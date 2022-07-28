@@ -1,16 +1,41 @@
+body {
+  font: 30px "Fira Sans", sans-serif;
+  cursor: pointer;
+  user-select: none;
+}
+
 .App {
   display: flex;
+  align-items: center;
   justify-content: center;
 }
 
 .cell {
   width: 50px;
   height: 50px;
-  border: 1px solid black;
+  border: 0.5px solid black;
 }
 
-#selected {
+.centerText {
+  text-align: center;
+  vertical-align: middle;
+  line-height: 50px;
+}
+
+#col:nth-child(3n + 4) {
+  border-left: 5.5px solid black;
+}
+
+.cell:nth-child(3n + 4) {
+  border-top: 5.5px solid black;
+}
+
+#focused {
   background-color: #aaa;
+}
+
+#focused:focus {
+  outline: none;
 }
 
 #adjacent {

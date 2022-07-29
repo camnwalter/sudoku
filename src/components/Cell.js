@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export const Cell = ({ adjacent, id, onClick, selected }) => {
+export const Cell = ({ adjacent, id, onClick, selected, onKeyDown }) => {
   const [text, setText] = useState("");
   const [cornerNotes, setCornerNotes] = useState([]);
 
@@ -10,6 +10,8 @@ export const Cell = ({ adjacent, id, onClick, selected }) => {
       id={selected ? "focused" : adjacent ? "adjacent" : ""}
       tabIndex={-1}
       onKeyDown={(e) => {
+        onKeyDown(e);
+
         e.preventDefault();
         if (e.key === "Backspace") {
           setText("");
@@ -21,7 +23,7 @@ export const Cell = ({ adjacent, id, onClick, selected }) => {
             if (cornerNotes.includes(e.key)) {
               setCornerNotes((notes) => notes.filter((note) => note !== e.key));
             } else {
-              setCornerNotes((notes) => notes.concat(e.key));
+              setCornerNotes((notes) => notes.concat(e.key).sort());
             }
           } else {
             setText(e.key);
@@ -31,6 +33,11 @@ export const Cell = ({ adjacent, id, onClick, selected }) => {
       onClick={onClick}
     >
       <div className="centerText">{text}</div>
+      <div className="cornerText">
+        {cornerNotes.map((note) => (
+          <div>{note}</div>
+        ))}
+      </div>
     </div>
   );
 };

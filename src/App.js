@@ -27,25 +27,49 @@ export const App = () => {
     );
   };
 
+  const moveByArrowKey = (e) => {
+    e.preventDefault();
+
+    switch (e.key) {
+      case "ArrowLeft":
+        if (Math.floor(selected / 9) > 0) setSelected(selected - 9);
+        break;
+      case "ArrowRight":
+        if (Math.floor(selected / 9) < 8) setSelected(selected + 9);
+        break;
+      case "ArrowUp":
+        if (selected % 9 > 0) setSelected(selected - 1);
+        break;
+      case "ArrowDown":
+        if (selected % 9 < 8) setSelected(selected + 1);
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <div className="App">
-      {BOARD.map((column, col) => (
-        <div id="col">
-          {column.map((cell, row) => {
-            const id = col * 9 + row;
-            return (
-              <Cell
-                id={id}
-                selected={id === selected}
-                adjacent={isAdjacent(id) || inSame3x3(id)}
-                onClick={(e) => {
-                  setSelected(id);
-                }}
-              ></Cell>
-            );
-          })}
-        </div>
-      ))}
+      <div className="board">
+        {BOARD.map((column, col) => (
+          <div id="col">
+            {column.map((cell, row) => {
+              const id = col * 9 + row;
+              return (
+                <Cell
+                  id={id}
+                  selected={id === selected}
+                  adjacent={isAdjacent(id) || inSame3x3(id)}
+                  onClick={(e) => {
+                    setSelected(id);
+                  }}
+                  onKeyDown={moveByArrowKey}
+                ></Cell>
+              );
+            })}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

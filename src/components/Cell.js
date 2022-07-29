@@ -18,7 +18,7 @@ export const Cell = ({ adjacent, id, onClick, selected, onKeyDown }) => {
         } else if (e.key === "Delete") {
           setText("");
           setCornerNotes([]);
-        } else if (e.key <= 9 && e.key >= 1) {
+        } else if (e.key >= 1 && e.key <= 9) {
           if (e.ctrlKey) {
             if (cornerNotes.includes(e.key)) {
               setCornerNotes((notes) => notes.filter((note) => note !== e.key));
@@ -34,9 +34,9 @@ export const Cell = ({ adjacent, id, onClick, selected, onKeyDown }) => {
     >
       <div className="centerText">{text}</div>
       <div className="cornerText">
-        {cornerNotes.map((note) => (
-          <div>{note}</div>
-        ))}
+        {cornerNotes.map(item => {
+           return item + "   ";
+        })}
       </div>
     </div>
   );

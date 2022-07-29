@@ -33,15 +33,19 @@ export const App = () => {
     switch (e.key) {
       case "ArrowLeft":
         if (Math.floor(selected / 9) > 0) setSelected(selected - 9);
+        else setSelected(selected + 72); //movement wraps around
         break;
       case "ArrowRight":
         if (Math.floor(selected / 9) < 8) setSelected(selected + 9);
+        else setSelected(selected - 72);
         break;
       case "ArrowUp":
         if (selected % 9 > 0) setSelected(selected - 1);
+        else setSelected(selected + 8);
         break;
       case "ArrowDown":
         if (selected % 9 < 8) setSelected(selected + 1);
+        else setSelected(selected - 8);
         break;
       default:
         break;

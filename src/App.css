@@ -1,5 +1,6 @@
 body {
   text-align: center;
+  font: 30px Helvetica, sans-serif;
 }
 
 *:focus {
@@ -48,4 +49,8 @@ td:first-child {
 
 .adjacent {
   background-color: #ddd;
+}
+
+.locked {
+  color: blue;
 }

@@ -8,6 +8,10 @@ export const Board = () => {
   const [board, setBoard] = useState<(number | null)[]>(Array(81).fill(null));
   const [corners, setCorners] = useState<number[][]>(Array(81).fill([]));
   const [selected, setSelected] = useState(-1);
+  const [editing, setEditing] = useState(false);
+  const [lockedCells, setLockedCells] = useState<boolean[]>(
+    Array(81).fill(false)
+  );
 
   const ref = useOutsideDetector(() => setSelected(-1));
 
@@ -18,6 +22,8 @@ export const Board = () => {
       return temp;
     });
   };
+
+  const isLocked = (index: number) => lockedCells[index];
 
   const isSelected = (index: number) => index === selected;
 
@@ -41,12 +47,20 @@ export const Board = () => {
     board[index] !== null && board[index] === board[selected];
 
   const resetBoard = () => {
-    setBoard(Array(81).fill(null));
+    setBoard((prev) => {
+      const temp = [...prev];
+      lockedCells.forEach((locked, index) => {
+        if (locked) return;
+        temp[index] = null;
+      });
+      return temp;
+    });
     setSelected(-1);
+    setEditing(false);
   };
 
   const handleArrowMovements = (
-    e: React.KeyboardEvent<HTMLTableDataCellElement>
+    e: React.KeyboardEvent<HTMLTableCellElement>
   ) => {
     const index = e.target.cellIndex;
 
@@ -54,19 +68,19 @@ export const Board = () => {
       case "ArrowLeft":
         if (selected % 9 > 0) {
           setSelected(selected - 1);
-          (e.target.previousSibling as HTMLTableDataCellElement)?.focus();
+          (e.target.previousSibling as HTMLTableCellElement)?.focus();
         }
         break;
       case "ArrowRight":
         if (selected % 9 < 8) setSelected(selected + 1);
-        (e.target.nextSibling as HTMLTableDataCellElement)?.focus();
+        (e.target.nextSibling as HTMLTableCellElement)?.focus();
         break;
       case "ArrowUp":
         if (Math.floor(selected / 9) > 0) setSelected(selected - 9);
         (
           e.target.parentElement?.previousSibling?.childNodes[
             index
-          ] as HTMLTableDataCellElement
+          ] as HTMLTableCellElement
         )?.focus();
         break;
       case "ArrowDown":
@@ -74,7 +88,7 @@ export const Board = () => {
         (
           e.target.parentElement?.nextSibling?.childNodes[
             index
-          ] as HTMLTableDataCellElement
+          ] as HTMLTableCellElement
         )?.focus();
         break;
       default:
@@ -94,23 +108,30 @@ export const Board = () => {
                   <td
                     key={col}
                     className={
-                      isSelected(index) || isSameNumber(index)
-                        ? "selected"
+                      (isSelected(index) || isSameNumber(index)
+                        ? "selected "
                         : isAdjacent(index) || inSame3x3(row, col)
-                        ? "adjacent"
-                        : ""
+                        ? "adjacent "
+                        : " ") + (isLocked(index) ? "locked" : "")
                     }
                     tabIndex={-1}
                     onClick={() => setSelected(index)}
                     onKeyDown={(e) => {
                       e.preventDefault();
                       handleArrowMovements(e);
+                      if (lockedCells[index] && !editing) return;
 
                       const key = parseInt(e.key);
                       if (key >= 1 && key <= 9) {
                         setBoard((prev) => {
                           const temp = [...prev];
                           temp[index] = key;
+                          return temp;
+                        });
+                      } else if (e.key === "Backspace") {
+                        setBoard((prev) => {
+                          const temp = [...prev];
+                          temp[index] = null;
                           return temp;
                         });
                       }
@@ -124,7 +145,25 @@ export const Board = () => {
           ))}
         </tbody>
       </table>
-      <button onClick={resetBoard}>Reset Board</button>
+      <button
+        onClick={() => {
+          if (editing) {
+            setEditing(false);
+            setLockedCells((prev) => {
+              const temp = [...prev];
+              board.forEach((cell, index) => {
+                if (cell !== null) temp[index] = true;
+              });
+              return temp;
+            });
+          } else {
+            setEditing(true);
+          }
+        }}
+      >
+        {editing ? "Save Board" : "Edit Board"}
+      </button>
+      <button onClick={resetBoard}>Reset</button>
     </>
   );
 };

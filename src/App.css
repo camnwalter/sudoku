@@ -1,56 +1,56 @@
 body {
-  font: 30px "Fira Sans", sans-serif;
-  cursor: pointer;
-  user-select: none;
-}
-
-.App {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#col {
-  float: left;
-}
-
-.cell {
-  width: 50px;
-  height: 50px;
-  border: 0.5px solid black;
-  padding: 2px;
-}
-
-.centerText {
-  text-align: center;
-  line-height: 50px;
+    text-align: center;
+    font: 30px Helvetica, sans-serif;
+  }
   
-}
-
-.cornerText {
-  font-size: 40%;
-  text-align: left;
-  align-items: center;
-  letter-spacing: 4.5px;
-  line-height: 1.48;
-}
-
-#col:nth-child(3n + 4) {
-  border-left: 5.5px solid black;
-}
-
-.cell:nth-child(3n + 4) {
-  border-top: 5.5px solid black;
-}
-
-#focused {
-  background-color: #aaa;
-}
-
-#focused:focus {
-  outline: none;
-}
-
-#adjacent {
-  background-color: #ddd;
-}
+  *:focus {
+    outline: none;
+  }
+  
+  .App {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  table {
+    cursor: pointer;
+    user-select: none;
+    border-collapse: collapse;
+  }
+  
+  td {
+    width: 50px;
+    height: 50px;
+    border: 0.5px solid black;
+  }
+  
+  /* Borders */
+  
+  tr:nth-child(3n + 1) {
+    border-top: 3px solid black;
+  }
+  
+  tr:last-child {
+    border-bottom: 3px solid black;
+  }
+  
+  td:nth-child(3n) {
+    border-right: 3px solid black;
+  }
+  
+  td:first-child {
+    border-left: 3px solid black;
+  }
+  
+  .selected {
+    background-color: #aaa;
+  }
+  
+  .adjacent {
+    background-color: #ddd;
+  }
+  
+  .locked {
+    color: blue;
+  }

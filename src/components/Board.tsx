@@ -10,7 +10,7 @@ export const Board = () => {
   const [corners, setCorners] = useState<number[][]>(Array(81).fill([]));
   const [centers, setCenters] = useState<number[][]>(Array(81).fill([]));
   const [selected, setSelected] = useState(-1);
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useState(true);
   const [lockedCells, setLockedCells] = useState<boolean[]>(
     Array(81).fill(false)
   );
@@ -53,6 +53,48 @@ export const Board = () => {
     setCenters((prev) => prev.map(() => []));
     setSelected(-1);
     setEditing(false);
+  };
+
+  const checkBoard = () => {
+    const isUnique = (arr: (number | null)[]) =>
+      arr.every((item, index) => {
+        return item === null || arr.indexOf(item) === index;
+      });
+
+    let solved = true;
+
+    for (let i = 0; i < SIZE; i++) {
+      const row = [];
+
+      for (let j = 0; j < SIZE; j++) {
+        row.push(board[i * SIZE + j]);
+      }
+
+      if (!isUnique(row)) {
+        solved = false;
+        break;
+      }
+
+      row.length = 0;
+      for (let j = 0; j < SIZE; j++) {
+        // if (board[i * SIZE + j] === null) {
+        //   solved = false;
+        //   break outer;
+        // }
+        row.push(board[i + SIZE * j]);
+      }
+
+      if (!isUnique(row)) {
+        solved = false;
+        break;
+      }
+    }
+
+    if (solved) {
+      alert("Congrats! You solved it!");
+    } else {
+      alert("Sorry... you messed up somewhere.");
+    }
   };
 
   const handleArrowMovements = (
@@ -211,6 +253,7 @@ export const Board = () => {
         {editing ? "Save Board" : "Edit Board"}
       </button>
       <button onClick={resetBoard}>Reset</button>
+      <button onClick={checkBoard}>Check</button>
     </>
   );
 };

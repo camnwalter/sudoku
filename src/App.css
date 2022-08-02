@@ -1,6 +1,7 @@
 body {
   text-align: center;
   font: 30px Helvetica, sans-serif;
+  user-select: none;
 }
 
 *:focus {
@@ -15,7 +16,6 @@ body {
 
 table {
   cursor: pointer;
-  user-select: none;
   border-collapse: collapse;
 }
 
@@ -44,6 +44,8 @@ td:first-child {
   border-left: 3px solid black;
 }
 
+/* Borders End */
+
 .selected {
   background-color: #aaa;
 }
@@ -64,7 +66,6 @@ td > .overlayText {
   width: 100%;
   height: 100%;
   font-size: 15px;
-  word-spacing: 2px;
   text-align: center;
 }
 
@@ -72,8 +73,27 @@ td > .overlayText {
   text-align: left;
   width: 100%;
   height: 100%;
+  word-spacing: 4px;
 }
 
 .center {
   line-height: 50px;
+}
+
+.sidebar {
+  width: 150px;
+}
+
+.remaining {
+  font-size: 20px;
+  line-height: normal;
+  background: #aaa;
+  border-radius: 10px;
+  padding: 0 10px;
+  margin-inline: 10px;
+}
+
+.remaining div {
+  border-radius: 10%;
+  margin: 1px;
 }

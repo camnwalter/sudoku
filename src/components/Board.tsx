@@ -52,14 +52,12 @@ export const Board = () => {
     setCorners((prev) => prev.map(() => []));
     setCenters((prev) => prev.map(() => []));
     setSelected(-1);
-    setEditing(false);
+    setEditing(true);
   };
 
   const checkBoard = () => {
     const isUnique = (arr: (number | null)[]) =>
-      arr.every((item, index) => {
-        return item === null || arr.indexOf(item) === index;
-      });
+      arr.every((item, index) => arr.indexOf(item) === index);
 
     let solved = true;
 
@@ -77,10 +75,10 @@ export const Board = () => {
 
       row.length = 0;
       for (let j = 0; j < SIZE; j++) {
-        // if (board[i * SIZE + j] === null) {
-        //   solved = false;
-        //   break outer;
-        // }
+        if (board[i * SIZE + j] === null) {
+          solved = false;
+          break;
+        }
         row.push(board[i + SIZE * j]);
       }
 
@@ -93,8 +91,22 @@ export const Board = () => {
     if (solved) {
       alert("Congrats! You solved it!");
     } else {
-      alert("Sorry... you messed up somewhere.");
+      alert("Sorry... You messed up somewhere.");
     }
+  };
+
+  const remainingNumbers = () => {
+    const counts = Array<number>(9).fill(9);
+    board.forEach((num) => {
+      if (num === null) return;
+
+      counts[num - 1]--;
+    });
+
+    return counts.reduce<number[]>(
+      (a, b, index) => (b > 0 ? [...a, index + 1] : a),
+      []
+    );
   };
 
   const handleArrowMovements = (
@@ -191,6 +203,20 @@ export const Board = () => {
                             temp[index] = key;
                             return temp;
                           });
+                          setCorners((prev) => {
+                            const temp = [...prev];
+                            return temp.map((corners, i) => {
+                              if (i !== index) return corners;
+                              return [];
+                            });
+                          });
+                          setCenters((prev) => {
+                            const temp = [...prev];
+                            return temp.map((centers, i) => {
+                              if (i !== index) return centers;
+                              return [];
+                            });
+                          });
                         }
                       } else if (e.key === "Backspace") {
                         setBoard((prev) => {
@@ -234,26 +260,35 @@ export const Board = () => {
           ))}
         </tbody>
       </table>
-      <button
-        onClick={() => {
-          if (editing) {
-            setEditing(false);
-            setLockedCells((prev) => {
-              const temp = [...prev];
-              board.forEach((cell, index) => {
-                if (cell !== null) temp[index] = true;
+      <div className="remaining">
+        {remainingNumbers().length > 0 && "Remaining"}
+        {remainingNumbers().map((row, i) => (
+          <div>{JSON.stringify(row)}</div>
+        ))}
+      </div>
+      <div className="sidebar">
+        <button
+          onClick={() => {
+            if (editing) {
+              setEditing(false);
+              setLockedCells((prev) => {
+                const temp = [...prev];
+                board.forEach((cell, index) => {
+                  if (cell !== null) temp[index] = true;
+                });
+                return temp;
               });
-              return temp;
-            });
-          } else {
-            setEditing(true);
-          }
-        }}
-      >
-        {editing ? "Save Board" : "Edit Board"}
-      </button>
-      <button onClick={resetBoard}>Reset</button>
-      <button onClick={checkBoard}>Check</button>
+            } else {
+              setEditing(true);
+              setLockedCells(Array(SIZE ** 2).fill(false));
+            }
+          }}
+        >
+          {editing ? "Save Board" : "Edit Board"}
+        </button>
+        <button onClick={resetBoard}>Reset</button>
+        <button onClick={checkBoard}>Check</button>
+      </div>
     </>
   );
 };

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useOutsideDetector } from "../hooks/useOutsideDetector";
+import { OverlayText } from "./OverlayText";
 
 const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
@@ -7,6 +8,7 @@ export const Board = () => {
   const SIZE = 9;
   const [board, setBoard] = useState<(number | null)[]>(Array(81).fill(null));
   const [corners, setCorners] = useState<number[][]>(Array(81).fill([]));
+  const [centers, setCenters] = useState<number[][]>(Array(81).fill([]));
   const [selected, setSelected] = useState(-1);
   const [editing, setEditing] = useState(false);
   const [lockedCells, setLockedCells] = useState<boolean[]>(
@@ -14,14 +16,6 @@ export const Board = () => {
   );
 
   const ref = useOutsideDetector(() => setSelected(-1));
-
-  const setCornerNumbers = (index: number, corners: number[] = []) => {
-    setCorners((prev) => {
-      const temp = [...prev];
-      temp[index] = corners;
-      return temp;
-    });
-  };
 
   const isLocked = (index: number) => lockedCells[index];
 
@@ -55,6 +49,8 @@ export const Board = () => {
       });
       return temp;
     });
+    setCorners((prev) => prev.map(() => []));
+    setCenters((prev) => prev.map(() => []));
     setSelected(-1);
     setEditing(false);
   };
@@ -121,23 +117,74 @@ export const Board = () => {
                       handleArrowMovements(e);
                       if (lockedCells[index] && !editing) return;
 
-                      const key = parseInt(e.key);
+                      const key = parseInt(e.code.substring(5));
                       if (key >= 1 && key <= 9) {
-                        setBoard((prev) => {
-                          const temp = [...prev];
-                          temp[index] = key;
-                          return temp;
-                        });
+                        if (e.ctrlKey) {
+                          setCorners((prev) => {
+                            const temp = [...prev];
+                            return temp.map((corners, i) => {
+                              if (i !== index) return corners;
+
+                              if (corners.includes(key)) {
+                                return corners.filter((num) => num !== key);
+                              }
+                              return corners.concat(key).sort();
+                            });
+                          });
+                        } else if (e.shiftKey) {
+                          setCenters((prev) => {
+                            const temp = [...prev];
+                            return temp.map((centers, i) => {
+                              if (i !== index) return centers;
+
+                              if (centers.includes(key)) {
+                                return centers.filter((num) => num !== key);
+                              }
+                              return centers.concat(key).sort();
+                            });
+                          });
+                        } else {
+                          setBoard((prev) => {
+                            const temp = [...prev];
+                            temp[index] = key;
+                            return temp;
+                          });
+                        }
                       } else if (e.key === "Backspace") {
                         setBoard((prev) => {
                           const temp = [...prev];
                           temp[index] = null;
                           return temp;
                         });
+                      } else if (e.key === "Delete") {
+                        setBoard((prev) => {
+                          const temp = [...prev];
+                          temp[index] = null;
+                          return temp;
+                        });
+                        setCorners((prev) => {
+                          const temp = [...prev];
+                          return temp.map((corners, i) => {
+                            if (i !== index) return corners;
+                            return [];
+                          });
+                        });
+                        setCenters((prev) => {
+                          const temp = [...prev];
+                          return temp.map((centers, i) => {
+                            if (i !== index) return centers;
+                            return [];
+                          });
+                        });
                       }
                     }}
                   >
                     {board[index]}
+                    <OverlayText
+                      text={corners[index].join(" ")}
+                      type="corner"
+                    />
+                    <OverlayText text={centers[index].join("")} type="center" />
                   </td>
                 );
               })}

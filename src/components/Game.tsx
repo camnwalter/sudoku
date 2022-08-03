@@ -44,21 +44,51 @@ export const Game = () => {
 
   const easy = () => {
     generateNewBoard(36);
+
+    setEditing(false);
+    setLockedCells((prev) => {
+      const temp = [...prev];
+      board.forEach((cell, index) => {
+        if (cell !== null) temp[index] = true;
+      });
+      return temp;
+    });
   };
 
   const medium = () => {
     generateNewBoard(45);
+
+    setEditing(false);
+    setLockedCells((prev) => {
+      const temp = [...prev];
+      board.forEach((cell, index) => {
+        if (cell !== null) temp[index] = true;
+      });
+      return temp;
+    });
   };
 
   const hard = () => {
     generateNewBoard(54);
+
+    setEditing(false);
+    setLockedCells((prev) => {
+      const temp = [...prev];
+      board.forEach((cell, index) => {
+        if (cell !== null) temp[index] = true;
+      });
+      return temp;
+    });
   };
 
   const generateNewBoard = (numsToRemove: number) => {
+    // setBoard(Array(81).fill(null));
+
     fillTheDiagonals();
     fillRest(0, 3);
     removeSomeNumbers(numsToRemove);
   };
+
   const fillTheDiagonals = () => {
     fillDiagonal();
 
@@ -68,10 +98,10 @@ export const Game = () => {
   };
 
   const fillDiagonal = () => {
-    let nums = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    const nums = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
     for (let a = 0; a < SIZE; a++) {
       let randomNumber = nums[a];
-      board[a * SIZE + a] = randomNumber;
+      setNumber(a * SIZE + a, randomNumber);
     }
   };
 
@@ -81,16 +111,18 @@ export const Game = () => {
       boxNum =
         Math.floor(a / 3) * 9 + Math.floor(i / 3) * 27 + (a % 3) + 3 * (i % 3);
       if (board[boxNum] !== null) continue;
+
       let num = null;
       while (!checkValidBox(i, num)) {
         num = randomNum(SIZE);
       }
-      board[boxNum] = num;
+
+      setNumber(boxNum, num);
     }
   };
 
   const checkValidRow = (row: number, val: number) => {
-    let nums = new Set<number | null>();
+    const nums = new Set<number | null>();
     for (let i = 0; i < SIZE; i++) {
       let curr = row * SIZE + i;
       nums.add(board[curr]);
@@ -99,7 +131,7 @@ export const Game = () => {
   };
 
   const checkValidCol = (col: number, val: number) => {
-    let nums = new Set<number | null>();
+    const nums = new Set<number | null>();
     for (let i = 0; i < SIZE; i++) {
       let curr = i * SIZE + col;
       nums.add(board[curr]);
@@ -107,22 +139,26 @@ export const Game = () => {
     return !nums.has(val);
   };
 
-  /* boxes: 
-  0 1 2
-  3 4 5
-  6 7 8 */
+  /*
+    Boxes:
+    0 1 2
+    3 4 5
+    6 7 8
+  */
   const checkValidBox = (box: number, val: number | null) => {
     if (val == null) return false;
-    let nums = new Set<number | null>();
+
+    const nums = new Set<number | null>();
     const start = 27 * Math.floor(box / 3) + 3 * (box % 3);
     for (let i = 0; i < 9; i++) {
       let curr = start + (i % 3) + 9 * Math.floor(i / 3);
       nums.add(board[curr]);
     }
+
     return !nums.has(val);
   };
+
   //use dfs to check for possible solutions
-  //TODO: implement this for all puzzle sizes
   const fillRest = (row: number, col: number) => {
     //the board is now filled
     if (row >= SIZE && col >= SIZE) {
@@ -147,10 +183,10 @@ export const Game = () => {
       col = 0;
       if (row >= SIZE) return true;
     }
-    //map 2d array to 1d
-    let idx = row * SIZE + col;
 
-    let box = SQRT * Math.floor(row / SQRT) + Math.floor(col / SQRT);
+    const index = row * SIZE + col;
+
+    const box = SQRT * Math.floor(row / SQRT) + Math.floor(col / SQRT);
 
     for (let i = 1; i <= SIZE; i++) {
       if (
@@ -158,11 +194,12 @@ export const Game = () => {
         checkValidCol(col, i) &&
         checkValidBox(box, i)
       ) {
-        board[idx] = i;
+        setNumber(index, i);
         if (fillRest(row, col + 1)) return true; //this last state was fine! use this state again
-        board[idx] = null; //if it did not work, return to previous state
+        setNumber(index, null); //if it did not work, return to previous state
       }
     }
+
     return false;
   };
 
@@ -171,10 +208,11 @@ export const Game = () => {
       let row = randomNum(SIZE);
       let col = randomNum(SIZE);
       if (board[row * SIZE + col] !== null) {
-        board[row * SIZE + col] = null;
+        setNumber(row * SIZE + col, null);
       } else numToRemove++;
     }
   };
+
   const resetBoard = () => {
     setBoard((prev) => {
       const temp = [...prev];

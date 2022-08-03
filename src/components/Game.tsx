@@ -28,6 +28,92 @@ export const Game = () => {
   const { isAdjacent, isLocked, isSameNumber, inSame3x3, isSelected } =
     useSudoku(board, lockedCells, selected);
 
+  const shuffle = (array:number[]) => {
+    let newArray = [...array]
+    for ( let i = newArray.length - 1; i > 0; i-- ) {
+        const j = Math.floor( Math.random() * ( i + 1 ) );
+        [ newArray[ i ], newArray[ j ] ] = [ newArray[ j ], newArray[ i ] ];
+    }
+    return newArray;
+  }
+
+  const randomNum = (num: number) => {
+    return Math.floor(Math.random() * num + 1);
+  }
+
+  const generateNewBoard = () => {
+    fillTheDiagonals();
+  }
+
+  const fillTheDiagonals = () => {
+    fillDiagonal();
+    
+    for(let i = 0; i < SIZE; i += 4){
+      fillBox(i);
+    }
+  }
+  const fillDiagonal = () => {
+    let nums = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9])
+    for(let a = 0; a < SIZE; a++){
+      let randomNumber = nums[a];
+      board[a*SIZE + a] = randomNumber;
+    }
+  }
+  const fillBox = (i:number) => {
+    let boxNum = 0;
+    for(let a = 0; a < 9; a++){
+      boxNum = Math.floor(a/3) * 9 + Math.floor(i/3) * 27 + a%3 + (3 * (i%3));
+      if(board[boxNum] !== null) continue; 
+      let num = null;
+      while(!checkValidBox(i, num)){
+        num = randomNum(SIZE);
+      }
+      board[boxNum] = num;
+    }
+  }
+
+  // const findNextEmptyCell = () => {
+  //   const nextEmptyCell = board.indexOf(null);
+  //   if (nextEmptyCell === -1) return null;
+  //   const row = Math.floor(nextEmptyCell/SIZE);
+  //   const col = nextEmptyCell%SIZE;
+  //   const box = 3 * (Math.floor(row/3)) + Math.floor(col/3);
+  //   return [row, col, box, nextEmptyCell];
+  // }
+
+  // const checkValidRow = (row: number, val: number) => {
+  //   let nums = new Set<number|null>();
+  //   for(let i = 0; i < SIZE; i++){
+  //     let curr = row * SIZE + i;
+  //     nums.add(board[curr]);
+  //   }
+  //   return (!nums.has(val));
+  // }
+
+  // const checkValidCol = (col: number, val: number) => {
+  //   let nums = new Set<number|null>();
+  //   for(let i = 0; i < SIZE; i++){
+  //     let curr = i * SIZE + col;
+  //     nums.add(board[curr]);
+  //   }
+  //   return (!nums.has(val));
+  // }
+
+  /* boxes: 
+  0 1 2
+  3 4 5
+  6 7 8 */
+  const checkValidBox = (box: number, val: number|null) => {
+    if(val == null) return false;
+    let nums = new Set<number|null>();
+    const start = 27 * Math.floor(box/3) + 3 * (box%3);
+    for(let i = 0; i < 9; i++){
+      let curr = start + i%3 + 9 * Math.floor(i/3);
+      nums.add(board[curr]);
+    }
+    return (!nums.has(val));
+  }
+
   const resetBoard = () => {
     setBoard((prev) => {
       const temp = [...prev];
@@ -89,7 +175,6 @@ export const Game = () => {
     const counts = Array<number>(9).fill(9);
     board.forEach((num) => {
       if (num === null) return;
-
       counts[num - 1]--;
     });
 
@@ -285,6 +370,7 @@ export const Game = () => {
               </button>
               <button onClick={resetBoard}>Reset</button>
               <button onClick={checkBoard}>Check</button>
+              <button onClick={generateNewBoard}>Solve Diagonals</button>
             </div>
           </div>
         </div>

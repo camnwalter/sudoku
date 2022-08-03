@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useOutsideDetector } from "../hooks/useOutsideDetector";
+import { useSudoku } from "../hooks/useSudoku";
+import { useTimer } from "../hooks/useTimer";
 import { Header } from "./Header";
 import { OverlayText } from "./OverlayText";
 import { Timer } from "./Timer";
@@ -22,42 +24,10 @@ export const Game = () => {
 
   const ref = useOutsideDetector(() => setSelected(-1));
 
-  useEffect(() => {
-    let interval: NodeJS.Timer | undefined;
-    if (!winner) {
-      interval = setInterval(() => {
-        setTime((time) => time + 1000);
-      }, 1000);
-    } else {
-      clearInterval(interval);
-    }
-    return () => {
-      clearInterval(interval);
-    };
-  }, [winner]);
+  useTimer(winner, () => setTime((time) => time + 1000));
 
-  const isLocked = (index: number) => lockedCells[index];
-
-  const isSelected = (index: number) => index === selected;
-
-  const isAdjacent = (index: number) => {
-    return (
-      index % 9 === selected % 9 ||
-      Math.floor(index / 9) === Math.floor(selected / 9)
-    );
-  };
-
-  const inSame3x3 = (row: number, col: number) => {
-    const selectedX = Math.floor(selected / 9);
-    const selectedY = Math.floor(selected % 9);
-    return (
-      Math.floor(row / 3) === Math.floor(selectedX / 3) &&
-      Math.floor(col / 3) === Math.floor(selectedY / 3)
-    );
-  };
-
-  const isSameNumber = (index: number) =>
-    board[index] !== null && board[index] === board[selected];
+  const { isAdjacent, isLocked, isSameNumber, inSame3x3, isSelected } =
+    useSudoku(board, lockedCells, selected);
 
   const shuffle = (array:number[]) => {
     let newArray = [...array]
@@ -273,6 +243,15 @@ export const Game = () => {
     );
   };
 
+  const setNumber = (index: number, value: number | null) => {
+    setBoard((prev) => {
+      const temp = [...prev];
+      temp[index] = value;
+
+      return temp;
+    });
+  };
+
   const handleArrowMovements = (
     e: React.KeyboardEvent<HTMLTableCellElement>
   ) => {
@@ -338,7 +317,7 @@ export const Game = () => {
                         onKeyDown={(e) => {
                           e.preventDefault();
                           handleArrowMovements(e);
-                          if (lockedCells[index] && !editing) return;
+                          if (isLocked(index) && !editing) return;
 
                           const key = parseInt(e.code.substring(5));
                           if (key >= 1 && key <= 9) {
@@ -367,11 +346,7 @@ export const Game = () => {
                                 });
                               });
                             } else {
-                              setBoard((prev) => {
-                                const temp = [...prev];
-                                temp[index] = key;
-                                return temp;
-                              });
+                              setNumber(index, key);
                               setCorners((prev) => {
                                 const temp = [...prev];
                                 return temp.map((corners, i) => {
@@ -388,17 +363,9 @@ export const Game = () => {
                               });
                             }
                           } else if (e.key === "Backspace") {
-                            setBoard((prev) => {
-                              const temp = [...prev];
-                              temp[index] = null;
-                              return temp;
-                            });
+                            setNumber(index, null);
                           } else if (e.key === "Delete") {
-                            setBoard((prev) => {
-                              const temp = [...prev];
-                              temp[index] = null;
-                              return temp;
-                            });
+                            setNumber(index, null);
                             setCorners((prev) => {
                               const temp = [...prev];
                               return temp.map((corners, i) => {
@@ -434,8 +401,8 @@ export const Game = () => {
           </table>
           {remainingNumbers().length > 0 && (
             <div className="remaining">
-              {remainingNumbers().map((row) => (
-                <div key={row}>{row}</div>
+              {remainingNumbers().map((num) => (
+                <div key={num}>{num}</div>
               ))}
             </div>
           )}

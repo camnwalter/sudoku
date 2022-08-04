@@ -4,11 +4,15 @@ import { useSudoku } from "../hooks/useSudoku";
 import { useTimer } from "../hooks/useTimer";
 import {
   generateNewBoard,
-  SIZE,
   locationToIndex,
+  SIZE,
 } from "../utils/generateBoard";
+import { Board } from "./Board";
+import { Body } from "./Body";
+import { Cell } from "./Cell";
 import { Header } from "./Header";
 import { OverlayText } from "./OverlayText";
+import { Sidebar } from "./Sidebar";
 import { Timer } from "./Timer";
 
 const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8];
@@ -192,152 +196,139 @@ export const Game = () => {
       <Header>
         <Timer time={time} />
       </Header>
-      <div className="wrapper">
-        <div className="mainArea">
-          <table className="board" ref={ref}>
-            <tbody>
-              {rows.map((row) => (
-                <tr key={row}>
-                  {rows.map((col) => {
-                    const index = row * SIZE + col;
-                    return (
-                      <td
-                        key={col}
-                        className={
-                          (isSelected(index) || isSameNumber(index)
-                            ? "selected "
-                            : isAdjacent(index) || inSame3x3(row, col)
-                            ? "adjacent "
-                            : " ") + (isLocked(index) ? "locked" : "")
+      <Body>
+        <Board _ref={ref}>
+          {rows.map((row) => (
+            <tr key={row}>
+              {rows.map((col) => {
+                const index = locationToIndex(row, col);
+                return (
+                  <Cell
+                    key={col}
+                    selected={isSelected(index) || isSameNumber(index)}
+                    adjacent={isAdjacent(index) || inSame3x3(row, col)}
+                    locked={isLocked(index)}
+                    onClick={() => setSelected(index)}
+                    onKeyDown={(e) => {
+                      e.preventDefault();
+                      handleArrowMovements(e);
+                      if (isLocked(index) && !editing) return;
+
+                      const key = parseInt(e.code.substring(5));
+                      if (key >= 1 && key <= 9) {
+                        if (e.ctrlKey) {
+                          if (board[index] !== null) return;
+
+                          setCorners((prev) => {
+                            const temp = [...prev];
+                            return temp.map((corners, i) => {
+                              if (i !== index) return corners;
+
+                              return corners.includes(key)
+                                ? corners.filter((num) => num !== key)
+                                : corners.concat(key).sort();
+                            });
+                          });
+                        } else if (e.shiftKey) {
+                          if (board[index] !== null) return;
+
+                          setCenters((prev) => {
+                            const temp = [...prev];
+                            return temp.map((centers, i) => {
+                              if (i !== index) return centers;
+
+                              return centers.includes(key)
+                                ? centers.filter((num) => num !== key)
+                                : centers.concat(key).sort();
+                            });
+                          });
+                        } else {
+                          setNumber(index, key);
+                          setCorners((prev) => {
+                            const temp = [...prev];
+                            return temp.map((corners, i) =>
+                              i !== index ? corners : []
+                            );
+                          });
+                          setCenters((prev) => {
+                            const temp = [...prev];
+                            return temp.map((centers, i) =>
+                              i !== index ? centers : []
+                            );
+                          });
                         }
-                        tabIndex={-1}
-                        onClick={() => setSelected(index)}
-                        onKeyDown={(e) => {
-                          e.preventDefault();
-                          handleArrowMovements(e);
-                          if (isLocked(index) && !editing) return;
-
-                          const key = parseInt(e.code.substring(5));
-                          if (key >= 1 && key <= 9) {
-                            if (e.ctrlKey) {
-                              setCorners((prev) => {
-                                const temp = [...prev];
-                                return temp.map((corners, i) => {
-                                  if (i !== index) return corners;
-
-                                  if (corners.includes(key)) {
-                                    return corners.filter((num) => num !== key);
-                                  }
-                                  return corners.concat(key).sort();
-                                });
-                              });
-                            } else if (e.shiftKey) {
-                              setCenters((prev) => {
-                                const temp = [...prev];
-                                return temp.map((centers, i) => {
-                                  if (i !== index) return centers;
-
-                                  if (centers.includes(key)) {
-                                    return centers.filter((num) => num !== key);
-                                  }
-                                  return centers.concat(key).sort();
-                                });
-                              });
-                            } else {
-                              setNumber(index, key);
-                              setCorners((prev) => {
-                                const temp = [...prev];
-                                return temp.map((corners, i) => {
-                                  if (i !== index) return corners;
-                                  return [];
-                                });
-                              });
-                              setCenters((prev) => {
-                                const temp = [...prev];
-                                return temp.map((centers, i) => {
-                                  if (i !== index) return centers;
-                                  return [];
-                                });
-                              });
-                            }
-                          } else if (e.key === "Backspace") {
-                            setNumber(index, null);
-                          } else if (e.key === "Delete") {
-                            setNumber(index, null);
-                            setCorners((prev) => {
-                              const temp = [...prev];
-                              return temp.map((corners, i) => {
-                                if (i !== index) return corners;
-                                return [];
-                              });
-                            });
-                            setCenters((prev) => {
-                              const temp = [...prev];
-                              return temp.map((centers, i) => {
-                                if (i !== index) return centers;
-                                return [];
-                              });
-                            });
-                          }
-                        }}
-                      >
-                        {board[index]}
-                        {corners[index].length > 0 && (
-                          <OverlayText
-                            text={corners[index].join(" ")}
-                            type="corner"
-                          />
-                        )}
-                        {centers[index].length > 0 && (
-                          <OverlayText
-                            text={centers[index].join("")}
-                            type="center"
-                          />
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {remainingNumbers().length > 0 && (
-            <div className="remaining">
-              {remainingNumbers().map((num) => (
-                <div key={num}>{num}</div>
-              ))}
-            </div>
-          )}
-          <div className="sidebarWrapper">
-            <div className="sidebar">
-              <button
-                onClick={() => {
-                  if (editing) {
-                    setEditing(false);
-                    setLockedCells((prev) => {
-                      const temp = [...prev];
-                      board.forEach((cell, index) => {
-                        if (cell !== null) temp[index] = true;
-                      });
-                      return temp;
-                    });
-                  } else {
-                    setEditing(true);
-                    setLockedCells(Array(SIZE ** 2).fill(false));
-                  }
-                }}
-              >
-                {editing ? "Save Board" : "Edit Board"}
-              </button>
-              <button onClick={resetBoard}>Reset</button>
-              <button onClick={checkBoard}>Check</button>
-              <button onClick={easy}>Easy puzzle</button>
-              <button onClick={medium}>Medium puzzle</button>
-              <button onClick={hard}>Hard puzzle</button>
-            </div>
+                      } else if (e.key === "Backspace") {
+                        setNumber(index, null);
+                      } else if (e.key === "Delete") {
+                        setNumber(index, null);
+                        setCorners((prev) => {
+                          const temp = [...prev];
+                          return temp.map((corners, i) =>
+                            i !== index ? corners : []
+                          );
+                        });
+                        setCenters((prev) => {
+                          const temp = [...prev];
+                          return temp.map((centers, i) =>
+                            i !== index ? centers : []
+                          );
+                        });
+                      }
+                    }}
+                  >
+                    {board[index]}
+                    {corners[index].length > 0 && (
+                      <OverlayText
+                        text={corners[index].join(" ")}
+                        type="corner"
+                      />
+                    )}
+                    {centers[index].length > 0 && (
+                      <OverlayText
+                        text={centers[index].join("")}
+                        type="center"
+                      />
+                    )}
+                  </Cell>
+                );
+              })}
+            </tr>
+          ))}
+        </Board>
+        {remainingNumbers().length > 0 && (
+          <div className="remaining">
+            {remainingNumbers().map((num) => (
+              <div key={num}>{num}</div>
+            ))}
           </div>
-        </div>
-      </div>
+        )}
+      </Body>
+      <Sidebar>
+        <button
+          onClick={() => {
+            if (editing) {
+              setEditing(false);
+              setLockedCells((prev) => {
+                const temp = [...prev];
+                board.forEach((cell, index) => {
+                  if (cell !== null) temp[index] = true;
+                });
+                return temp;
+              });
+            } else {
+              setEditing(true);
+              setLockedCells(Array(SIZE ** 2).fill(false));
+            }
+          }}
+        >
+          {editing ? "Save Board" : "Edit Board"}
+        </button>
+        <button onClick={resetBoard}>Reset</button>
+        <button onClick={checkBoard}>Check</button>
+        <button onClick={easy}>Easy puzzle</button>
+        <button onClick={medium}>Medium puzzle</button>
+        <button onClick={hard}>Hard puzzle</button>
+      </Sidebar>
     </>
   );
 };

@@ -2,6 +2,11 @@ import { useState } from "react";
 import { useOutsideDetector } from "../hooks/useOutsideDetector";
 import { useSudoku } from "../hooks/useSudoku";
 import { useTimer } from "../hooks/useTimer";
+import {
+  generateNewBoard,
+  SIZE,
+  locationToIndex,
+} from "../utils/generateBoard";
 import { Header } from "./Header";
 import { OverlayText } from "./OverlayText";
 import { Timer } from "./Timer";
@@ -9,8 +14,6 @@ import { Timer } from "./Timer";
 const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
 export const Game = () => {
-  const SIZE = 9;
-  const SQRT = Math.round(Math.sqrt(SIZE));
   const [board, setBoard] = useState<(number | null)[]>(Array(81).fill(null));
   const [corners, setCorners] = useState<number[][]>(Array(81).fill([]));
   const [centers, setCenters] = useState<number[][]>(Array(81).fill([]));
@@ -29,21 +32,8 @@ export const Game = () => {
   const { isAdjacent, isLocked, isSameNumber, inSame3x3, isSelected } =
     useSudoku(board, lockedCells, selected);
 
-  const shuffle = (array: number[]) => {
-    let newArray = [...array];
-    for (let i = newArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-    }
-    return newArray;
-  };
-
-  const randomNum = (num: number) => {
-    return Math.floor(Math.random() * num + 1);
-  };
-
   const easy = () => {
-    generateNewBoard(36);
+    generateNewBoard(36, board, setNumber);
 
     setEditing(false);
     setLockedCells((prev) => {
@@ -56,7 +46,7 @@ export const Game = () => {
   };
 
   const medium = () => {
-    generateNewBoard(45);
+    generateNewBoard(45, board, setNumber);
 
     setEditing(false);
     setLockedCells((prev) => {
@@ -69,7 +59,7 @@ export const Game = () => {
   };
 
   const hard = () => {
-    generateNewBoard(54);
+    generateNewBoard(54, board, setNumber);
 
     setEditing(false);
     setLockedCells((prev) => {
@@ -79,138 +69,6 @@ export const Game = () => {
       });
       return temp;
     });
-  };
-
-  const generateNewBoard = (numsToRemove: number) => {
-    // setBoard(Array(81).fill(null));
-
-    fillTheDiagonals();
-    fillRest(0, 3);
-    removeSomeNumbers(numsToRemove);
-  };
-
-  const fillTheDiagonals = () => {
-    fillDiagonal();
-
-    for (let i = 0; i < SIZE; i += 4) {
-      fillBox(i);
-    }
-  };
-
-  const fillDiagonal = () => {
-    const nums = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    for (let a = 0; a < SIZE; a++) {
-      let randomNumber = nums[a];
-      setNumber(a * SIZE + a, randomNumber);
-    }
-  };
-
-  const fillBox = (i: number) => {
-    let boxNum = 0;
-    for (let a = 0; a < 9; a++) {
-      boxNum =
-        Math.floor(a / 3) * 9 + Math.floor(i / 3) * 27 + (a % 3) + 3 * (i % 3);
-      if (board[boxNum] !== null) continue;
-
-      let num = null;
-      while (!checkValidBox(i, num)) {
-        num = randomNum(SIZE);
-      }
-
-      setNumber(boxNum, num);
-    }
-  };
-
-  const checkValidRow = (row: number, val: number) => {
-    const nums = new Set<number | null>();
-    for (let i = 0; i < SIZE; i++) {
-      let curr = row * SIZE + i;
-      nums.add(board[curr]);
-    }
-    return !nums.has(val);
-  };
-
-  const checkValidCol = (col: number, val: number) => {
-    const nums = new Set<number | null>();
-    for (let i = 0; i < SIZE; i++) {
-      let curr = i * SIZE + col;
-      nums.add(board[curr]);
-    }
-    return !nums.has(val);
-  };
-
-  /*
-    Boxes:
-    0 1 2
-    3 4 5
-    6 7 8
-  */
-  const checkValidBox = (box: number, val: number | null) => {
-    if (val == null) return false;
-
-    const nums = new Set<number | null>();
-    const start = 27 * Math.floor(box / 3) + 3 * (box % 3);
-    for (let i = 0; i < 9; i++) {
-      let curr = start + (i % 3) + 9 * Math.floor(i / 3);
-      nums.add(board[curr]);
-    }
-
-    return !nums.has(val);
-  };
-
-  //use dfs to check for possible solutions
-  const fillRest = (row: number, col: number) => {
-    //the board is now filled
-    if (row >= SIZE && col >= SIZE) {
-      return true;
-    }
-
-    //you have reached the end of the row, go down
-    if (col >= SIZE && row < SIZE - 1) {
-      row++;
-      col = 0;
-    }
-
-    //box 0
-    if (row < SQRT && col < SQRT) col = SQRT;
-    //box 4
-    if (row >= SQRT && row < 2 * SQRT && col >= SQRT && col < 2 * SQRT) {
-      col = 2 * SQRT;
-    }
-    //box 8
-    if (row >= 2 * SQRT && col >= 2 * SQRT) {
-      row++;
-      col = 0;
-      if (row >= SIZE) return true;
-    }
-
-    const index = row * SIZE + col;
-
-    const box = SQRT * Math.floor(row / SQRT) + Math.floor(col / SQRT);
-
-    for (let i = 1; i <= SIZE; i++) {
-      if (
-        checkValidRow(row, i) &&
-        checkValidCol(col, i) &&
-        checkValidBox(box, i)
-      ) {
-        setNumber(index, i);
-        if (fillRest(row, col + 1)) return true; //this last state was fine! use this state again
-        setNumber(index, null); //if it did not work, return to previous state
-      }
-    }
-
-    return false;
-  };
-
-  const removeSomeNumbers = (numToRemove: number) => {
-    while (numToRemove-- > 0) {
-      let row = randomNum(SIZE);
-      let col = randomNum(SIZE);
-      if (board[row * SIZE + col] !== null) {
-        setNumber(row * SIZE + col, null);
-      } else numToRemove++;
-    }
   };
 
   const resetBoard = () => {
@@ -239,7 +97,11 @@ export const Game = () => {
       const row = [];
 
       for (let j = 0; j < SIZE; j++) {
-        row.push(board[i * SIZE + j]);
+        if (board[locationToIndex(i, j)] === null) {
+          solved = false;
+          break;
+        }
+        row.push(board[locationToIndex(i, j)]);
       }
 
       if (!isUnique(row)) {
@@ -249,11 +111,7 @@ export const Game = () => {
 
       row.length = 0;
       for (let j = 0; j < SIZE; j++) {
-        if (board[i * SIZE + j] === null) {
-          solved = false;
-          break;
-        }
-        row.push(board[i + SIZE * j]);
+        row.push(board[locationToIndex(j, i)]);
       }
 
       if (!isUnique(row)) {
@@ -424,14 +282,18 @@ export const Game = () => {
                         }}
                       >
                         {board[index]}
-                        <OverlayText
-                          text={corners[index].join(" ")}
-                          type="corner"
-                        />
-                        <OverlayText
-                          text={centers[index].join("")}
-                          type="center"
-                        />
+                        {corners[index].length > 0 && (
+                          <OverlayText
+                            text={corners[index].join(" ")}
+                            type="corner"
+                          />
+                        )}
+                        {centers[index].length > 0 && (
+                          <OverlayText
+                            text={centers[index].join("")}
+                            type="center"
+                          />
+                        )}
                       </td>
                     );
                   })}

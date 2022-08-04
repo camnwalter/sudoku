@@ -11,6 +11,5 @@ export const useTimer = (winner: boolean, callback: () => void) => {
     return () => {
       clearInterval(interval);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [winner]);
 };

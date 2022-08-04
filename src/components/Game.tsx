@@ -3,7 +3,7 @@ import { useOutsideDetector } from "../hooks/useOutsideDetector";
 import { useSudoku } from "../hooks/useSudoku";
 import { useTimer } from "../hooks/useTimer";
 import {
-  generateNewBoard,
+  generateBoardHelper,
   locationToIndex,
   SIZE,
 } from "../utils/generateBoard";
@@ -36,39 +36,15 @@ export const Game = () => {
   const { isAdjacent, isLocked, isSameNumber, inSame3x3, isSelected } =
     useSudoku(board, lockedCells, selected);
 
-  const easy = () => {
-    generateNewBoard(36, board, setNumber);
-
-    setEditing(false);
-    setLockedCells((prev) => {
-      board.forEach((cell, index) => {
-        if (cell !== null) prev[index] = true;
+  const generateWithRemoved = (slotsRemoved: number) => {
+    generateBoardHelper(slotsRemoved, board, setNumber, () => {
+      setEditing(false);
+      setLockedCells((prev) => {
+        board.forEach((cell, index) => {
+          if (cell !== null) prev[index] = true;
+        });
+        return prev;
       });
-      return prev;
-    });
-  };
-
-  const medium = () => {
-    generateNewBoard(45, board, setNumber);
-
-    setEditing(false);
-    setLockedCells((prev) => {
-      board.forEach((cell, index) => {
-        if (cell !== null) prev[index] = true;
-      });
-      return prev;
-    });
-  };
-
-  const hard = () => {
-    generateNewBoard(54, board, setNumber);
-
-    setEditing(false);
-    setLockedCells((prev) => {
-      board.forEach((cell, index) => {
-        if (cell !== null) prev[index] = true;
-      });
-      return prev;
     });
   };
 
@@ -309,9 +285,9 @@ export const Game = () => {
         </button>
         <button onClick={resetBoard}>Reset</button>
         <button onClick={checkBoard}>Check</button>
-        <button onClick={easy}>Easy puzzle</button>
-        <button onClick={medium}>Medium puzzle</button>
-        <button onClick={hard}>Hard puzzle</button>
+        <button onClick={() => generateWithRemoved(36)}>Easy puzzle</button>
+        <button onClick={() => generateWithRemoved(45)}>Medium puzzle</button>
+        <button onClick={() => generateWithRemoved(54)}>Hard puzzle</button>
       </Sidebar>
     </>
   );

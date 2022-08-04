@@ -159,12 +159,14 @@ const removeSomeNumbers = (
   }
 };
 
-export const generateNewBoard = (
+export const generateBoardHelper = (
   numsToRemove: number,
   board: (number | null)[],
-  setNumber: (index: number, value: number | null) => void
+  setNumber: (index: number, value: number | null) => void,
+  callback: () => void
 ) => {
   fillTheDiagonals(board, setNumber);
   fillRest(0, 3, board, setNumber);
   removeSomeNumbers(numsToRemove, board, setNumber);
+  callback();
 };

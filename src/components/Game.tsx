@@ -41,11 +41,10 @@ export const Game = () => {
 
     setEditing(false);
     setLockedCells((prev) => {
-      const temp = [...prev];
       board.forEach((cell, index) => {
-        if (cell !== null) temp[index] = true;
+        if (cell !== null) prev[index] = true;
       });
-      return temp;
+      return prev;
     });
   };
 
@@ -54,11 +53,10 @@ export const Game = () => {
 
     setEditing(false);
     setLockedCells((prev) => {
-      const temp = [...prev];
       board.forEach((cell, index) => {
-        if (cell !== null) temp[index] = true;
+        if (cell !== null) prev[index] = true;
       });
-      return temp;
+      return prev;
     });
   };
 
@@ -67,22 +65,20 @@ export const Game = () => {
 
     setEditing(false);
     setLockedCells((prev) => {
-      const temp = [...prev];
       board.forEach((cell, index) => {
-        if (cell !== null) temp[index] = true;
+        if (cell !== null) prev[index] = true;
       });
-      return temp;
+      return prev;
     });
   };
 
   const resetBoard = () => {
     setBoard((prev) => {
-      const temp = [...prev];
       lockedCells.forEach((locked, index) => {
         if (locked) return;
-        temp[index] = null;
+        prev[index] = null;
       });
-      return temp;
+      return prev;
     });
     setCorners((prev) => prev.map(() => []));
     setCenters((prev) => prev.map(() => []));
@@ -147,10 +143,9 @@ export const Game = () => {
 
   const setNumber = (index: number, value: number | null) => {
     setBoard((prev) => {
-      const temp = [...prev];
-      temp[index] = value;
+      prev[index] = value;
 
-      return temp;
+      return prev;
     });
   };
 
@@ -219,60 +214,50 @@ export const Game = () => {
                         if (e.ctrlKey) {
                           if (board[index] !== null) return;
 
-                          setCorners((prev) => {
-                            const temp = [...prev];
-                            return temp.map((corners, i) => {
+                          setCorners((prev) =>
+                            prev.map((corners, i) => {
                               if (i !== index) return corners;
 
                               return corners.includes(key)
                                 ? corners.filter((num) => num !== key)
                                 : corners.concat(key).sort();
-                            });
-                          });
+                            })
+                          );
                         } else if (e.shiftKey) {
                           if (board[index] !== null) return;
 
-                          setCenters((prev) => {
-                            const temp = [...prev];
-                            return temp.map((centers, i) => {
+                          setCenters((prev) =>
+                            prev.map((centers, i) => {
                               if (i !== index) return centers;
 
                               return centers.includes(key)
                                 ? centers.filter((num) => num !== key)
                                 : centers.concat(key).sort();
-                            });
-                          });
+                            })
+                          );
                         } else {
                           setNumber(index, key);
-                          setCorners((prev) => {
-                            const temp = [...prev];
-                            return temp.map((corners, i) =>
+                          setCorners((prev) =>
+                            prev.map((corners, i) =>
                               i !== index ? corners : []
-                            );
-                          });
-                          setCenters((prev) => {
-                            const temp = [...prev];
-                            return temp.map((centers, i) =>
+                            )
+                          );
+                          setCenters((prev) =>
+                            prev.map((centers, i) =>
                               i !== index ? centers : []
-                            );
-                          });
+                            )
+                          );
                         }
                       } else if (e.key === "Backspace") {
                         setNumber(index, null);
                       } else if (e.key === "Delete") {
                         setNumber(index, null);
-                        setCorners((prev) => {
-                          const temp = [...prev];
-                          return temp.map((corners, i) =>
-                            i !== index ? corners : []
-                          );
-                        });
-                        setCenters((prev) => {
-                          const temp = [...prev];
-                          return temp.map((centers, i) =>
-                            i !== index ? centers : []
-                          );
-                        });
+                        setCorners((prev) =>
+                          prev.map((corners, i) => (i !== index ? corners : []))
+                        );
+                        setCenters((prev) =>
+                          prev.map((centers, i) => (i !== index ? centers : []))
+                        );
                       }
                     }}
                   >
@@ -309,11 +294,10 @@ export const Game = () => {
             if (editing) {
               setEditing(false);
               setLockedCells((prev) => {
-                const temp = [...prev];
                 board.forEach((cell, index) => {
-                  if (cell !== null) temp[index] = true;
+                  if (cell !== null) prev[index] = true;
                 });
-                return temp;
+                return prev;
               });
             } else {
               setEditing(true);

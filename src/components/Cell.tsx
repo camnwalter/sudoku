@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 
 interface Props {
+  index: number;
   children: ReactNode;
   selected: boolean;
   adjacent: boolean;
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export const Cell = ({
+  index,
   children,
   selected,
   adjacent,
@@ -23,6 +25,7 @@ export const Cell = ({
         (selected ? "selected " : adjacent ? "adjacent " : " ") +
         (locked ? "locked" : "")
       }
+      id={index.toString()}
       tabIndex={-1}
       onClick={onClick}
       onKeyDown={onKeyDown}

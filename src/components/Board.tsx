@@ -2,12 +2,11 @@ import { ReactNode } from "react";
 
 interface Props {
   children: ReactNode;
-  _ref: React.LegacyRef<HTMLTableElement>;
 }
 
-export const Board = ({ children, _ref }: Props) => {
+export const Board = ({ children }: Props) => {
   return (
-    <table className="board" ref={_ref}>
+    <table className="board">
       <tbody>{children}</tbody>
     </table>
   );

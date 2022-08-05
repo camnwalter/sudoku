@@ -2,12 +2,15 @@ import { ReactNode } from "react";
 
 interface Props {
   children: ReactNode;
+  _ref: React.LegacyRef<HTMLTableElement>;
 }
 
-export const Body = ({ children }: Props) => {
+export const Body = ({ children, _ref }: Props) => {
   return (
     <div className="wrapper">
-      <div className="mainArea">{children}</div>
+      <div className="mainArea" ref={_ref}>
+        {children}
+      </div>
     </div>
   );
 };

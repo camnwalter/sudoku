@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { getSudoku } from "sudoku-gen";
 import { Difficulty } from "sudoku-gen/dist/types/difficulty.type";
 import { useOutsideDetector } from "../hooks/useOutsideDetector";
@@ -166,20 +166,61 @@ export const Game = () => {
     }
   };
 
+  const handleNumberPressed = (
+    e: React.KeyboardEvent | React.MouseEvent,
+    index: number,
+    key: number
+  ) => {
+    if (e.ctrlKey) {
+      if (board[index] !== null) return;
+
+      setCorners((prev) =>
+        prev.map((corners, i) => {
+          if (i !== index) return corners;
+
+          return corners.includes(key)
+            ? corners.filter((num) => num !== key)
+            : corners.concat(key).sort();
+        })
+      );
+    } else if (e.shiftKey) {
+      if (board[index] !== null) return;
+
+      setCenters((prev) =>
+        prev.map((centers, i) => {
+          if (i !== index) return centers;
+
+          return centers.includes(key)
+            ? centers.filter((num) => num !== key)
+            : centers.concat(key).sort();
+        })
+      );
+    } else {
+      setNumber(index, key);
+      setCorners((prev) =>
+        prev.map((corners, i) => (i !== index ? corners : []))
+      );
+      setCenters((prev) =>
+        prev.map((centers, i) => (i !== index ? centers : []))
+      );
+    }
+  };
+
   return (
     <>
       <Header>
         <Timer time={time} />
       </Header>
-      <Body>
-        <Board _ref={ref}>
+      <Body _ref={ref}>
+        <Board>
           {rows.map((row) => (
             <tr key={row}>
               {rows.map((col) => {
                 const index = locationToIndex(row, col);
                 return (
                   <Cell
-                    key={col}
+                    key={index}
+                    index={index}
                     selected={isSelected(index) || isSameNumber(index)}
                     adjacent={isAdjacent(index) || inSame3x3(row, col)}
                     locked={isLocked(index)}
@@ -191,43 +232,7 @@ export const Game = () => {
 
                       const key = parseInt(e.code.substring(5));
                       if (key >= 1 && key <= 9) {
-                        if (e.ctrlKey) {
-                          if (board[index] !== null) return;
-
-                          setCorners((prev) =>
-                            prev.map((corners, i) => {
-                              if (i !== index) return corners;
-
-                              return corners.includes(key)
-                                ? corners.filter((num) => num !== key)
-                                : corners.concat(key).sort();
-                            })
-                          );
-                        } else if (e.shiftKey) {
-                          if (board[index] !== null) return;
-
-                          setCenters((prev) =>
-                            prev.map((centers, i) => {
-                              if (i !== index) return centers;
-
-                              return centers.includes(key)
-                                ? centers.filter((num) => num !== key)
-                                : centers.concat(key).sort();
-                            })
-                          );
-                        } else {
-                          setNumber(index, key);
-                          setCorners((prev) =>
-                            prev.map((corners, i) =>
-                              i !== index ? corners : []
-                            )
-                          );
-                          setCenters((prev) =>
-                            prev.map((centers, i) =>
-                              i !== index ? centers : []
-                            )
-                          );
-                        }
+                        handleNumberPressed(e, index, key);
                       } else if (e.key === "Backspace" || e.key === "Delete") {
                         setNumber(index, null);
                         setCorners((prev) =>
@@ -261,7 +266,31 @@ export const Game = () => {
         {remainingNumbers().length > 0 && (
           <div className="remaining">
             {remainingNumbers().map((num) => (
-              <div key={num}>{num}</div>
+              <div
+                key={num}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+
+                  if (board[selected] !== null && board[selected] !== num) {
+                    setSelected(() => {
+                      const index = board.findIndex((cell) => cell === num);
+
+                      const element = document.getElementById(index.toString());
+                      element?.focus();
+
+                      return index;
+                    });
+
+                    return;
+                  }
+
+                  if (isLocked(selected) && !editing) return;
+
+                  handleNumberPressed(e, selected, num);
+                }}
+              >
+                {num}
+              </div>
             ))}
           </div>
         )}

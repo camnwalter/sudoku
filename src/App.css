@@ -104,7 +104,8 @@ td > .overlayText {
 
 .remaining div {
   margin: 3px;
-  width: fit-content;
+  width: 2rem;
+  cursor: pointer;
 }
 
 .header {

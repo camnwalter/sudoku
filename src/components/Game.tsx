@@ -1,22 +1,18 @@
 import { useState } from "react";
+import { getSudoku } from "sudoku-gen";
+import { Difficulty } from "sudoku-gen/dist/types/difficulty.type";
 import { useOutsideDetector } from "../hooks/useOutsideDetector";
 import { useSudoku } from "../hooks/useSudoku";
 import { useTimer } from "../hooks/useTimer";
-import {
-  // generateBoardHelper,
-  locationToIndex,
-  SIZE,
-} from "../utils/utils";
-import { getSudoku } from "sudoku-gen";
 import type { BoardNumber } from "../utils/types";
+import { locationToIndex, SIZE } from "../utils/utils";
 import { Board } from "./Board";
 import { Body } from "./Body";
+import { Buttons } from "./Buttons";
 import { Cell } from "./Cell";
 import { Header } from "./Header";
 import { OverlayText } from "./OverlayText";
-import { Sidebar } from "./Sidebar";
 import { Timer } from "./Timer";
-import { Difficulty } from "sudoku-gen/dist/types/difficulty.type";
 
 const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
@@ -269,40 +265,22 @@ export const Game = () => {
             ))}
           </div>
         )}
-      </Body>
-      <Sidebar>
-        <button
-          onClick={() => {
-            if (editing) {
-              setEditing(false);
-              setLockedCells((prev) => {
-                board.forEach((cell, index) => {
-                  if (cell !== null) prev[index] = true;
-                });
-                return prev;
-              });
-            } else {
+        <Buttons>
+          <button
+            onClick={() => {
+              clearBoard();
               setEditing(true);
-              setLockedCells(Array(SIZE ** 2).fill(false));
-            }
-          }}
-        >
-          {editing ? "Save Board" : "Edit Board"}
-        </button>
-        <button
-          onClick={() => {
-            clearBoard();
-            setEditing(true);
-          }}
-        >
-          Reset
-        </button>
-        <button onClick={checkBoard}>Check</button>
-        <button onClick={() => generateBoard("easy")}>Easy puzzle</button>
-        <button onClick={() => generateBoard("medium")}>Medium puzzle</button>
-        <button onClick={() => generateBoard("hard")}>Hard puzzle</button>
-        <button onClick={() => generateBoard("expert")}>Expert puzzle</button>
-      </Sidebar>
+            }}
+          >
+            Reset
+          </button>
+          <button onClick={checkBoard}>Check</button>
+          <button onClick={() => generateBoard("easy")}>Easy</button>
+          <button onClick={() => generateBoard("medium")}>Medium</button>
+          <button onClick={() => generateBoard("hard")}>Hard</button>
+          <button onClick={() => generateBoard("expert")}>Expert</button>
+        </Buttons>
+      </Body>
     </>
   );
 };

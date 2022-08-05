@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useMemo, useState } from "react";
 import { getSudoku } from "sudoku-gen";
 import { Difficulty } from "sudoku-gen/dist/types/difficulty.type";
 import type { BoardNumber } from "../utils/types";
@@ -14,24 +14,30 @@ export const Game = () => {
     Array(SIZE ** 2).fill(null)
   );
   const [lockedCells, setLockedCells] = useState<number[]>([]);
+  const [corners, setCorners] = useState<number[][]>(Array(SIZE ** 2).fill([]));
+  const [centers, setCenters] = useState<number[][]>(Array(SIZE ** 2).fill([]));
 
   const generateBoard = (difficulty: Difficulty) => {
     clearBoard();
 
     const sudoku = getSudoku(difficulty);
 
-    setBoard((prev) => {
-      [...sudoku.puzzle].forEach((char, i) => {
-        if (char === "-") return;
-        prev[i] = parseInt(char);
+    [...sudoku.puzzle].forEach((char, i) => {
+      if (char !== "-") {
+        setBoard((prev) => {
+          prev[i] = parseInt(char);
+          return prev;
+        });
         setLockedCells((prev) => [...prev, i]);
-      });
-      return prev;
+      }
     });
   };
 
   const clearBoard = () => {
     setBoard(Array(SIZE ** 2).fill(null));
+    setLockedCells([]);
+    setCorners(Array(SIZE ** 2).fill([]));
+    setCenters(Array(SIZE ** 2).fill([]));
   };
 
   const checkBoard = () => {
@@ -83,7 +89,15 @@ export const Game = () => {
         <Timer />
       </Header>
       <Body>
-        <Board board={board} setBoard={setBoard} lockedCells={lockedCells} />
+        <Board
+          board={board}
+          setBoard={setBoard}
+          lockedCells={lockedCells}
+          corners={corners}
+          setCorners={setCorners}
+          centers={centers}
+          setCenters={setCenters}
+        />
       </Body>
       <Sidebar>
         <button onClick={clearBoard}>Reset</button>
@@ -91,6 +105,7 @@ export const Game = () => {
         <button onClick={() => generateBoard("easy")}>Easy puzzle</button>
         <button onClick={() => generateBoard("medium")}>Medium puzzle</button>
         <button onClick={() => generateBoard("hard")}>Hard puzzle</button>
+        <button onClick={() => generateBoard("expert")}>Expert puzzle</button>
       </Sidebar>
     </>
   );

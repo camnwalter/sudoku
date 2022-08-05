@@ -11,12 +11,22 @@ const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 interface Props {
   board: BoardNumber[];
   setBoard: (value: React.SetStateAction<BoardNumber[]>) => void;
+  corners: number[][];
+  setCorners: (value: React.SetStateAction<number[][]>) => void;
+  centers: number[][];
+  setCenters: (value: React.SetStateAction<number[][]>) => void;
   lockedCells: number[];
 }
 
-export const Board = ({ board, setBoard, lockedCells }: Props) => {
-  const [corners, setCorners] = useState<number[][]>(Array(SIZE ** 2).fill([]));
-  const [centers, setCenters] = useState<number[][]>(Array(SIZE ** 2).fill([]));
+export const Board = ({
+  board,
+  setBoard,
+  lockedCells,
+  corners,
+  setCorners,
+  centers,
+  setCenters,
+}: Props) => {
   const [selected, setSelected] = useState(-1);
 
   const { isAdjacent, isLocked, isSameNumber, inSame3x3, isSelected } =

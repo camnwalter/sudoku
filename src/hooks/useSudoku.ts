@@ -1,5 +1,8 @@
+import { SIZE } from "../utils/utils";
+import type { BoardNumber } from "../utils/types";
+
 export const useSudoku = (
-  board: (number | null)[],
+  board: BoardNumber[],
   lockedCells: boolean[],
   selected: number
 ) => {
@@ -9,14 +12,14 @@ export const useSudoku = (
 
   const isAdjacent = (index: number) => {
     return (
-      index % 9 === selected % 9 ||
-      Math.floor(index / 9) === Math.floor(selected / 9)
+      index % SIZE === selected % SIZE ||
+      Math.floor(index / SIZE) === Math.floor(selected / SIZE)
     );
   };
 
   const inSame3x3 = (row: number, col: number) => {
-    const selectedX = Math.floor(selected / 9);
-    const selectedY = Math.floor(selected % 9);
+    const selectedX = Math.floor(selected / SIZE);
+    const selectedY = Math.floor(selected % SIZE);
     return (
       Math.floor(row / 3) === Math.floor(selectedX / 3) &&
       Math.floor(col / 3) === Math.floor(selectedY / 3)

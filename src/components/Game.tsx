@@ -3,10 +3,12 @@ import { useOutsideDetector } from "../hooks/useOutsideDetector";
 import { useSudoku } from "../hooks/useSudoku";
 import { useTimer } from "../hooks/useTimer";
 import {
-  generateBoardHelper,
+  // generateBoardHelper,
   locationToIndex,
   SIZE,
-} from "../utils/generateBoard";
+} from "../utils/utils";
+import { getSudoku } from "sudoku-gen";
+import type { BoardNumber } from "../utils/types";
 import { Board } from "./Board";
 import { Body } from "./Body";
 import { Cell } from "./Cell";
@@ -14,57 +16,63 @@ import { Header } from "./Header";
 import { OverlayText } from "./OverlayText";
 import { Sidebar } from "./Sidebar";
 import { Timer } from "./Timer";
+import { Difficulty } from "sudoku-gen/dist/types/difficulty.type";
 
 const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
 export const Game = () => {
-  const [board, setBoard] = useState<(number | null)[]>(Array(81).fill(null));
-  const [corners, setCorners] = useState<number[][]>(Array(81).fill([]));
-  const [centers, setCenters] = useState<number[][]>(Array(81).fill([]));
+  const [board, setBoard] = useState<BoardNumber[]>(
+    Array(SIZE ** 2).fill(null)
+  );
+  const [corners, setCorners] = useState<number[][]>(Array(SIZE ** 2).fill([]));
+  const [centers, setCenters] = useState<number[][]>(Array(SIZE ** 2).fill([]));
   const [selected, setSelected] = useState(-1);
   const [editing, setEditing] = useState(true);
   const [lockedCells, setLockedCells] = useState<boolean[]>(
-    Array(81).fill(false)
+    Array(SIZE ** 2).fill(false)
   );
   const [winner, setWinner] = useState(false);
   const [time, setTime] = useState(0);
 
   const ref = useOutsideDetector(() => setSelected(-1));
 
-  useTimer(winner, () => setTime((time) => time + 1000));
+  useTimer(winner, () => setTime(time + 1000));
 
   const { isAdjacent, isLocked, isSameNumber, inSame3x3, isSelected } =
     useSudoku(board, lockedCells, selected);
 
-  const generateWithRemoved = (slotsRemoved: number) => {
-    generateBoardHelper(slotsRemoved, board, setNumber, () => {
-      setEditing(false);
+  const generateBoard = (difficulty: Difficulty) => {
+    clearBoard();
+
+    const sudoku = getSudoku(difficulty);
+
+    [...sudoku.puzzle].forEach((char, i) => {
+      if (char === "-") return;
+      setBoard((prev) => {
+        prev[i] = parseInt(char);
+        return prev;
+      });
       setLockedCells((prev) => {
-        board.forEach((cell, index) => {
-          if (cell !== null) prev[index] = true;
-        });
+        prev[i] = true;
         return prev;
       });
     });
+
+    setEditing(false);
   };
 
-  const resetBoard = () => {
-    setBoard((prev) => {
-      lockedCells.forEach((locked, index) => {
-        if (locked) return;
-        prev[index] = null;
-      });
-      return prev;
-    });
+  const clearBoard = () => {
+    setBoard(Array(SIZE ** 2).fill(null));
+    setEditing(true);
+    setLockedCells(Array(SIZE ** 2).fill(false));
     setCorners((prev) => prev.map(() => []));
     setCenters((prev) => prev.map(() => []));
     setSelected(-1);
-    setEditing(true);
     setTime(0);
   };
 
   const checkBoard = () => {
-    const isUnique = (arr: (number | null)[]) =>
+    const isUnique = (arr: BoardNumber[]) =>
       arr.every((item, index) => arr.indexOf(item) === index);
 
     let solved = true;
@@ -105,7 +113,7 @@ export const Game = () => {
   };
 
   const remainingNumbers = () => {
-    const counts = Array<number>(9).fill(9);
+    const counts = Array<number>(SIZE).fill(9);
     board.forEach((num) => {
       if (num === null) return;
       counts[num - 1]--;
@@ -117,7 +125,7 @@ export const Game = () => {
     );
   };
 
-  const setNumber = (index: number, value: number | null) => {
+  const setNumber = (index: number, value: BoardNumber) => {
     setBoard((prev) => {
       prev[index] = value;
 
@@ -132,17 +140,17 @@ export const Game = () => {
 
     switch (e.key) {
       case "ArrowLeft":
-        if (selected % 9 > 0) {
+        if (selected % SIZE > 0) {
           setSelected(selected - 1);
           (e.target.previousSibling as HTMLTableCellElement)?.focus();
         }
         break;
       case "ArrowRight":
-        if (selected % 9 < 8) setSelected(selected + 1);
+        if (selected % SIZE < 8) setSelected(selected + 1);
         (e.target.nextSibling as HTMLTableCellElement)?.focus();
         break;
       case "ArrowUp":
-        if (Math.floor(selected / 9) > 0) setSelected(selected - 9);
+        if (Math.floor(selected / SIZE) > 0) setSelected(selected - SIZE);
         (
           e.target.parentElement?.previousSibling?.childNodes[
             index
@@ -150,7 +158,7 @@ export const Game = () => {
         )?.focus();
         break;
       case "ArrowDown":
-        if (Math.floor(selected / 9) < 8) setSelected(selected + 9);
+        if (Math.floor(selected / SIZE) < 8) setSelected(selected + SIZE);
         (
           e.target.parentElement?.nextSibling?.childNodes[
             index
@@ -224,9 +232,7 @@ export const Game = () => {
                             )
                           );
                         }
-                      } else if (e.key === "Backspace") {
-                        setNumber(index, null);
-                      } else if (e.key === "Delete") {
+                      } else if (e.key === "Backspace" || e.key === "Delete") {
                         setNumber(index, null);
                         setCorners((prev) =>
                           prev.map((corners, i) => (i !== index ? corners : []))
@@ -283,11 +289,18 @@ export const Game = () => {
         >
           {editing ? "Save Board" : "Edit Board"}
         </button>
-        <button onClick={resetBoard}>Reset</button>
+        <button
+          onClick={() => {
+            clearBoard();
+            setEditing(true);
+          }}
+        >
+          Reset
+        </button>
         <button onClick={checkBoard}>Check</button>
-        <button onClick={() => generateWithRemoved(36)}>Easy puzzle</button>
-        <button onClick={() => generateWithRemoved(45)}>Medium puzzle</button>
-        <button onClick={() => generateWithRemoved(54)}>Hard puzzle</button>
+        <button onClick={() => generateBoard("easy")}>Easy puzzle</button>
+        <button onClick={() => generateBoard("medium")}>Medium puzzle</button>
+        <button onClick={() => generateBoard("hard")}>Hard puzzle</button>
       </Sidebar>
     </>
   );

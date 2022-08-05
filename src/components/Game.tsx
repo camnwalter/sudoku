@@ -3,7 +3,7 @@ import { getSudoku } from "sudoku-gen";
 import { Difficulty } from "sudoku-gen/dist/types/difficulty.type";
 import { useOutsideDetector } from "../hooks/useOutsideDetector";
 import { useSudoku } from "../hooks/useSudoku";
-import { useTimer } from "../hooks/useTimer";
+import { useInterval } from "../hooks/useInterval";
 import type { BoardNumber } from "../utils/types";
 import { locationToIndex, SIZE } from "../utils/utils";
 import { Board } from "./Board";
@@ -27,12 +27,14 @@ export const Game = () => {
   const [lockedCells, setLockedCells] = useState<boolean[]>(
     Array(SIZE ** 2).fill(false)
   );
-  const [winner, setWinner] = useState(false);
+  const [hasWon, setHasWon] = useState(false);
   const [time, setTime] = useState(0);
 
   const ref = useOutsideDetector(() => setSelected(-1));
 
-  useTimer(winner, () => setTime(time + 1000));
+  useInterval(!hasWon && !board.every((cell) => cell === null), () =>
+    setTime(time + 1000)
+  );
 
   const { isAdjacent, isLocked, isSameNumber, inSame3x3, isSelected } =
     useSudoku(board, lockedCells, selected);
@@ -59,12 +61,14 @@ export const Game = () => {
 
   const clearBoard = () => {
     setBoard(Array(SIZE ** 2).fill(null));
-    setEditing(true);
     setLockedCells(Array(SIZE ** 2).fill(false));
     setCorners((prev) => prev.map(() => []));
     setCenters((prev) => prev.map(() => []));
+
     setSelected(-1);
     setTime(0);
+    setEditing(true);
+    setHasWon(false);
   };
 
   const checkBoard = () => {
@@ -102,7 +106,7 @@ export const Game = () => {
 
     if (solved) {
       alert("Congrats! You solved it!");
-      setWinner(true);
+      setHasWon(true);
     } else {
       alert("Sorry... You messed up somewhere.");
     }
@@ -295,14 +299,7 @@ export const Game = () => {
           </div>
         )}
         <Buttons>
-          <button
-            onClick={() => {
-              clearBoard();
-              setEditing(true);
-            }}
-          >
-            Reset
-          </button>
+          <button onClick={clearBoard}>Reset</button>
           <button onClick={checkBoard}>Check</button>
           <button onClick={() => generateBoard("easy")}>Easy</button>
           <button onClick={() => generateBoard("medium")}>Medium</button>

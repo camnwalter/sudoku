@@ -7,7 +7,7 @@ interface Props {
   adjacent: boolean;
   locked: boolean;
   onClick: () => void;
-  onKeyDown: (e: React.KeyboardEvent<HTMLTableDataCellElement>) => void;
+  onKeyDown: (e: React.KeyboardEvent<HTMLTableCellElement>) => void;
 }
 
 export const Cell = ({

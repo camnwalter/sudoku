@@ -3,10 +3,10 @@ import type { BoardNumber } from "../utils/types";
 
 export const useSudoku = (
   board: BoardNumber[],
-  lockedCells: boolean[],
+  lockedCells: number[],
   selected: number
 ) => {
-  const isLocked = (index: number) => lockedCells[index];
+  const isLocked = (index: number) => lockedCells.includes(index);
 
   const isSelected = (index: number) => index === selected;
 

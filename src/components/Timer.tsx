@@ -1,8 +1,18 @@
-interface Props {
-  time: number;
-}
+import { useEffect, useState } from "react";
 
-export const Timer = ({ time }: Props) => {
+export const Timer = () => {
+  const [time, setTime] = useState(0);
+
+  useEffect(() => {
+    const tick = () => setTime(time + 1000);
+
+    const interval = setInterval(tick, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [time]);
+
   const formatTime = () => {
     const diff = time;
     let seconds = Math.floor(diff / 1000);

@@ -1,12 +1,8 @@
 import { SIZE } from "../utils/utils";
-import type { BoardNumber } from "../utils/types";
+import type { CellData } from "../utils/types";
 
-export const useSudoku = (
-  board: BoardNumber[],
-  lockedCells: boolean[],
-  selected: number
-) => {
-  const isLocked = (index: number) => lockedCells[index];
+export const useSudoku = (board: CellData[], selected: number) => {
+  const isLocked = (index: number) => board[index].locked;
 
   const isSelected = (index: number) => index === selected;
 
@@ -27,7 +23,9 @@ export const useSudoku = (
   };
 
   const isSameNumber = (index: number) =>
-    board[index] !== null && board[index] === board[selected];
+    selected >= 0 &&
+    board[index].number !== null &&
+    board[index].number === board[selected].number;
 
   return { isLocked, isAdjacent, isSelected, inSame3x3, isSameNumber };
 };

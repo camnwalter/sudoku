@@ -4,7 +4,7 @@ import { Difficulty } from "sudoku-gen/dist/types/difficulty.type";
 import { useOutsideDetector } from "../hooks/useOutsideDetector";
 import { useSudoku } from "../hooks/useSudoku";
 import { useInterval } from "../hooks/useInterval";
-import type { BoardNumber } from "../utils/types";
+import type { BoardNumber, CellData } from "../utils/types";
 import { locationToIndex, SIZE } from "../utils/utils";
 import { Board } from "./Board";
 import { Body } from "./Body";
@@ -17,41 +17,47 @@ import { Timer } from "./Timer";
 const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
 export const Game = () => {
-  const [board, setBoard] = useState<BoardNumber[]>(
-    Array(SIZE ** 2).fill(null)
+  const [board, setBoard] = useState<CellData[]>(
+    Array(SIZE ** 2)
+      .fill(null)
+      .map(() => ({
+        number: null,
+        solution: -1,
+        centers: [],
+        corners: [],
+        locked: false,
+      }))
   );
-  const [corners, setCorners] = useState<number[][]>(Array(SIZE ** 2).fill([]));
-  const [centers, setCenters] = useState<number[][]>(Array(SIZE ** 2).fill([]));
+
   const [selected, setSelected] = useState(-1);
   const [editing, setEditing] = useState(true);
-  const [lockedCells, setLockedCells] = useState<boolean[]>(
-    Array(SIZE ** 2).fill(false)
-  );
   const [hasWon, setHasWon] = useState(false);
   const [time, setTime] = useState(0);
 
   const ref = useOutsideDetector(() => setSelected(-1));
 
-  useInterval(!hasWon && !board.every((cell) => cell === null), () =>
+  useInterval(!hasWon && !board.every((cell) => cell.number === null), () =>
     setTime(time + 1000)
   );
 
   const { isAdjacent, isLocked, isSameNumber, inSame3x3, isSelected } =
-    useSudoku(board, lockedCells, selected);
+    useSudoku(board, selected);
 
   const generateBoard = (difficulty: Difficulty) => {
     clearBoard();
 
-    const sudoku = getSudoku(difficulty);
+    const { puzzle, solution } = getSudoku(difficulty);
 
-    [...sudoku.puzzle].forEach((char, i) => {
-      if (char === "-") return;
+    [...puzzle].forEach((char, i) => {
       setBoard((prev) => {
-        prev[i] = parseInt(char);
+        prev[i].solution = parseInt(solution[i]);
         return prev;
       });
-      setLockedCells((prev) => {
-        prev[i] = true;
+      if (char === "-") return;
+
+      setBoard((prev) => {
+        prev[i].number = parseInt(char);
+        prev[i].locked = true;
         return prev;
       });
     });
@@ -60,10 +66,17 @@ export const Game = () => {
   };
 
   const clearBoard = () => {
-    setBoard(Array(SIZE ** 2).fill(null));
-    setLockedCells(Array(SIZE ** 2).fill(false));
-    setCorners((prev) => prev.map(() => []));
-    setCenters((prev) => prev.map(() => []));
+    setBoard(
+      Array(SIZE ** 2)
+        .fill(null)
+        .map(() => ({
+          number: null,
+          solution: -1,
+          centers: [],
+          corners: [],
+          locked: false,
+        }))
+    );
 
     setSelected(-1);
     setTime(0);
@@ -72,37 +85,7 @@ export const Game = () => {
   };
 
   const checkBoard = () => {
-    const isUnique = (arr: BoardNumber[]) =>
-      arr.every((item, index) => arr.indexOf(item) === index);
-
-    let solved = true;
-
-    for (let i = 0; i < SIZE; i++) {
-      const row = [];
-
-      for (let j = 0; j < SIZE; j++) {
-        if (board[locationToIndex(i, j)] === null) {
-          solved = false;
-          break;
-        }
-        row.push(board[locationToIndex(i, j)]);
-      }
-
-      if (!isUnique(row)) {
-        solved = false;
-        break;
-      }
-
-      row.length = 0;
-      for (let j = 0; j < SIZE; j++) {
-        row.push(board[locationToIndex(j, i)]);
-      }
-
-      if (!isUnique(row)) {
-        solved = false;
-        break;
-      }
-    }
+    const solved = board.every(({ number, solution }) => number === solution);
 
     if (solved) {
       alert("Congrats! You solved it!");
@@ -114,9 +97,9 @@ export const Game = () => {
 
   const remainingNumbers = () => {
     const counts = Array<number>(SIZE).fill(9);
-    board.forEach((num) => {
-      if (num === null) return;
-      counts[num - 1]--;
+    board.forEach(({ number }) => {
+      if (number === null) return;
+      counts[number - 1]--;
     });
 
     return counts.reduce<number[]>(
@@ -127,10 +110,28 @@ export const Game = () => {
 
   const setNumber = (index: number, value: BoardNumber) => {
     setBoard((prev) => {
-      prev[index] = value;
+      prev[index].number = value;
 
       return prev;
     });
+  };
+
+  const setCorners = (index: number, corners: number[]) => {
+    setBoard((prev) =>
+      prev.map((cellData, i) => ({
+        ...cellData,
+        corners: i === index ? corners : cellData.corners,
+      }))
+    );
+  };
+
+  const setCenters = (index: number, centers: number[]) => {
+    setBoard((prev) =>
+      prev.map((cellData, i) => ({
+        ...cellData,
+        centers: i === index ? centers : cellData.centers,
+      }))
+    );
   };
 
   const handleArrowMovements = (
@@ -176,37 +177,31 @@ export const Game = () => {
     key: number
   ) => {
     if (e.ctrlKey) {
-      if (board[index] !== null) return;
+      if (board[index].number !== null) return;
 
-      setCorners((prev) =>
-        prev.map((corners, i) => {
-          if (i !== index) return corners;
+      const corners = board[index].corners;
 
-          return corners.includes(key)
-            ? corners.filter((num) => num !== key)
-            : corners.concat(key).sort();
-        })
+      setCorners(
+        index,
+        corners.includes(key)
+          ? corners.filter((num) => num !== key)
+          : corners.concat(key).sort()
       );
     } else if (e.shiftKey) {
-      if (board[index] !== null) return;
+      if (board[index].number !== null) return;
 
-      setCenters((prev) =>
-        prev.map((centers, i) => {
-          if (i !== index) return centers;
+      const centers = board[index].centers;
 
-          return centers.includes(key)
-            ? centers.filter((num) => num !== key)
-            : centers.concat(key).sort();
-        })
+      setCenters(
+        index,
+        centers.includes(key)
+          ? centers.filter((num) => num !== key)
+          : centers.concat(key).sort()
       );
     } else {
       setNumber(index, key);
-      setCorners((prev) =>
-        prev.map((corners, i) => (i !== index ? corners : []))
-      );
-      setCenters((prev) =>
-        prev.map((centers, i) => (i !== index ? centers : []))
-      );
+      setCorners(index, []);
+      setCenters(index, []);
     }
   };
 
@@ -232,6 +227,7 @@ export const Game = () => {
                     onKeyDown={(e) => {
                       e.preventDefault();
                       handleArrowMovements(e);
+
                       if (isLocked(index) && !editing) return;
 
                       const key = parseInt(e.code.substring(5));
@@ -239,25 +235,21 @@ export const Game = () => {
                         handleNumberPressed(e, index, key);
                       } else if (e.key === "Backspace" || e.key === "Delete") {
                         setNumber(index, null);
-                        setCorners((prev) =>
-                          prev.map((corners, i) => (i !== index ? corners : []))
-                        );
-                        setCenters((prev) =>
-                          prev.map((centers, i) => (i !== index ? centers : []))
-                        );
+                        setCorners(index, []);
+                        setCenters(index, []);
                       }
                     }}
                   >
-                    {board[index]}
-                    {corners[index].length > 0 && (
+                    {board[index].number}
+                    {board[index].corners.length > 0 && (
                       <OverlayText
-                        text={corners[index].join(" ")}
+                        text={board[index].corners.join(" ")}
                         type="corner"
                       />
                     )}
-                    {centers[index].length > 0 && (
+                    {board[index].centers.length > 0 && (
                       <OverlayText
-                        text={centers[index].join("")}
+                        text={board[index].centers.join("")}
                         type="center"
                       />
                     )}
@@ -275,9 +267,15 @@ export const Game = () => {
                 onMouseDown={(e) => {
                   e.preventDefault();
 
-                  if (board[selected] !== null && board[selected] !== num) {
+                  if (
+                    selected >= 0 &&
+                    board[selected].number !== null &&
+                    board[selected].number !== num
+                  ) {
                     setSelected(() => {
-                      const index = board.findIndex((cell) => cell === num);
+                      const index = board.findIndex(
+                        ({ number }) => number === num
+                      );
 
                       const element = document.getElementById(index.toString());
                       element?.focus();

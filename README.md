@@ -22,6 +22,8 @@ That's just about it. Have fun!
 
 # Contributing
 
+Contributions are welcome! After making changes, you can view the changes live.
+
 In the project directory, you can run:
 
 ### `npm start`

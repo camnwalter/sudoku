@@ -109,6 +109,8 @@ export const Game = () => {
   };
 
   const setNumber = (index: number, value: BoardNumber) => {
+    if (index === -1) return;
+
     setBoard((prev) => {
       prev[index].number = value;
 
@@ -117,6 +119,8 @@ export const Game = () => {
   };
 
   const setCorners = (index: number, corners: number[]) => {
+    if (index === -1) return;
+
     setBoard((prev) =>
       prev.map((cellData, i) => ({
         ...cellData,
@@ -126,6 +130,8 @@ export const Game = () => {
   };
 
   const setCenters = (index: number, centers: number[]) => {
+    if (index === -1) return;
+
     setBoard((prev) =>
       prev.map((cellData, i) => ({
         ...cellData,
@@ -267,11 +273,7 @@ export const Game = () => {
                 onMouseDown={(e) => {
                   e.preventDefault();
 
-                  if (
-                    selected >= 0 &&
-                    board[selected].number !== null &&
-                    board[selected].number !== num
-                  ) {
+                  if (selected === -1 || isLocked(selected)) {
                     setSelected(() => {
                       const index = board.findIndex(
                         ({ number }) => number === num

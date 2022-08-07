@@ -33,7 +33,7 @@ export const Game = () => {
   const [editing, setEditing] = useState(true);
   const [hasWon, setHasWon] = useState(false);
   const [time, setTime] = useState(0);
-
+  const [moves, setMoves] = useState([[-1, -1]]);
   const ref = useOutsideDetector(() => setSelected(-1));
 
   useInterval(!hasWon && !board.every((cell) => cell.number === null), () =>
@@ -205,12 +205,36 @@ export const Game = () => {
           : centers.concat(key).sort()
       );
     } else {
+      setMoves(moves[0][0] !== -1 ? moves => [[index, key], ...moves] : [[index, key]]) //treat it like a stack (there is probably a better way to do)
       setNumber(index, key);
       setCorners(index, []);
       setCenters(index, []);
     }
   };
 
+  const undoMove = () => {
+    console.log(moves);
+    const idx = moves[0][0];
+    if(moves.length == 1 && idx == -1) {
+      alert("Cannot undo! No moves to undo.");
+      
+    }
+    else if(moves.length == 1) {
+      setNumber(idx, null);
+      setMoves([[-1, -1]]) //the default for empty moves
+    }
+    else {
+      moves.slice(1, moves.length).forEach(move => {
+        if(move[0] == idx){
+          setNumber(idx, move[1]);
+          return;
+        }
+      })
+      setNumber(idx, null);
+      setMoves(moves.slice(1, moves.length))
+    }
+    
+  }
   return (
     <>
       <Header>
@@ -305,6 +329,7 @@ export const Game = () => {
           <button onClick={() => generateBoard("medium")}>Medium</button>
           <button onClick={() => generateBoard("hard")}>Hard</button>
           <button onClick={() => generateBoard("expert")}>Expert</button>
+          <button onClick={() => undoMove()}>Undo</button>
         </Buttons>
       </Body>
     </>

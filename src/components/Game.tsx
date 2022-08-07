@@ -15,19 +15,18 @@ import { OverlayText } from "./OverlayText";
 import { Timer } from "./Timer";
 
 const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+const initial = Array(SIZE ** 2)
+  .fill(null)
+  .map(() => ({
+    number: null,
+    solution: -1,
+    centers: [],
+    corners: [],
+    locked: false,
+  }));
 
 export const Game = () => {
-  const [board, setBoard] = useState<CellData[]>(
-    Array(SIZE ** 2)
-      .fill(null)
-      .map(() => ({
-        number: null,
-        solution: -1,
-        centers: [],
-        corners: [],
-        locked: false,
-      }))
-  );
+  const [board, setBoard] = useState<CellData[]>(initial);
 
   const [selected, setSelected] = useState(-1);
   const [editing, setEditing] = useState(true);
@@ -66,18 +65,7 @@ export const Game = () => {
   };
 
   const clearBoard = () => {
-    setBoard(
-      Array(SIZE ** 2)
-        .fill(null)
-        .map(() => ({
-          number: null,
-          solution: -1,
-          centers: [],
-          corners: [],
-          locked: false,
-        }))
-    );
-
+    setBoard(initial);
     setSelected(-1);
     setTime(0);
     setEditing(true);
@@ -205,7 +193,11 @@ export const Game = () => {
           : centers.concat(key).sort()
       );
     } else {
-      setMoves(moves[0][0] !== -1 ? moves => [[index, key], ...moves] : [[index, key]]) //treat it like a stack (there is probably a better way to do)
+      setMoves(
+        moves[0][0] !== -1
+          ? (moves) => [[index, key], ...moves]
+          : [[index, key]]
+      ); //treat it like a stack (there is probably a better way to do)
       setNumber(index, key);
       setCorners(index, []);
       setCenters(index, []);
@@ -213,28 +205,23 @@ export const Game = () => {
   };
 
   const undoMove = () => {
-    console.log(moves);
     const idx = moves[0][0];
-    if(moves.length == 1 && idx == -1) {
+    if (moves.length === 1 && idx === -1) {
       alert("Cannot undo! No moves to undo.");
-      
-    }
-    else if(moves.length == 1) {
+    } else if (moves.length == 1) {
       setNumber(idx, null);
-      setMoves([[-1, -1]]) //the default for empty moves
-    }
-    else {
-      moves.slice(1, moves.length).forEach(move => {
-        if(move[0] == idx){
+      setMoves([[-1, -1]]); //the default for empty moves
+    } else {
+      moves.slice(1, moves.length).forEach((move) => {
+        if (move[0] === idx) {
           setNumber(idx, move[1]);
           return;
         }
-      })
+      });
       setNumber(idx, null);
-      setMoves(moves.slice(1, moves.length))
+      setMoves(moves.slice(1, moves.length));
     }
-    
-  }
+  };
   return (
     <>
       <Header>

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { getSudoku } from "sudoku-gen";
 import { Difficulty } from "sudoku-gen/dist/types/difficulty.type";
+import { useInterval } from "../hooks/useInterval";
 import { useOutsideDetector } from "../hooks/useOutsideDetector";
 import { useSudoku } from "../hooks/useSudoku";
-import { useInterval } from "../hooks/useInterval";
+import { MoveTypes, useUndoRedo } from "../hooks/useUndoRedo";
 import type { BoardNumber, CellData } from "../utils/types";
 import { locationToIndex, SIZE } from "../utils/utils";
 import { Board } from "./Board";
@@ -29,17 +30,10 @@ export const Game = () => {
       }))
   );
 
-  enum MoveTypes {
-    Number = 0,
-    Corner = 1,
-    Center = 2,
-  }
-  const [undos, setUndos] = useState([[-1, -1, -1]]);
   const [selected, setSelected] = useState(-1);
   const [editing, setEditing] = useState(true);
   const [hasWon, setHasWon] = useState(false);
   const [time, setTime] = useState(0);
-  const [moves, setMoves] = useState([[-1, -1, -1]]);
   const ref = useOutsideDetector(() => setSelected(-1));
 
   useInterval(!hasWon && !board.every((cell) => cell.number === null), () =>
@@ -48,6 +42,50 @@ export const Game = () => {
 
   const { isAdjacent, isLocked, isSameNumber, inSame3x3, isSelected } =
     useSudoku(board, selected);
+
+  const setNumber = (index: number, value: BoardNumber) => {
+    if (index === -1) return;
+
+    setBoard((prev) => {
+      prev[index].number = value;
+
+      return prev;
+    });
+  };
+
+  const setCorners = (index: number, corners: number[]) => {
+    if (index === -1) return;
+
+    setBoard((prev) =>
+      prev.map((cellData, i) => ({
+        ...cellData,
+        corners: i === index ? corners : cellData.corners,
+      }))
+    );
+  };
+
+  const setCenters = (index: number, centers: number[]) => {
+    if (index === -1) return;
+
+    setBoard((prev) =>
+      prev.map((cellData, i) => ({
+        ...cellData,
+        centers: i === index ? centers : cellData.centers,
+      }))
+    );
+  };
+
+  const { resetMoves, undoMove, redoMove, setMoves, moves } = useUndoRedo(
+    {
+      type: MoveTypes.Corner,
+      index: -1,
+      value: -1,
+    },
+    board,
+    setNumber,
+    setCorners,
+    setCenters
+  );
 
   const generateBoard = (difficulty: Difficulty) => {
     clearBoard();
@@ -83,6 +121,7 @@ export const Game = () => {
           locked: false,
         }))
     );
+    resetMoves();
     setSelected(-1);
     setTime(0);
     setEditing(true);
@@ -110,38 +149,6 @@ export const Game = () => {
     return counts.reduce<number[]>(
       (a, b, index) => (b > 0 ? [...a, index + 1] : a),
       []
-    );
-  };
-
-  const setNumber = (index: number, value: BoardNumber) => {
-    if (index === -1) return;
-
-    setBoard((prev) => {
-      prev[index].number = value;
-
-      return prev;
-    });
-  };
-
-  const setCorners = (index: number, corners: number[]) => {
-    if (index === -1) return;
-
-    setBoard((prev) =>
-      prev.map((cellData, i) => ({
-        ...cellData,
-        corners: i === index ? corners : cellData.corners,
-      }))
-    );
-  };
-
-  const setCenters = (index: number, centers: number[]) => {
-    if (index === -1) return;
-
-    setBoard((prev) =>
-      prev.map((cellData, i) => ({
-        ...cellData,
-        centers: i === index ? centers : cellData.centers,
-      }))
     );
   };
 
@@ -191,12 +198,12 @@ export const Game = () => {
       if (board[index].number !== null) return;
 
       const corners = board[index].corners;
-      const val = corners.includes(key) ? -key : key;
+      const value = corners.includes(key) ? -key : key;
 
       setMoves(
-        moves[0][1] !== -1
-          ? (moves) => [[MoveTypes.Corner, index, val], ...moves]
-          : [[MoveTypes.Corner, index, val]]
+        moves[0].type !== MoveTypes.Invalid
+          ? (moves) => [{ type: MoveTypes.Corner, index, value }, ...moves]
+          : [{ type: MoveTypes.Corner, index, value }]
       );
 
       setCorners(
@@ -209,11 +216,12 @@ export const Game = () => {
       if (board[index].number !== null) return;
 
       const centers = board[index].centers;
-      const val = centers.includes(key) ? -key : key;
+      const value = centers.includes(key) ? -key : key;
+
       setMoves(
-        moves[0][1] !== -1
-          ? (moves) => [[MoveTypes.Center, index, val], ...moves]
-          : [[MoveTypes.Center, index, val]]
+        moves[0].type !== MoveTypes.Invalid
+          ? (moves) => [{ type: MoveTypes.Center, index, value }, ...moves]
+          : [{ type: MoveTypes.Center, index, value }]
       );
       setCenters(
         index,
@@ -223,9 +231,9 @@ export const Game = () => {
       );
     } else {
       setMoves(
-        moves[0][1] !== -1
-          ? (moves) => [[MoveTypes.Number, index, key], ...moves]
-          : [[MoveTypes.Number, index, key]]
+        moves[0].type !== MoveTypes.Invalid
+          ? (moves) => [{ type: MoveTypes.Number, index, value: key }, ...moves]
+          : [{ type: MoveTypes.Number, index, value: key }]
       );
       setNumber(index, key);
       setCorners(index, []);
@@ -233,94 +241,6 @@ export const Game = () => {
     }
   };
 
-  const undoMove = () => {
-    const moveType = moves[0][0];
-    const idx = moves[0][1];
-    const val = moves[0][2];
-    let corners, centers;
-    if (moves.length === 1 && idx === -1) {
-      alert("Cannot undo! No moves to undo.");
-      return;
-    }
-    switch (moveType) {
-      case 0:
-        if (moves.length == 1) {
-          setNumber(idx, null);
-          setMoves([[0, -1, -1]]);
-        } else {
-          moves.slice(1).forEach((move) => {
-            if (move[0] === idx) {
-              setNumber(idx, move[1]);
-              return;
-            }
-          });
-          setNumber(idx, null);
-          setMoves(moves.slice(1));
-        }
-        break;
-      case 1:
-        corners = board[idx].corners;
-        setCorners(
-          idx,
-          val > 0
-            ? corners.filter((num) => num !== val)
-            : corners.concat(-val).sort()
-        );
-        setMoves(moves.length > 1 ? moves.slice(1) : [[0, -1, -1]]);
-        break;
-      case 2:
-        centers = board[idx].centers;
-        setCenters(
-          idx,
-          val > 0
-            ? centers.filter((num) => num !== val)
-            : centers.concat(-val).sort()
-        );
-        setMoves(moves.length > 1 ? moves.slice(1) : [[0, -1, -1]]);
-        break;
-    }
-    setUndos((undos) => [...undos, [moveType, idx, val]]);
-  };
-
-  const redoMove = () => {
-    const type = undos[undos.length - 1][0];
-    const idx = undos[undos.length - 1][1];
-    let val = undos[undos.length - 1][2];
-    let corners, centers;
-    if (undos.length === 1) {
-      alert("Nothing to redo!");
-      return;
-    }
-    switch (type) {
-      case 0:
-        setNumber(idx, val);
-        setMoves((moves) => [[type, idx, val], ...moves]);
-        break;
-      case 1:
-        val = -val;
-        corners = board[idx].corners;
-        setCorners(
-          idx,
-          val > 0
-            ? corners.filter((num) => num !== val)
-            : corners.concat(-val).sort()
-        );
-        setMoves((moves) => [[type, idx, -val], ...moves]);
-        break;
-      case 2:
-        val = -val;
-        centers = board[idx].centers;
-        setCenters(
-          idx,
-          val > 0
-            ? centers.filter((num) => num !== val)
-            : centers.concat(-val).sort()
-        );
-        setMoves((moves) => [[type, idx, -val], ...moves]);
-        break;
-    }
-    setUndos(undos.slice(0, undos.length - 1));
-  };
   return (
     <>
       <Header>

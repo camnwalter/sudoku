@@ -28,11 +28,17 @@ const initial = Array(SIZE ** 2)
 export const Game = () => {
   const [board, setBoard] = useState<CellData[]>(initial);
 
+  enum MoveTypes {
+    Number = 0,
+    Corner = 1,
+    Center = 2,
+  }
+  const [undos, setUndos] = useState([[-1, -1, -1]]);
   const [selected, setSelected] = useState(-1);
   const [editing, setEditing] = useState(true);
   const [hasWon, setHasWon] = useState(false);
   const [time, setTime] = useState(0);
-  const [moves, setMoves] = useState([[-1, -1]]);
+  const [moves, setMoves] = useState([[-1, -1, -1]]);
   const ref = useOutsideDetector(() => setSelected(-1));
 
   useInterval(!hasWon && !board.every((cell) => cell.number === null), () =>
@@ -174,6 +180,13 @@ export const Game = () => {
       if (board[index].number !== null) return;
 
       const corners = board[index].corners;
+      const val = corners.includes(key) ? -key : key;
+
+      setMoves(
+        moves[0][1] !== -1
+          ? (moves) => [[MoveTypes.Corner, index, val], ...moves]
+          : [[MoveTypes.Corner, index, val]]
+      );
 
       setCorners(
         index,
@@ -185,7 +198,12 @@ export const Game = () => {
       if (board[index].number !== null) return;
 
       const centers = board[index].centers;
-
+      const val = centers.includes(key) ? -key : key;
+      setMoves(
+        moves[0][1] !== -1
+          ? (moves) => [[MoveTypes.Center, index, val], ...moves]
+          : [[MoveTypes.Center, index, val]]
+      );
       setCenters(
         index,
         centers.includes(key)
@@ -194,10 +212,10 @@ export const Game = () => {
       );
     } else {
       setMoves(
-        moves[0][0] !== -1
-          ? (moves) => [[index, key], ...moves]
-          : [[index, key]]
-      ); //treat it like a stack (there is probably a better way to do)
+        moves[0][1] !== -1
+          ? (moves) => [[MoveTypes.Number, index, key], ...moves]
+          : [[MoveTypes.Number, index, key]]
+      );
       setNumber(index, key);
       setCorners(index, []);
       setCenters(index, []);
@@ -205,22 +223,92 @@ export const Game = () => {
   };
 
   const undoMove = () => {
-    const idx = moves[0][0];
+    const moveType = moves[0][0];
+    const idx = moves[0][1];
+    const val = moves[0][2];
+    let corners, centers;
     if (moves.length === 1 && idx === -1) {
       alert("Cannot undo! No moves to undo.");
-    } else if (moves.length == 1) {
-      setNumber(idx, null);
-      setMoves([[-1, -1]]); //the default for empty moves
-    } else {
-      moves.slice(1, moves.length).forEach((move) => {
-        if (move[0] === idx) {
-          setNumber(idx, move[1]);
-          return;
-        }
-      });
-      setNumber(idx, null);
-      setMoves(moves.slice(1, moves.length));
+      return;
     }
+    switch (moveType) {
+      case 0:
+        if (moves.length == 1) {
+          setNumber(idx, null);
+          setMoves([[0, -1, -1]]);
+        } else {
+          moves.slice(1).forEach((move) => {
+            if (move[0] === idx) {
+              setNumber(idx, move[1]);
+              return;
+            }
+          });
+          setNumber(idx, null);
+          setMoves(moves.slice(1));
+        }
+        break;
+      case 1:
+        corners = board[idx].corners;
+        setCorners(
+          idx,
+          val > 0
+            ? corners.filter((num) => num !== val)
+            : corners.concat(-val).sort()
+        );
+        setMoves(moves.length > 1 ? moves.slice(1) : [[0, -1, -1]]);
+        break;
+      case 2:
+        centers = board[idx].centers;
+        setCenters(
+          idx,
+          val > 0
+            ? centers.filter((num) => num !== val)
+            : centers.concat(-val).sort()
+        );
+        setMoves(moves.length > 1 ? moves.slice(1) : [[0, -1, -1]]);
+        break;
+    }
+    setUndos((undos) => [...undos, [moveType, idx, val]]);
+  };
+
+  const redoMove = () => {
+    const type = undos[undos.length - 1][0];
+    const idx = undos[undos.length - 1][1];
+    let val = undos[undos.length - 1][2];
+    let corners, centers;
+    if (undos.length === 1) {
+      alert("Nothing to redo!");
+      return;
+    }
+    switch (type) {
+      case 0:
+        setNumber(idx, val);
+        setMoves((moves) => [[type, idx, val], ...moves]);
+        break;
+      case 1:
+        val = -val;
+        corners = board[idx].corners;
+        setCorners(
+          idx,
+          val > 0
+            ? corners.filter((num) => num !== val)
+            : corners.concat(-val).sort()
+        );
+        setMoves((moves) => [[type, idx, -val], ...moves]);
+        break;
+      case 2:
+        val = -val;
+        centers = board[idx].centers;
+        setCenters(
+          idx,
+          val > 0
+            ? centers.filter((num) => num !== val)
+            : centers.concat(-val).sort()
+        );
+        setMoves((moves) => [[type, idx, -val], ...moves]);
+        break;
+    }
+    setUndos(undos.slice(0, undos.length - 1));
   };
   return (
     <>
@@ -317,6 +405,7 @@ export const Game = () => {
           <button onClick={() => generateBoard("hard")}>Hard</button>
           <button onClick={() => generateBoard("expert")}>Expert</button>
           <button onClick={() => undoMove()}>Undo</button>
+          <button onClick={() => redoMove()}>Redo</button>
         </Buttons>
       </Body>
     </>

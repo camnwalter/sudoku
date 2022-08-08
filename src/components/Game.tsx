@@ -15,18 +15,19 @@ import { OverlayText } from "./OverlayText";
 import { Timer } from "./Timer";
 
 const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-const initial = Array(SIZE ** 2)
-  .fill(null)
-  .map(() => ({
-    number: null,
-    solution: -1,
-    centers: [],
-    corners: [],
-    locked: false,
-  }));
 
 export const Game = () => {
-  const [board, setBoard] = useState<CellData[]>(initial);
+  const [board, setBoard] = useState<CellData[]>(
+    Array(SIZE ** 2)
+      .fill(null)
+      .map(() => ({
+        number: null,
+        solution: -1,
+        centers: [],
+        corners: [],
+        locked: false,
+      }))
+  );
 
   enum MoveTypes {
     Number = 0,
@@ -71,7 +72,17 @@ export const Game = () => {
   };
 
   const clearBoard = () => {
-    setBoard(initial);
+    setBoard(
+      Array(SIZE ** 2)
+        .fill(null)
+        .map(() => ({
+          number: null,
+          solution: -1,
+          centers: [],
+          corners: [],
+          locked: false,
+        }))
+    );
     setSelected(-1);
     setTime(0);
     setEditing(true);

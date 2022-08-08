@@ -98,7 +98,7 @@ td > .overlayText {
   line-height: normal;
   background: #aaa;
   border-radius: 5px;
-  margin: 5px;
+  margin: 10px;
   outline: 2px solid black;
 }
 
@@ -115,4 +115,18 @@ td > .overlayText {
   border-radius: 5px;
   margin-top: 5px;
   margin-bottom: 5px;
+}
+
+.buttons button {
+  background-color: #aaa;
+  padding: 5px 10px;
+  color: black;
+  border: 2px solid black;
+  float: center;
+  margin-left: 6px;
+  margin-right: 6px;
+}
+
+.buttons button:hover {
+  background-color: #c5c5c5;
 }

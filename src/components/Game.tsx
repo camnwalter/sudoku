@@ -31,13 +31,12 @@ export const Game = () => {
   );
 
   const [selected, setSelected] = useState(-1);
-  const [editing, setEditing] = useState(true);
   const [hasWon, setHasWon] = useState(false);
   const [time, setTime] = useState(0);
   const ref = useOutsideDetector(() => setSelected(-1));
 
   useInterval(!hasWon && !board.every((cell) => cell.number === null), () =>
-    setTime(time + 1000)
+    setTime((prev) => prev + 1000)
   );
 
   const { isAdjacent, isLocked, isSameNumber, inSame3x3, isSelected } =
@@ -77,7 +76,7 @@ export const Game = () => {
 
   const { resetMoves, undoMove, redoMove, setMoves, moves } = useUndoRedo(
     {
-      type: MoveTypes.Corner,
+      type: MoveTypes.Invalid,
       index: -1,
       value: -1,
     },
@@ -105,8 +104,6 @@ export const Game = () => {
         return prev;
       });
     });
-
-    setEditing(false);
   };
 
   const clearBoard = () => {
@@ -124,7 +121,6 @@ export const Game = () => {
     resetMoves();
     setSelected(-1);
     setTime(0);
-    setEditing(true);
     setHasWon(false);
   };
 
@@ -194,10 +190,8 @@ export const Game = () => {
     index: number,
     key: number
   ) => {
-    if (e.ctrlKey) {
-      if (board[index].number !== null) return;
-
-      const corners = board[index].corners;
+    const { centers, corners, number } = board[index];
+    if (e.ctrlKey && number === null) {
       const value = corners.includes(key) ? -key : key;
 
       setMoves(
@@ -212,10 +206,7 @@ export const Game = () => {
           ? corners.filter((num) => num !== key)
           : corners.concat(key).sort()
       );
-    } else if (e.shiftKey) {
-      if (board[index].number !== null) return;
-
-      const centers = board[index].centers;
+    } else if (e.shiftKey && number === null) {
       const value = centers.includes(key) ? -key : key;
 
       setMoves(
@@ -264,7 +255,7 @@ export const Game = () => {
                       e.preventDefault();
                       handleArrowMovements(e);
 
-                      if (isLocked(index) && !editing) return;
+                      if (isLocked(index)) return;
 
                       const key = parseInt(e.code.substring(5));
                       if (key >= 1 && key <= 9) {
@@ -318,7 +309,7 @@ export const Game = () => {
                     return;
                   }
 
-                  if (isLocked(selected) && !editing) return;
+                  if (isLocked(selected)) return;
 
                   handleNumberPressed(e, selected, num);
                 }}

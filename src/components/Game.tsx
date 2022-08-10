@@ -6,7 +6,7 @@ import { useOutsideDetector } from "../hooks/useOutsideDetector";
 import { useSudoku } from "../hooks/useSudoku";
 import { MoveTypes, useUndoRedo } from "../hooks/useUndoRedo";
 import type { BoardNumber, CellData } from "../utils/types";
-import { locationToIndex, SIZE } from "../utils/utils";
+import { isShiftDown, locationToIndex, SIZE } from "../utils/utils";
 import { Board } from "./Board";
 import { Body } from "./Body";
 import { Buttons } from "./Buttons";
@@ -153,7 +153,7 @@ export const Game = () => {
   ) => {
     const index = e.target.cellIndex;
 
-    switch (e.key) {
+    switch (e.code) {
       case "ArrowLeft":
         if (selected % SIZE > 0) {
           setSelected(selected - 1);
@@ -188,7 +188,8 @@ export const Game = () => {
   const handleNumberPressed = (
     e: React.KeyboardEvent | React.MouseEvent,
     index: number,
-    key: number
+    key: number,
+    shift: boolean
   ) => {
     const { centers, corners, number } = board[index];
     if (e.ctrlKey && number === null) {
@@ -206,7 +207,7 @@ export const Game = () => {
           ? corners.filter((num) => num !== key)
           : corners.concat(key).sort()
       );
-    } else if (e.shiftKey && number === null) {
+    } else if (shift && number === null) {
       const value = centers.includes(key) ? -key : key;
 
       setMoves(
@@ -257,13 +258,17 @@ export const Game = () => {
 
                       if (isLocked(index)) return;
 
-                      const key = parseInt(e.code.substring(5));
+                      const key = parseInt(e.code.slice(-1));
+
                       if (key >= 1 && key <= 9) {
-                        handleNumberPressed(e, index, key);
+                        handleNumberPressed(e, index, key, isShiftDown(e));
                       } else if (e.key === "Backspace" || e.key === "Delete") {
                         setNumber(index, null);
                         setCorners(index, []);
                         setCenters(index, []);
+                      } else if (e.ctrlKey) {
+                        if (e.code === "KeyZ") undoMove();
+                        if (e.code === "KeyY") redoMove();
                       }
                     }}
                   >
@@ -311,7 +316,7 @@ export const Game = () => {
 
                   if (isLocked(selected)) return;
 
-                  handleNumberPressed(e, selected, num);
+                  handleNumberPressed(e, selected, num, e.shiftKey);
                 }}
               >
                 {num}

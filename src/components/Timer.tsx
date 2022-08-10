@@ -13,5 +13,5 @@ export const Timer = ({ time }: Props) => {
     return `${`${mins}`.padStart(2, "0")}:${`${seconds}`.padStart(2, "0")}`;
   };
 
-  return <div>{formatTime()}</div>;
+  return <div className="timer">{formatTime()}</div>;
 };

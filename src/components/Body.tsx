@@ -7,10 +7,8 @@ interface Props {
 
 export const Body = ({ children, _ref }: Props) => {
   return (
-    <div className="wrapper">
-      <div className="mainArea" ref={_ref}>
-        {children}
-      </div>
+    <div className="mainArea" ref={_ref}>
+      {children}
     </div>
   );
 };

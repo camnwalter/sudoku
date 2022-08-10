@@ -2,12 +2,22 @@ body {
   text-align: center;
   font: 30px Helvetica, sans-serif;
   user-select: none;
+  overflow: hidden;
 }
 
 *:focus {
   outline: none;
 }
 
+.timer {
+  background-color: #aaa;
+  width: fit-content;
+  margin: 5px auto;
+  padding: 3px;
+  outline: 2px solid black;
+  border-radius: 5px;
+  
+}
 .board {
   display: flex;
   align-items: center;
@@ -80,13 +90,8 @@ td > .overlayText {
   line-height: 50px;
 }
 
-.wrapper {
-  display: inline-block;
-}
-
 .mainArea {
-  display: flex;
-  flex-direction: column;
+  display: inline-block;
 }
 
 .remaining {
@@ -108,15 +113,6 @@ td > .overlayText {
   cursor: pointer;
 }
 
-.header {
-  align-self: center;
-  width: 100%;
-  background-color: #aaa;
-  border-radius: 5px;
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-
 .buttons button {
   background-color: #aaa;
   padding: 5px 10px;
@@ -130,3 +126,33 @@ td > .overlayText {
 .buttons button:hover {
   background-color: #c5c5c5;
 }
+
+.row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 95vh;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.column {
+  flex: 25%;
+  padding-left: 20px;
+  padding-right: 20px;
+  box-sizing: border-box;
+}
+
+.largeColumn{
+  flex: 50%;
+  box-sizing: border-box;
+}
+
+/* @media screen and (max-width: 992px) {
+  .largeColumn {
+    flex: 100%;
+  }
+  .row {
+    flex-direction: column;
+  }
+} */

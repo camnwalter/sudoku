@@ -5,9 +5,5 @@ interface Props {
 }
 
 export const Board = ({ children }: Props) => {
-  return (
-    <table className="board">
-      <tbody>{children}</tbody>
-    </table>
-  );
+  return <div className="board">{children}</div>;
 };

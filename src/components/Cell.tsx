@@ -20,7 +20,7 @@ export const Cell = ({
   onKeyDown,
 }: Props) => {
   return (
-    <td
+    <div
       className={
         (selected ? "selected " : adjacent ? "adjacent " : " ") +
         (locked ? "locked" : "")
@@ -31,6 +31,6 @@ export const Cell = ({
       onKeyDown={onKeyDown}
     >
       {children}
-    </td>
+    </div>
   );
 };

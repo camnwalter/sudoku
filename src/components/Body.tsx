@@ -1,14 +1,19 @@
 import { ReactNode } from "react";
 
 interface Props {
-  children: ReactNode;
-  _ref: React.LegacyRef<HTMLTableElement>;
+  center: ReactNode;
+  right: ReactNode;
+  outsideClickHandler: React.LegacyRef<HTMLTableElement>;
 }
 
-export const Body = ({ children, _ref }: Props) => {
+export const Body = ({ outsideClickHandler, center, right }: Props) => {
   return (
-    <div className="mainArea" ref={_ref}>
-      {children}
+    <div className="mainArea">
+      <div className="column" />
+      <div className="largeColumn" ref={outsideClickHandler}>
+        {center}
+      </div>
+      <div className="column">{right}</div>
     </div>
   );
 };

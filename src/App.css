@@ -2,7 +2,10 @@ body {
   text-align: center;
   font: 30px Helvetica, sans-serif;
   user-select: none;
-  overflow: hidden;
+}
+
+.App {
+  width: 100%;
 }
 
 *:focus {
@@ -14,47 +17,19 @@ body {
   width: fit-content;
   margin: 5px auto;
   padding: 3px;
-  outline: 2px solid black;
+  border: 2px solid black;
   border-radius: 5px;
-  
 }
+
 .board {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-table {
   cursor: pointer;
   border-collapse: collapse;
+  flex-direction: column;
+  width: 100%;
 }
-
-td {
-  width: 50px;
-  height: 50px;
-  border: 0.5px solid black;
-  position: relative;
-}
-
-/* Borders */
-
-tr:nth-child(3n + 1) {
-  border-top: 3px solid black;
-}
-
-tr:last-child {
-  border-bottom: 3px solid black;
-}
-
-td:nth-child(3n) {
-  border-right: 3px solid black;
-}
-
-td:first-child {
-  border-left: 3px solid black;
-}
-
-/* Borders End */
 
 .selected {
   background-color: #aaa;
@@ -68,32 +43,6 @@ td:first-child {
   color: blue;
 }
 
-td > .overlayText {
-  position: absolute;
-  top: 0;
-  left: 0;
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  font-size: 15px;
-  text-align: center;
-}
-
-.corner {
-  text-align: left;
-  width: 100%;
-  height: 100%;
-  word-spacing: 4px;
-}
-
-.center {
-  line-height: 50px;
-}
-
-.mainArea {
-  display: inline-block;
-}
-
 .remaining {
   display: flex;
   flex-direction: row;
@@ -104,7 +53,7 @@ td > .overlayText {
   background: #aaa;
   border-radius: 5px;
   margin: 10px;
-  outline: 2px solid black;
+  border: 2px solid black;
 }
 
 .remaining div {
@@ -127,7 +76,7 @@ td > .overlayText {
   background-color: #c5c5c5;
 }
 
-.row {
+.mainArea {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -140,19 +89,64 @@ td > .overlayText {
   flex: 25%;
   padding-left: 20px;
   padding-right: 20px;
-  box-sizing: border-box;
 }
 
-.largeColumn{
+.largeColumn {
   flex: 50%;
-  box-sizing: border-box;
+  justify-content: center;
 }
 
-/* @media screen and (max-width: 992px) {
-  .largeColumn {
-    flex: 100%;
-  }
-  .row {
-    flex-direction: column;
-  }
-} */
+.row {
+  display: flex;
+  flex-direction: row;
+  width: 80%;
+}
+
+.row > div {
+  display: flex;
+  position: relative;
+  width: calc(100% / 9);
+  aspect-ratio: 1 / 1;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid black;
+}
+
+.row:nth-child(3n + 1) > div {
+  border-top: 3px solid black;
+}
+.row:last-child > div {
+  border-bottom: 3px solid black;
+}
+
+.row > div:nth-child(3n) {
+  border-right: 3px solid black;
+}
+
+.row > div:first-child {
+  border-left: 3px solid black;
+}
+
+.row > div > .overlayText {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  font-size: 60%;
+  text-align: center;
+}
+
+.corner {
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  word-spacing: 0.5rem;
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

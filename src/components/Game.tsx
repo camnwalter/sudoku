@@ -85,7 +85,7 @@ export const Game = () => {
     setCenters
   );
 
-  const generateBoard = (difficulty: Difficulty) => {
+  const generateBoard = (difficulty: Difficulty) => () => {
     clearBoard();
 
     const { puzzle, solution } = getSudoku(difficulty);
@@ -233,115 +233,114 @@ export const Game = () => {
   };
 
   return (
-    <>
-      <Body _ref={ref}>
-        <div className="row">
-          <div className="column"/>
-          <div className="largeColumn">
-            
-            <Timer time={time} />
-            
-            <Board>
-              {rows.map((row) => (
-                <tr key={row}>
-                  {rows.map((col) => {
-                    const index = locationToIndex(row, col);
-                    return (
-                      <Cell
-                        key={index}
-                        index={index}
-                        selected={isSelected(index) || isSameNumber(index)}
-                        adjacent={isAdjacent(index) || inSame3x3(row, col)}
-                        locked={isLocked(index)}
-                        onClick={() => setSelected(index)}
-                        onKeyDown={(e) => {
-                          e.preventDefault();
-                          handleArrowMovements(e);
+    <Body
+      outsideClickHandler={ref}
+      center={
+        <>
+          <Timer time={time} />
 
-                          if (isLocked(index)) return;
+          <Board>
+            {rows.map((row) => (
+              <div className="row" key={row}>
+                {rows.map((col) => {
+                  const index = locationToIndex(row, col);
+                  return (
+                    <Cell
+                      key={index}
+                      index={index}
+                      selected={isSelected(index) || isSameNumber(index)}
+                      adjacent={isAdjacent(index) || inSame3x3(row, col)}
+                      locked={isLocked(index)}
+                      onClick={() => setSelected(index)}
+                      onKeyDown={(e) => {
+                        e.preventDefault();
+                        handleArrowMovements(e);
 
-                          const key = parseInt(e.code.slice(-1));
+                        if (isLocked(index)) return;
 
-                          if (key >= 1 && key <= 9) {
-                            handleNumberPressed(e, index, key, isShiftDown(e));
-                          } else if (e.key === "Backspace" || e.key === "Delete") {
-                            setNumber(index, null);
-                            setCorners(index, []);
-                            setCenters(index, []);
-                          } else if (e.ctrlKey) {
-                            if (e.code === "KeyZ") undoMove();
-                            if (e.code === "KeyY") redoMove();
-                          }
-                        }}
-                      >
-                        {board[index].number}
-                        {board[index].corners.length > 0 && (
-                          <OverlayText
-                            text={board[index].corners.join(" ")}
-                            type="corner"
-                          />
-                        )}
-                        {board[index].centers.length > 0 && (
-                          <OverlayText
-                            text={board[index].centers.join("")}
-                            type="center"
-                          />
-                        )}
-                      </Cell>
-                    );
-                  })}
-                </tr>
-              ))}
-            </Board>
-            {remainingNumbers().length > 0 && (
-              <div className="remaining">
-                {remainingNumbers().map((num) => (
-                  <div
-                    key={num}
-                    onMouseDown={(e) => {
-                      e.preventDefault();
+                        const key = parseInt(e.code.slice(-1));
 
-                      if (selected === -1 || isLocked(selected)) {
-                        setSelected(() => {
-                          const index = board.findIndex(
-                            ({ number }) => number === num
-                          );
-
-                          const element = document.getElementById(index.toString());
-                          element?.focus();
-
-                          return index;
-                        });
-
-                        return;
-                      }
-
-                      if (isLocked(selected)) return;
-
-                      handleNumberPressed(e, selected, num, e.shiftKey);
-                    }}
-                  >
-                    {num}
-                  </div>
-                ))}
+                        if (key >= 1 && key <= 9) {
+                          handleNumberPressed(e, index, key, isShiftDown(e));
+                        } else if (
+                          e.key === "Backspace" ||
+                          e.key === "Delete"
+                        ) {
+                          setNumber(index, null);
+                          setCorners(index, []);
+                          setCenters(index, []);
+                        } else if (e.ctrlKey) {
+                          if (e.code === "KeyZ") undoMove();
+                          if (e.code === "KeyY") redoMove();
+                        }
+                      }}
+                    >
+                      {board[index].number}
+                      {board[index].corners.length > 0 && (
+                        <OverlayText
+                          text={board[index].corners.join(" ")}
+                          type="corner"
+                        />
+                      )}
+                      {board[index].centers.length > 0 && (
+                        <OverlayText
+                          text={board[index].centers.join("")}
+                          type="center"
+                        />
+                      )}
+                    </Cell>
+                  );
+                })}
               </div>
-            )}
-          </div>
-          
-          <div className="column">
-            <Buttons>
-              <button onClick={clearBoard}>Reset</button>
-              <button onClick={checkBoard}>Check</button>
-              <button onClick={() => generateBoard("easy")}>Easy</button>
-              <button onClick={() => generateBoard("medium")}>Medium</button>
-              <button onClick={() => generateBoard("hard")}>Hard</button>
-              <button onClick={() => generateBoard("expert")}>Expert</button>
-              <button onClick={() => undoMove()}>Undo</button>
-              <button onClick={() => redoMove()}>Redo</button>
-            </Buttons>
-          </div>
-        </div>
-      </Body>
-    </>
+            ))}
+          </Board>
+          {remainingNumbers().length > 0 && (
+            <div className="remaining">
+              {remainingNumbers().map((num) => (
+                <div
+                  key={num}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+
+                    if (selected === -1 || isLocked(selected)) {
+                      setSelected(() => {
+                        const index = board.findIndex(
+                          ({ number }) => number === num
+                        );
+
+                        const element = document.getElementById(
+                          index.toString()
+                        );
+                        element?.focus();
+
+                        return index;
+                      });
+
+                      return;
+                    }
+
+                    handleNumberPressed(e, selected, num, e.shiftKey);
+                  }}
+                >
+                  {num}
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      }
+      right={
+        <Buttons>
+          <button onClick={clearBoard}>Reset</button>
+          <button onClick={checkBoard}>Check</button>
+          <button onClick={generateBoard("easy")}>Easy</button>
+          <button onClick={generateBoard("medium")}>Medium</button>
+          <button onClick={generateBoard("hard")}>Hard</button>
+          <button onClick={generateBoard("expert")}>Expert</button>
+          <button onClick={undoMove}>Undo</button>
+          <button onClick={redoMove}>Redo</button>
+        </Buttons>
+      }
+    />
   );
 };

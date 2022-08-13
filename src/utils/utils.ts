@@ -12,3 +12,10 @@ export const isShiftDown = (e: React.KeyboardEvent<HTMLTableCellElement>) =>
       e.key === "End" ||
       e.key === "Clear" ||
       e.key.startsWith("Page")));
+
+export enum MoveTypes {
+  Invalid,
+  Number,
+  Corner,
+  Center,
+}

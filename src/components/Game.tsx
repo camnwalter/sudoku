@@ -1,17 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getSudoku } from "sudoku-gen";
 import { Difficulty } from "sudoku-gen/dist/types/difficulty.type";
 import { useInterval } from "../hooks/useInterval";
 import { useOutsideDetector } from "../hooks/useOutsideDetector";
 import { useSudoku } from "../hooks/useSudoku";
-import { MoveTypes, useUndoRedo } from "../hooks/useUndoRedo";
+import { useUndoRedo } from "../hooks/useUndoRedo";
 import type { BoardNumber, CellData } from "../utils/types";
-import { isShiftDown, locationToIndex, SIZE } from "../utils/utils";
+import { isShiftDown, locationToIndex, SIZE, MoveTypes } from "../utils/utils";
 import { Board } from "./Board";
 import { Body } from "./Body";
 import { Buttons } from "./Buttons";
 import { Cell } from "./Cell";
 import { OverlayText } from "./OverlayText";
+import { Row } from "./Row";
 import { Timer } from "./Timer";
 
 const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8];
@@ -32,6 +33,11 @@ export const Game = () => {
   const [selected, setSelected] = useState(-1);
   const [hasWon, setHasWon] = useState(false);
   const [time, setTime] = useState(0);
+  const [moveType, setMoveType] = useState({
+    current: MoveTypes.Number,
+    previous: MoveTypes.Number,
+  });
+
   const ref = useOutsideDetector(() => setSelected(-1));
 
   useInterval(!hasWon && !board.every((cell) => cell.number === null), () =>
@@ -40,6 +46,45 @@ export const Game = () => {
 
   const { isAdjacent, isLocked, isSameNumber, inSame3x3, isSelected } =
     useSudoku(board, selected);
+
+  useEffect(() => {
+    const cb = (e: KeyboardEvent) => {
+      if (e.ctrlKey) {
+        setMoveType((prev) => {
+          if (prev.current === MoveTypes.Corner) return prev;
+
+          return {
+            previous: prev.current,
+            current: MoveTypes.Corner,
+          };
+        });
+      } else if (e.shiftKey) {
+        setMoveType((prev) => {
+          if (prev.current === MoveTypes.Center) return prev;
+
+          return {
+            previous: prev.current,
+            current: MoveTypes.Center,
+          };
+        });
+      }
+    };
+
+    const resetMoveType = () => {
+      setMoveType((prev) => ({
+        previous: prev.previous,
+        current: prev.previous,
+      }));
+    };
+
+    document.addEventListener("keydown", cb);
+    document.addEventListener("keyup", resetMoveType);
+
+    return () => {
+      document.removeEventListener("keydown", cb);
+      document.removeEventListener("keyup", resetMoveType);
+    };
+  }, []);
 
   const setNumber = (index: number, value: BoardNumber) => {
     if (index === -1) return;
@@ -191,7 +236,10 @@ export const Game = () => {
     shift: boolean
   ) => {
     const { centers, corners, number } = board[index];
-    if (e.ctrlKey && number === null) {
+    if (
+      moveType.current === MoveTypes.Corner ||
+      (e.ctrlKey && number === null)
+    ) {
       const value = corners.includes(key) ? -key : key;
 
       setMoves(
@@ -206,7 +254,10 @@ export const Game = () => {
           ? corners.filter((num) => num !== key)
           : corners.concat(key).sort()
       );
-    } else if (shift && number === null) {
+    } else if (
+      moveType.current === MoveTypes.Center ||
+      (shift && number === null)
+    ) {
       const value = centers.includes(key) ? -key : key;
 
       setMoves(
@@ -241,7 +292,7 @@ export const Game = () => {
 
           <Board>
             {rows.map((row) => (
-              <div className="row" key={row}>
+              <Row key={row}>
                 {rows.map((col) => {
                   const index = locationToIndex(row, col);
                   return (
@@ -291,7 +342,7 @@ export const Game = () => {
                     </Cell>
                   );
                 })}
-              </div>
+              </Row>
             ))}
           </Board>
           {remainingNumbers().length > 0 && (
@@ -331,14 +382,53 @@ export const Game = () => {
       }
       right={
         <Buttons>
-          <button onClick={clearBoard}>Reset</button>
-          <button onClick={checkBoard}>Check</button>
-          <button onClick={generateBoard("easy")}>Easy</button>
-          <button onClick={generateBoard("medium")}>Medium</button>
-          <button onClick={generateBoard("hard")}>Hard</button>
-          <button onClick={generateBoard("expert")}>Expert</button>
-          <button onClick={undoMove}>Undo</button>
-          <button onClick={redoMove}>Redo</button>
+          <Row>
+            <button onClick={clearBoard}>Reset</button>
+            <button onClick={checkBoard}>Check</button>
+            <button onClick={undoMove}>Undo</button>
+            <button onClick={redoMove}>Redo</button>
+          </Row>
+          <Row>
+            <button onClick={generateBoard("easy")}>Easy</button>
+            <button onClick={generateBoard("medium")}>Medium</button>
+            <button onClick={generateBoard("hard")}>Hard</button>
+            <button onClick={generateBoard("expert")}>Expert</button>
+          </Row>
+          <Row>
+            <button
+              onClick={() =>
+                setMoveType(() => ({
+                  previous: MoveTypes.Number,
+                  current: MoveTypes.Number,
+                }))
+              }
+              disabled={moveType.current === MoveTypes.Number}
+            >
+              Normal
+            </button>
+            <button
+              onClick={() =>
+                setMoveType(() => ({
+                  previous: MoveTypes.Corner,
+                  current: MoveTypes.Corner,
+                }))
+              }
+              disabled={moveType.current === MoveTypes.Corner}
+            >
+              Corner
+            </button>
+            <button
+              onClick={() =>
+                setMoveType(() => ({
+                  previous: MoveTypes.Center,
+                  current: MoveTypes.Center,
+                }))
+              }
+              disabled={moveType.current === MoveTypes.Center}
+            >
+              Center
+            </button>
+          </Row>
         </Buttons>
       }
     />

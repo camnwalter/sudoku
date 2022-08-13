@@ -1,12 +1,6 @@
 import { useState } from "react";
 import { BoardNumber, CellData } from "../utils/types";
-
-export enum MoveTypes {
-  Invalid,
-  Number,
-  Corner,
-  Center,
-}
+import { MoveTypes } from "../utils/utils";
 
 interface Moves {
   type: MoveTypes;

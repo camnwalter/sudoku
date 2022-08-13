@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 export const useOutsideDetector = (callback: () => void) => {
-  const ref = useRef<HTMLTableElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

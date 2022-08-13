@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 interface Props {
   center: ReactNode;
   right: ReactNode;
-  outsideClickHandler: React.LegacyRef<HTMLTableElement>;
+  outsideClickHandler: React.LegacyRef<HTMLDivElement>;
 }
 
 export const Body = ({ outsideClickHandler, center, right }: Props) => {

@@ -4,7 +4,7 @@ export const SIZE = 9;
 
 export const locationToIndex = (row: number, col: number) => row * SIZE + col;
 
-export const isShiftDown = (e: React.KeyboardEvent<HTMLTableCellElement>) =>
+export const isShiftDown = (e: React.KeyboardEvent<HTMLDivElement>) =>
   e.shiftKey ||
   (e.code.startsWith("Numpad") &&
     (e.key.startsWith("Arrow") ||

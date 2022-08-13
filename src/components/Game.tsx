@@ -192,37 +192,41 @@ export const Game = () => {
     );
   };
 
-  const handleArrowMovements = (
-    e: React.KeyboardEvent<HTMLTableCellElement>
-  ) => {
-    const index = e.target.cellIndex;
+  const handleArrowMovements = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const index = selected % SIZE;
 
     switch (e.code) {
       case "ArrowLeft":
         if (selected % SIZE > 0) {
-          setSelected(selected - 1);
-          (e.target.previousSibling as HTMLTableCellElement)?.focus();
+          setSelected((prev) => prev - 1);
+          (e.target.previousSibling as HTMLDivElement)?.focus();
         }
         break;
       case "ArrowRight":
-        if (selected % SIZE < 8) setSelected(selected + 1);
-        (e.target.nextSibling as HTMLTableCellElement)?.focus();
+        if (selected % SIZE < 8) {
+          setSelected((prev) => prev + 1);
+          (e.target.nextSibling as HTMLDivElement)?.focus();
+        }
         break;
       case "ArrowUp":
-        if (Math.floor(selected / SIZE) > 0) setSelected(selected - SIZE);
-        (
-          e.target.parentElement?.previousSibling?.childNodes[
-            index
-          ] as HTMLTableCellElement
-        )?.focus();
+        if (Math.floor(selected / SIZE) > 0) {
+          setSelected((prev) => prev - SIZE);
+          (
+            e.target.parentElement?.previousSibling?.childNodes[
+              index
+            ] as HTMLDivElement
+          )?.focus();
+        }
         break;
       case "ArrowDown":
-        if (Math.floor(selected / SIZE) < 8) setSelected(selected + SIZE);
-        (
-          e.target.parentElement?.nextSibling?.childNodes[
-            index
-          ] as HTMLTableCellElement
-        )?.focus();
+        if (Math.floor(selected / SIZE) < 8) {
+          setSelected((prev) => prev + SIZE);
+          (
+            e.target.parentElement?.nextSibling?.childNodes[
+              index
+            ] as HTMLDivElement
+          )?.focus();
+        }
         break;
       default:
         break;

@@ -1,8 +1,13 @@
-interface Props {
-  time: number;
-}
+import { useSudoku } from "../hooks/sudokuContext";
+import { useInterval } from "../hooks/useInterval";
 
-export const Timer = ({ time }: Props) => {
+export const Timer = () => {
+  const { board, won, time, setTime } = useSudoku();
+
+  useInterval(!won && !board.every((cell) => cell.number === null), () =>
+    setTime((prev) => prev + 1000)
+  );
+
   const formatTime = () => {
     const diff = time;
     let seconds = Math.floor(diff / 1000);

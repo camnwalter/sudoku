@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { BoardNumber, CellData } from "../utils/types";
 import { MoveTypes } from "../utils/utils";
+import { useSudoku } from "./sudokuContext";
 
 interface Moves {
   type: MoveTypes;
@@ -8,13 +8,15 @@ interface Moves {
   value: number;
 }
 
-export const useUndoRedo = (
-  initialState: Moves,
-  board: CellData[],
-  setNumber: (index: number, value: BoardNumber) => void,
-  setCorners: (index: number, corners: number[]) => void,
-  setCenters: (index: number, corners: number[]) => void
-) => {
+const initialState = {
+  type: MoveTypes.Invalid,
+  index: -1,
+  value: -1,
+};
+
+export const useUndoRedo = () => {
+  const { board, setNumber, setCorners, setCenters } = useSudoku();
+
   const [undos, setUndos] = useState<Moves[]>([initialState]);
   const [moves, setMoves] = useState<Moves[]>([initialState]);
 

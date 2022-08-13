@@ -1,16 +1,21 @@
 import { ReactNode } from "react";
+import { useSudoku } from "../hooks/sudokuContext";
+import { useOutsideDetector } from "../hooks/useOutsideDetector";
 
 interface Props {
   center: ReactNode;
   right: ReactNode;
-  outsideClickHandler: React.LegacyRef<HTMLDivElement>;
 }
 
-export const Body = ({ outsideClickHandler, center, right }: Props) => {
+export const Body = ({ center, right }: Props) => {
+  const { setSelected } = useSudoku();
+
+  const ref = useOutsideDetector(() => setSelected(-1));
+
   return (
     <div className="mainArea">
       <div className="column" />
-      <div className="largeColumn" ref={outsideClickHandler}>
+      <div className="largeColumn" ref={ref}>
         {center}
       </div>
       <div className="column">{right}</div>

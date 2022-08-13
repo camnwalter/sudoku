@@ -70,11 +70,12 @@ export const Game = () => {
       }
     };
 
-    const resetMoveType = () => {
-      setMoveType((prev) => ({
-        previous: prev.previous,
-        current: prev.previous,
-      }));
+    const resetMoveType = (e: KeyboardEvent) => {
+      if (e.code.startsWith("Control") || e.code.startsWith("Shift"))
+        setMoveType((prev) => ({
+          previous: prev.previous,
+          current: prev.previous,
+        }));
     };
 
     document.addEventListener("keydown", cb);

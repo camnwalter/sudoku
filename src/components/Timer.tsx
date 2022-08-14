@@ -1,8 +1,10 @@
 import { useSudoku } from "../hooks/sudokuContext";
+import { useTime } from "../hooks/timerContext";
 import { useInterval } from "../hooks/useInterval";
 
 export const Timer = () => {
-  const { board, won, time, setTime } = useSudoku();
+  const { board, won } = useSudoku();
+  const { time, setTime } = useTime();
 
   useInterval(!won && !board.every((cell) => cell.number === null), () =>
     setTime((prev) => prev + 1000)

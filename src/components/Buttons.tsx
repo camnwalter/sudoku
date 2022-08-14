@@ -1,20 +1,16 @@
 import { getSudoku } from "sudoku-gen";
 import { Difficulty } from "sudoku-gen/dist/types/difficulty.type";
 import { useSudoku } from "../hooks/sudokuContext";
+import { useTime } from "../hooks/timerContext";
 import { useUndoRedo } from "../hooks/useUndoRedo";
 import { MoveTypes, SIZE } from "../utils/utils";
 import { Row } from "./Row";
 
 export const Buttons = () => {
-  const {
-    board,
-    setBoard,
-    setSelected,
-    setTime,
-    setWon,
-    moveType,
-    setMoveType,
-  } = useSudoku();
+  const { board, setBoard, setSelected, setWon, moveType, setMoveType } =
+    useSudoku();
+
+  const { setTime } = useTime();
 
   const { resetMoves, undoMove, redoMove } = useUndoRedo();
 

@@ -15,8 +15,6 @@ interface SudokuContextProps {
   setSelected: React.Dispatch<React.SetStateAction<number[]>>;
   won: boolean;
   setWon: React.Dispatch<React.SetStateAction<boolean>>;
-  time: number;
-  setTime: React.Dispatch<React.SetStateAction<number>>;
   moveType: {
     current: MoveTypes;
     previous: MoveTypes;
@@ -44,8 +42,6 @@ const SudokuContext = createContext<SudokuContextProps>({
   setSelected: () => undefined,
   won: false,
   setWon: () => undefined,
-  time: 0,
-  setTime: () => undefined,
   moveType: { current: MoveTypes.Number, previous: MoveTypes.Number },
   setMoveType: () => undefined,
 
@@ -77,7 +73,6 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
   );
   const [selected, setSelected] = useState<number[]>([]);
   const [won, setWon] = useState(false);
-  const [time, setTime] = useState(0);
   const [moveType, setMoveType] = useState({
     current: MoveTypes.Number,
     previous: MoveTypes.Number,
@@ -191,8 +186,6 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
         setSelected,
         won,
         setWon,
-        time,
-        setTime,
         moveType,
         setMoveType,
 

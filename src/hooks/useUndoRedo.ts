@@ -25,6 +25,8 @@ export const useUndoRedo = () => {
     setMoves([initialState]);
   };
 
+  // TODO: Now that we can modify multiple cells at a time, let's reimplement
+  //       this to have it work again.
   const undoMove = () => {
     const { type, index, value } = moves[0];
 

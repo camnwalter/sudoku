@@ -3,8 +3,7 @@ import { SIZE } from "../utils/utils";
 
 interface RemainingNumbersProps {
   onMouseDown: (
-    e: React.MouseEvent,
-    index: number,
+    e: React.MouseEvent<HTMLDivElement>,
     key: number,
     shift: boolean
   ) => void;
@@ -34,20 +33,20 @@ export const RemainingNumbers = ({ onMouseDown }: RemainingNumbersProps) => {
           onMouseDown={(e) => {
             e.preventDefault();
 
-            if (selected === -1 || isLocked(selected)) {
+            if (selected.length === 0 || selected.some(isLocked)) {
               setSelected(() => {
                 const index = board.findIndex(({ number }) => number === num);
 
                 const element = document.getElementById(index.toString());
                 element?.focus();
 
-                return index;
+                return [index];
               });
 
               return;
             }
 
-            onMouseDown(e, selected, num, e.shiftKey);
+            onMouseDown(e, num, e.shiftKey);
           }}
         >
           {num}

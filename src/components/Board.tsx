@@ -9,8 +9,7 @@ const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
 interface BoardProps {
   onKeyDown: (
-    e: React.KeyboardEvent,
-    index: number,
+    e: React.KeyboardEvent<HTMLDivElement>,
     key: number,
     shift: boolean
   ) => void;
@@ -34,43 +33,64 @@ export const Board = ({ onKeyDown }: BoardProps) => {
   const { undoMove, redoMove } = useUndoRedo();
 
   const handleArrowMovements = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    const index = selected % SIZE;
+    selected.forEach((actualSelected, index) => {
+      const boardIndex = actualSelected % SIZE;
 
-    switch (e.code) {
-      case "ArrowLeft":
-        if (selected % SIZE > 0) {
-          setSelected((prev) => prev - 1);
-          (e.target.previousSibling as HTMLDivElement)?.focus();
-        }
-        break;
-      case "ArrowRight":
-        if (selected % SIZE < 8) {
-          setSelected((prev) => prev + 1);
-          (e.target.nextSibling as HTMLDivElement)?.focus();
-        }
-        break;
-      case "ArrowUp":
-        if (Math.floor(selected / SIZE) > 0) {
-          setSelected((prev) => prev - SIZE);
-          (
-            e.target.parentElement?.previousSibling?.childNodes[
-              index
-            ] as HTMLDivElement
-          )?.focus();
-        }
-        break;
-      case "ArrowDown":
-        if (Math.floor(selected / SIZE) < 8) {
-          setSelected((prev) => prev + SIZE);
-          (
-            e.target.parentElement?.nextSibling?.childNodes[
-              index
-            ] as HTMLDivElement
-          )?.focus();
-        }
-        break;
-      default:
-        break;
+      switch (e.code) {
+        case "ArrowLeft":
+          if (actualSelected % SIZE > 0) {
+            setSelected((prev) =>
+              prev.map((cell, i) => (i === index ? cell - 1 : cell))
+            );
+            (e.target.previousSibling as HTMLDivElement)?.focus();
+          }
+          break;
+        case "ArrowRight":
+          if (actualSelected % SIZE < 8) {
+            setSelected((prev) =>
+              prev.map((cell, i) => (i === index ? cell + 1 : cell))
+            );
+            (e.target.nextSibling as HTMLDivElement)?.focus();
+          }
+          break;
+        case "ArrowUp":
+          if (Math.floor(actualSelected / SIZE) > 0) {
+            setSelected((prev) =>
+              prev.map((cell, i) => (i === index ? cell - SIZE : cell))
+            );
+            (
+              e.target.parentElement?.previousSibling?.childNodes[
+                boardIndex
+              ] as HTMLDivElement
+            )?.focus();
+          }
+          break;
+        case "ArrowDown":
+          if (Math.floor(actualSelected / SIZE) < 8) {
+            setSelected((prev) =>
+              prev.map((cell, i) => (i === index ? cell + SIZE : cell))
+            );
+            (
+              e.target.parentElement?.nextSibling?.childNodes[
+                boardIndex
+              ] as HTMLDivElement
+            )?.focus();
+          }
+          break;
+        default:
+          break;
+      }
+    });
+  };
+
+  const handleCellClicked = (
+    e: React.MouseEvent<HTMLDivElement>,
+    index: number
+  ) => {
+    if (e.ctrlKey) {
+      setSelected((prev) => prev.concat(index));
+    } else {
+      setSelected(() => [index]);
     }
   };
 
@@ -87,7 +107,7 @@ export const Board = ({ onKeyDown }: BoardProps) => {
                 selected={isSelected(index) || isSameNumber(index)}
                 adjacent={isAdjacent(index) || inSame3x3(row, col)}
                 locked={isLocked(index)}
-                onClick={() => setSelected(index)}
+                onClick={(e) => handleCellClicked(e, index)}
                 onKeyDown={(e) => {
                   e.preventDefault();
                   handleArrowMovements(e);
@@ -97,11 +117,13 @@ export const Board = ({ onKeyDown }: BoardProps) => {
                   const key = parseInt(e.code.slice(-1));
 
                   if (key >= 1 && key <= 9) {
-                    onKeyDown(e, index, key, isShiftDown(e));
+                    onKeyDown(e, key, isShiftDown(e));
                   } else if (e.key === "Backspace" || e.key === "Delete") {
-                    setNumber(index, null);
-                    setCorners(index, []);
-                    setCenters(index, []);
+                    selected.forEach((i) => {
+                      setNumber(i, null);
+                      setCorners(i, []);
+                      setCenters(i, []);
+                    });
                   } else if (e.ctrlKey) {
                     if (e.code === "KeyZ") undoMove();
                     if (e.code === "KeyY") redoMove();

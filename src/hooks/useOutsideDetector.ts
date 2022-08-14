@@ -11,9 +11,8 @@ export const useOutsideDetector = (callback: () => void) => {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [callback]);
 
   return ref;

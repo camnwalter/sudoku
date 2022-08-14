@@ -11,8 +11,8 @@ import { MoveTypes, SIZE } from "../utils/utils";
 interface SudokuContextProps {
   board: CellData[];
   setBoard: React.Dispatch<React.SetStateAction<CellData[]>>;
-  selected: number;
-  setSelected: React.Dispatch<React.SetStateAction<number>>;
+  selected: number[];
+  setSelected: React.Dispatch<React.SetStateAction<number[]>>;
   won: boolean;
   setWon: React.Dispatch<React.SetStateAction<boolean>>;
   time: number;
@@ -40,7 +40,7 @@ interface SudokuContextProps {
 const SudokuContext = createContext<SudokuContextProps>({
   board: [],
   setBoard: () => undefined,
-  selected: -1,
+  selected: [],
   setSelected: () => undefined,
   won: false,
   setWon: () => undefined,
@@ -75,7 +75,7 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
         locked: false,
       }))
   );
-  const [selected, setSelected] = useState(-1);
+  const [selected, setSelected] = useState<number[]>([]);
   const [won, setWon] = useState(false);
   const [time, setTime] = useState(0);
   const [moveType, setMoveType] = useState({
@@ -125,18 +125,18 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
 
   const isLocked = (index: number) => board[index]?.locked ?? false;
 
-  const isSelected = (index: number) => index === selected;
+  const isSelected = (index: number) => selected.includes(index);
 
   const isAdjacent = (index: number) => {
     return (
-      index % SIZE === selected % SIZE ||
-      Math.floor(index / SIZE) === Math.floor(selected / SIZE)
+      index % SIZE === selected[0] % SIZE ||
+      Math.floor(index / SIZE) === Math.floor(selected[0] / SIZE)
     );
   };
 
   const inSame3x3 = (row: number, col: number) => {
-    const selectedX = Math.floor(selected / SIZE);
-    const selectedY = Math.floor(selected % SIZE);
+    const selectedX = Math.floor(selected[0] / SIZE);
+    const selectedY = Math.floor(selected[0] % SIZE);
     return (
       Math.floor(row / 3) === Math.floor(selectedX / 3) &&
       Math.floor(col / 3) === Math.floor(selectedY / 3)
@@ -144,9 +144,11 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
   };
 
   const isSameNumber = (index: number) =>
-    selected >= 0 &&
-    board[index].number !== null &&
-    board[index].number === board[selected].number;
+    selected.some(
+      (selectedCell) =>
+        board[index].number !== null &&
+        board[index].number === board[selectedCell].number
+    );
 
   const setNumber = (index: number, value: BoardNumber) => {
     if (index === -1) return;

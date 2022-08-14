@@ -9,8 +9,7 @@ export const Timer = () => {
   );
 
   const formatTime = () => {
-    const diff = time;
-    let seconds = Math.floor(diff / 1000);
+    let seconds = Math.floor(time / 1000);
     const mins = Math.floor(seconds / 60);
     if (seconds >= 60) {
       seconds -= 60 * mins;

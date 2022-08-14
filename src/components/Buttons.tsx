@@ -51,7 +51,7 @@ export const Buttons = () => {
         }))
     );
     resetMoves();
-    setSelected(-1);
+    setSelected([]);
     setTime(0);
     setWon(false);
     setMoveType({ current: MoveTypes.Number, previous: MoveTypes.Number });

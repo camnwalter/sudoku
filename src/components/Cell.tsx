@@ -6,7 +6,7 @@ interface Props {
   selected: boolean;
   adjacent: boolean;
   locked: boolean;
-  onClick: () => void;
+  onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void;
 }
 

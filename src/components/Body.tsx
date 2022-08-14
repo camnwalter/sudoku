@@ -10,7 +10,7 @@ interface Props {
 export const Body = ({ center, right }: Props) => {
   const { setSelected } = useSudoku();
 
-  const ref = useOutsideDetector(() => setSelected(-1));
+  const ref = useOutsideDetector(() => setSelected([]));
 
   return (
     <div className="mainArea">

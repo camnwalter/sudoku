@@ -30,7 +30,7 @@ export const Board = ({ onKeyDown }: BoardProps) => {
     setCenters,
   } = useSudoku();
 
-  const { undoMove, redoMove } = useUndoRedo();
+  const { undo, redo } = useUndoRedo();
 
   const handleArrowMovements = (e: React.KeyboardEvent<HTMLDivElement>) => {
     selected.forEach((actualSelected, index) => {
@@ -125,8 +125,8 @@ export const Board = ({ onKeyDown }: BoardProps) => {
                       setCenters(i, []);
                     });
                   } else if (e.ctrlKey) {
-                    if (e.code === "KeyZ") undoMove();
-                    if (e.code === "KeyY") redoMove();
+                    if (e.code === "KeyZ") undo();
+                    if (e.code === "KeyY") redo();
                   }
                 }}
               >

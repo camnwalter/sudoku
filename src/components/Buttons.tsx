@@ -3,16 +3,23 @@ import { Difficulty } from "sudoku-gen/dist/types/difficulty.type";
 import { useSudoku } from "../hooks/sudokuContext";
 import { useTime } from "../hooks/timerContext";
 import { useUndoRedo } from "../hooks/useUndoRedo";
-import { MoveTypes, SIZE } from "../utils/utils";
+import { MoveTypes } from "../utils/utils";
 import { Row } from "./Row";
 
 export const Buttons = () => {
-  const { board, setBoard, setSelected, setWon, moveType, setMoveType } =
-    useSudoku();
+  const {
+    board,
+    setBoard,
+    setSelected,
+    setWon,
+    moveType,
+    setMoveType,
+    resetBoard,
+  } = useSudoku();
 
   const { setTime } = useTime();
 
-  const { resetMoves, undoMove, redoMove } = useUndoRedo();
+  const { resetMoves, undo, redo } = useUndoRedo();
 
   const generateBoard = (difficulty: Difficulty) => () => {
     clearBoard();
@@ -35,17 +42,7 @@ export const Buttons = () => {
   };
 
   const clearBoard = () => {
-    setBoard(
-      Array(SIZE ** 2)
-        .fill(null)
-        .map(() => ({
-          number: null,
-          solution: -1,
-          centers: [],
-          corners: [],
-          locked: false,
-        }))
-    );
+    resetBoard();
     resetMoves();
     setSelected([]);
     setTime(0);
@@ -69,8 +66,8 @@ export const Buttons = () => {
       <Row>
         <button onClick={clearBoard}>Reset</button>
         <button onClick={checkBoard}>Check</button>
-        <button onClick={undoMove}>Undo</button>
-        <button onClick={redoMove}>Redo</button>
+        <button onClick={undo}>Undo</button>
+        <button onClick={redo}>Redo</button>
       </Row>
       <Row>
         <button onClick={generateBoard("easy")}>Easy</button>

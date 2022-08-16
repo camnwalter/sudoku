@@ -33,6 +33,8 @@ interface SudokuContextProps {
   setNumber: (index: number, number: BoardNumber) => void;
   setCorners: (index: number, corners: number[]) => void;
   setCenters: (index: number, centers: number[]) => void;
+  resetBoard: () => void;
+  initialBoard: () => CellData[];
 }
 
 const SudokuContext = createContext<SudokuContextProps>({
@@ -53,6 +55,8 @@ const SudokuContext = createContext<SudokuContextProps>({
   setNumber: () => undefined,
   setCorners: () => undefined,
   setCenters: () => undefined,
+  resetBoard: () => undefined,
+  initialBoard: () => [],
 });
 
 interface SudokuProviderProps {
@@ -60,7 +64,7 @@ interface SudokuProviderProps {
 }
 
 export const SudokuProvider = ({ children }: SudokuProviderProps) => {
-  const [board, setBoard] = useState<CellData[]>(
+  const initialBoard = () =>
     Array(SIZE ** 2)
       .fill(null)
       .map(() => ({
@@ -69,8 +73,9 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
         centers: [],
         corners: [],
         locked: false,
-      }))
-  );
+      }));
+
+  const [board, setBoard] = useState<CellData[]>(initialBoard());
   const [selected, setSelected] = useState<number[]>([]);
   const [won, setWon] = useState(false);
   const [moveType, setMoveType] = useState({
@@ -177,6 +182,8 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
     );
   };
 
+  const resetBoard = () => setBoard(initialBoard());
+
   return (
     <SudokuContext.Provider
       value={{
@@ -197,6 +204,8 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
         setNumber,
         setCorners,
         setCenters,
+        resetBoard,
+        initialBoard,
       }}
     >
       {children}

@@ -3,6 +3,7 @@ import "./App.css";
 import { Game } from "./components/Game";
 import { SudokuProvider } from "./hooks/sudokuContext";
 import { TimeProvider } from "./hooks/timerContext";
+import { UndoRedoProvider } from "./hooks/useUndoRedo";
 
 export const App = () => {
   return (
@@ -10,7 +11,9 @@ export const App = () => {
       <React.StrictMode>
         <SudokuProvider>
           <TimeProvider>
-            <Game />
+            <UndoRedoProvider>
+              <Game />
+            </UndoRedoProvider>
           </TimeProvider>
         </SudokuProvider>
       </React.StrictMode>

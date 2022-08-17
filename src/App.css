@@ -31,12 +31,16 @@ body {
   width: 100%;
 }
 
-.selected {
+.adjacent {
+  background-color: #ddd;
+}
+
+.sameNumber {
   background-color: #aaa;
 }
 
-.adjacent {
-  background-color: #ddd;
+.selected {
+  background-color: #777;
 }
 
 .locked {

@@ -1,10 +1,11 @@
 import { ReactNode } from "react";
 
-interface Props {
+interface CellProps {
   index: number;
   children: ReactNode;
   selected: boolean;
   adjacent: boolean;
+  sameNumber: boolean;
   locked: boolean;
   onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void;
@@ -15,15 +16,17 @@ export const Cell = ({
   children,
   selected,
   adjacent,
+  sameNumber,
   locked,
   onClick,
   onKeyDown,
-}: Props) => {
+}: CellProps) => {
   return (
     <div
       className={
-        (selected ? "selected " : adjacent ? "adjacent " : " ") +
-        (locked ? "locked" : "")
+        (selected ? "selected " : adjacent ? "adjacent " : "") +
+        (sameNumber ? "sameNumber " : "") +
+        (locked ? "locked " : " ")
       }
       id={index.toString()}
       tabIndex={-1}

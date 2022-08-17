@@ -104,8 +104,9 @@ export const Board = ({ onKeyDown }: BoardProps) => {
               <Cell
                 key={index}
                 index={index}
-                selected={isSelected(index) || isSameNumber(index)}
+                selected={isSelected(index)}
                 adjacent={isAdjacent(index) || inSame3x3(row, col)}
+                sameNumber={isSameNumber(index)}
                 locked={isLocked(index)}
                 onClick={(e) => handleCellClicked(e, index)}
                 onKeyDown={(e) => {

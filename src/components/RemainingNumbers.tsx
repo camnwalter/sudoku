@@ -25,7 +25,7 @@ export const RemainingNumbers = ({ onMouseDown }: RemainingNumbersProps) => {
     );
   };
 
-  return (
+  return remainingNumbers().length > 0 ? (
     <div className="remaining">
       {remainingNumbers().map((num) => (
         <div
@@ -55,5 +55,7 @@ export const RemainingNumbers = ({ onMouseDown }: RemainingNumbersProps) => {
         </div>
       ))}
     </div>
+  ) : (
+    <></>
   );
 };

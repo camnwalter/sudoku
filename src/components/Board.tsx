@@ -90,7 +90,7 @@ export const Board = ({ onKeyDown }: BoardProps) => {
     index: number
   ) => {
     if (e.ctrlKey) {
-      setSelected((prev) => prev.concat(index));
+      setSelected((prev) => [...new Set(prev.concat(index))]);
     } else {
       setSelected(() => [index]);
     }
@@ -133,7 +133,8 @@ export const Board = ({ onKeyDown }: BoardProps) => {
                   }
                 }}
                 onMouseOver={() =>
-                  mouseDown && setSelected((prev) => prev.concat(index))
+                  mouseDown &&
+                  setSelected((prev) => [...new Set(prev.concat(index))])
                 }
               >
                 {board[index].number}

@@ -22,21 +22,22 @@ export const Game = () => {
 
     selected.forEach((index) => {
       const { centers, corners, number } = tempBoard[index];
+
       if (
-        moveType.current === MoveTypes.Corner ||
-        (e.ctrlKey && number === null)
+        (moveType.current === MoveTypes.Corner || e.ctrlKey) &&
+        number === null
       ) {
         tempBoard[index].corners = corners.includes(key)
           ? corners.filter((num) => num !== key)
           : corners.concat(key).sort();
       } else if (
-        moveType.current === MoveTypes.Center ||
-        (shift && number === null)
+        (moveType.current === MoveTypes.Center || shift) &&
+        number === null
       ) {
         tempBoard[index].centers = centers.includes(key)
           ? centers.filter((num) => num !== key)
           : centers.concat(key).sort();
-      } else {
+      } else if (moveType.current === MoveTypes.Number) {
         tempBoard[index].number = key;
         tempBoard[index].corners = [];
         tempBoard[index].centers = [];

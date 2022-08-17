@@ -37,6 +37,8 @@ export const RemainingNumbers = ({ onMouseDown }: RemainingNumbersProps) => {
               setSelected(() => {
                 const index = board.findIndex(({ number }) => number === num);
 
+                if (index === -1) return [];
+
                 const element = document.getElementById(index.toString());
                 element?.focus();
 

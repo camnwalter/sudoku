@@ -25,6 +25,8 @@ interface SudokuContextProps {
       previous: MoveTypes;
     }>
   >;
+  mouseDown: boolean;
+
   isLocked: (index: number) => boolean;
   isSelected: (index: number) => boolean;
   isAdjacent: (index: number) => boolean;
@@ -46,6 +48,7 @@ const SudokuContext = createContext<SudokuContextProps>({
   setWon: () => undefined,
   moveType: { current: MoveTypes.Number, previous: MoveTypes.Number },
   setMoveType: () => undefined,
+  mouseDown: false,
 
   isLocked: () => false,
   isSelected: () => false,
@@ -82,6 +85,7 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
     current: MoveTypes.Number,
     previous: MoveTypes.Number,
   });
+  const [mouseDown, setMouseDown] = useState(false);
 
   useEffect(() => {
     const cb = (e: KeyboardEvent) => {
@@ -114,12 +118,19 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
         }));
     };
 
+    const mouseDownHandler = () => setMouseDown(true);
+    const mouseUpHandler = () => setMouseDown(false);
+
     document.addEventListener("keydown", cb);
     document.addEventListener("keyup", resetMoveType);
+    document.addEventListener("mousedown", mouseDownHandler);
+    document.addEventListener("mouseup", mouseUpHandler);
 
     return () => {
       document.removeEventListener("keydown", cb);
       document.removeEventListener("keyup", resetMoveType);
+      document.removeEventListener("mousedown", mouseDownHandler);
+      document.removeEventListener("mouseup", mouseUpHandler);
     };
   }, []);
 
@@ -198,6 +209,7 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
         setWon,
         moveType,
         setMoveType,
+        mouseDown,
 
         isLocked,
         isSelected,

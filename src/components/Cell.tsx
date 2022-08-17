@@ -7,8 +7,9 @@ interface CellProps {
   adjacent: boolean;
   sameNumber: boolean;
   locked: boolean;
-  onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void;
+  onMouseOver: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 export const Cell = ({
@@ -18,8 +19,9 @@ export const Cell = ({
   adjacent,
   sameNumber,
   locked,
-  onClick,
+  onMouseDown,
   onKeyDown,
+  onMouseOver,
 }: CellProps) => {
   return (
     <div
@@ -30,8 +32,9 @@ export const Cell = ({
       }
       id={index.toString()}
       tabIndex={-1}
-      onClick={onClick}
+      onMouseDown={onMouseDown}
       onKeyDown={onKeyDown}
+      onMouseOver={onMouseOver}
     >
       {children}
     </div>

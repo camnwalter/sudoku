@@ -5,14 +5,14 @@ export const useOutsideDetector = (callback: () => void) => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (ref.current && !ref.current.contains(event.target as Element)) {
+      if (!ref.current?.contains(event.target as Element)) {
         callback();
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
 
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
   }, [callback]);
 
   return ref;

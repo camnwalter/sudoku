@@ -20,6 +20,8 @@ export const Board = ({ onKeyDown }: BoardProps) => {
     board,
     selected,
     setSelected,
+    mouseDown,
+
     isSelected,
     isSameNumber,
     isAdjacent,
@@ -108,7 +110,7 @@ export const Board = ({ onKeyDown }: BoardProps) => {
                 adjacent={isAdjacent(index) || inSame3x3(row, col)}
                 sameNumber={isSameNumber(index)}
                 locked={isLocked(index)}
-                onClick={(e) => handleCellClicked(e, index)}
+                onMouseDown={(e) => handleCellClicked(e, index)}
                 onKeyDown={(e) => {
                   e.preventDefault();
                   handleArrowMovements(e);
@@ -130,6 +132,9 @@ export const Board = ({ onKeyDown }: BoardProps) => {
                     if (e.code === "KeyY") redo();
                   }
                 }}
+                onMouseOver={() =>
+                  mouseDown && setSelected((prev) => prev.concat(index))
+                }
               >
                 {board[index].number}
                 {board[index].corners.length > 0 && (

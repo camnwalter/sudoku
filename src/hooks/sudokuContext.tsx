@@ -128,26 +128,29 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
   const isSelected = (index: number) => selected.includes(index);
 
   const isAdjacent = (index: number) => {
-    return (
-      index % SIZE === selected[0] % SIZE ||
-      Math.floor(index / SIZE) === Math.floor(selected[0] / SIZE)
+    return selected.some(
+      (cell) =>
+        index % SIZE === cell % SIZE ||
+        Math.floor(index / SIZE) === Math.floor(cell / SIZE)
     );
   };
 
   const inSame3x3 = (row: number, col: number) => {
-    const selectedX = Math.floor(selected[0] / SIZE);
-    const selectedY = Math.floor(selected[0] % SIZE);
-    return (
-      Math.floor(row / 3) === Math.floor(selectedX / 3) &&
-      Math.floor(col / 3) === Math.floor(selectedY / 3)
-    );
+    return selected.some((cell) => {
+      const selectedX = Math.floor(cell / SIZE);
+      const selectedY = Math.floor(cell % SIZE);
+      return (
+        Math.floor(row / 3) === Math.floor(selectedX / 3) &&
+        Math.floor(col / 3) === Math.floor(selectedY / 3)
+      );
+    });
   };
 
   const isSameNumber = (index: number) =>
     selected.some(
-      (selectedCell) =>
+      (cell) =>
         board[index].number !== null &&
-        board[index].number === board[selectedCell].number
+        board[index].number === board[cell].number
     );
 
   const setNumber = (index: number, value: BoardNumber) => {

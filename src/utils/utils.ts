@@ -14,33 +14,22 @@ export const isShiftDown = (e: React.KeyboardEvent<HTMLDivElement>) =>
       e.key.startsWith("Page")));
 
 export enum MoveTypes {
-  Invalid,
   Number,
   Corner,
   Center,
 }
 
-export const deepClone = (object: unknown) => {
-  let copy: unknown;
-
+export const deepClone = (object: unknown): unknown => {
   if (object === null || typeof object !== "object") return object;
 
   if (Array.isArray(object)) {
-    copy = [];
-    object.forEach((element, i) => {
-      (copy as unknown[])[i] = deepClone(element);
-    });
-
-    return copy;
+    return object.map(deepClone);
   }
 
   if (object instanceof Object) {
-    copy = {};
-    Object.entries(object).forEach(([key, value]) => {
-      (copy as { [key: string]: unknown })[key] = deepClone(value);
-    });
-
-    return copy;
+    return Object.fromEntries(
+      Object.entries(object).map(([k, v]) => [k, deepClone(v)])
+    );
   }
 
   throw new Error("Unsupported type to deep clone!");

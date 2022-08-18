@@ -120,17 +120,13 @@ body {
 
 .row > div > .overlayText {
   position: absolute;
-  top: 0;
-  left: 0;
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  font-size: 1.1rem;
+  display: flex;
+  justify-content: center;
+  font-size: 1rem;
   text-align: center;
 }
 
 .corner {
-  text-align: center;
   width: 100%;
   height: 100%;
   word-spacing: 0.5rem;
@@ -165,4 +161,35 @@ body {
 .buttons .row:last-child button:disabled {
   background-color: #555;
   color: #eee;
+}
+
+@media screen and (orientation: portrait) {
+  .mainArea {
+    flex-direction: column;
+  }
+
+  .column:first-child {
+    flex: 0%;
+    display: none;
+  }
+
+  .largeColumn {
+    flex: 75%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .row > div {
+    font-size: 1.5rem;
+  }
+
+  .row > div > .overlayText {
+    font-size: 2vmin;
+    line-height: 2.5vmin;
+  }
+
+  .corner {
+    word-spacing: 1vmin;
+  }
 }

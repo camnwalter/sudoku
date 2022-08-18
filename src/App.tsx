@@ -4,15 +4,20 @@ import { Game } from "./components/Game";
 import { SudokuProvider } from "./hooks/sudokuContext";
 import { TimeProvider } from "./hooks/timerContext";
 import { UndoRedoProvider } from "./hooks/useUndoRedo";
+import { Environment } from "./utils/utils";
 
-export const App = () => {
+interface AppProps {
+  environment: Environment;
+}
+
+export const App = ({ environment }: AppProps) => {
   return (
     <div className="App">
       <React.StrictMode>
         <SudokuProvider>
           <TimeProvider>
             <UndoRedoProvider>
-              <Game />
+              <Game environment={environment} />
             </UndoRedoProvider>
           </TimeProvider>
         </SudokuProvider>

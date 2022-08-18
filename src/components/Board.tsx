@@ -1,6 +1,15 @@
+import axios from "axios";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { useSudoku } from "../hooks/sudokuContext";
 import { useUndoRedo } from "../hooks/useUndoRedo";
-import { isShiftDown, locationToIndex, SIZE } from "../utils/utils";
+import { BoardNumber } from "../utils/types";
+import {
+  Environment,
+  isShiftDown,
+  locationToIndex,
+  SIZE,
+} from "../utils/utils";
 import { Cell } from "./Cell";
 import { OverlayText } from "./OverlayText";
 import { Row } from "./Row";
@@ -13,11 +22,14 @@ interface BoardProps {
     key: number,
     shift: boolean
   ) => void;
+  environment: Environment;
 }
 
-export const Board = ({ onKeyDown }: BoardProps) => {
+export const Board = ({ onKeyDown, environment }: BoardProps) => {
   const {
+    setInitialBoard,
     board,
+    setBoard,
     selected,
     setSelected,
     mouseDown,
@@ -34,7 +46,27 @@ export const Board = ({ onKeyDown }: BoardProps) => {
 
   const { undo, redo } = useUndoRedo();
 
+  const { id } = useParams();
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:4000/play/${id}`)
+      .then(({ data }: { data: BoardNumber[] }) => {
+        const newBoard = data.map((cell) => ({
+          centers: [],
+          corners: [],
+          number: cell,
+          locked: cell !== null,
+          solution: -1,
+        }));
+        setBoard(newBoard);
+        setInitialBoard(newBoard);
+      });
+  }, []);
+
   const handleArrowMovements = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const target = e.target as Element;
+
     selected.forEach((actualSelected, index) => {
       const boardIndex = actualSelected % SIZE;
 
@@ -44,7 +76,7 @@ export const Board = ({ onKeyDown }: BoardProps) => {
             setSelected((prev) =>
               prev.map((cell, i) => (i === index ? cell - 1 : cell))
             );
-            (e.target.previousSibling as HTMLDivElement)?.focus();
+            (target.previousSibling as HTMLDivElement)?.focus();
           }
           break;
         case "ArrowRight":
@@ -52,7 +84,7 @@ export const Board = ({ onKeyDown }: BoardProps) => {
             setSelected((prev) =>
               prev.map((cell, i) => (i === index ? cell + 1 : cell))
             );
-            (e.target.nextSibling as HTMLDivElement)?.focus();
+            (target.nextSibling as HTMLDivElement)?.focus();
           }
           break;
         case "ArrowUp":
@@ -61,7 +93,7 @@ export const Board = ({ onKeyDown }: BoardProps) => {
               prev.map((cell, i) => (i === index ? cell - SIZE : cell))
             );
             (
-              e.target.parentElement?.previousSibling?.childNodes[
+              target.parentElement?.previousSibling?.childNodes[
                 boardIndex
               ] as HTMLDivElement
             )?.focus();
@@ -73,7 +105,7 @@ export const Board = ({ onKeyDown }: BoardProps) => {
               prev.map((cell, i) => (i === index ? cell + SIZE : cell))
             );
             (
-              e.target.parentElement?.nextSibling?.childNodes[
+              target.parentElement?.nextSibling?.childNodes[
                 boardIndex
               ] as HTMLDivElement
             )?.focus();
@@ -115,7 +147,8 @@ export const Board = ({ onKeyDown }: BoardProps) => {
                   e.preventDefault();
                   handleArrowMovements(e);
 
-                  if (isLocked(index)) return;
+                  if (isLocked(index) && environment !== Environment.Sandbox)
+                    return;
 
                   const key = parseInt(e.code.slice(-1));
 

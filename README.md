@@ -2,7 +2,8 @@
 
 A pretty nice sudoku app inspired by Cracking The Cryptic's [Website](https://cracking-the-cryptic.web.app/).
 
-Play by clicking one of the buttons at the bottom of the screen! See how fast you can beat it!
+Play by clicking one of the buttons at the bottom of the screen or accessing
+a user-submitted game via the `/play/:id` endpoint!
 
 ## Controls:
 
@@ -33,6 +34,15 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
+
+### `npm run serve`
+
+Runs the server to allow for saving and accessing user-made games.
+
+Open [http://localhost:3000/sandbox](http://localhost:3000/sandbox) to view it in your browser.
+
+When pressing the "save" button, you will be redirected to a
+new page, located at `/play/:id`.
 
 ### `npm run build`
 

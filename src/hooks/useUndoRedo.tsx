@@ -24,7 +24,7 @@ interface UseUndoProviderProps {
 export const UndoRedoProvider = ({ children }: UseUndoProviderProps) => {
   const { setBoard, initialBoard } = useSudoku();
 
-  const [moves, setMoves] = useState<CellData[][]>([initialBoard()]);
+  const [moves, setMoves] = useState<CellData[][]>([initialBoard]);
   const [index, setIndex] = useState(0);
 
   const setState = (value: CellData[]) => {
@@ -38,7 +38,7 @@ export const UndoRedoProvider = ({ children }: UseUndoProviderProps) => {
   };
 
   const resetMoves = () => {
-    setMoves([initialBoard()]);
+    setMoves([initialBoard]);
     setIndex(0);
   };
 

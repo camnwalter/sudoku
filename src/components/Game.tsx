@@ -1,14 +1,18 @@
 import { useSudoku } from "../hooks/sudokuContext";
 import { useUndoRedo } from "../hooks/useUndoRedo";
 import { CellData } from "../utils/types";
-import { deepClone, MoveTypes } from "../utils/utils";
+import { deepClone, Environment, MoveTypes } from "../utils/utils";
 import { Board } from "./Board";
 import { Body } from "./Body";
 import { Buttons } from "./Buttons";
 import { RemainingNumbers } from "./RemainingNumbers";
 import { Timer } from "./Timer";
 
-export const Game = () => {
+interface GameProps {
+  environment: Environment;
+}
+
+export const Game = ({ environment }: GameProps) => {
   const { board, setBoard, moveType, selected } = useSudoku();
 
   const { setMoves } = useUndoRedo();
@@ -24,23 +28,29 @@ export const Game = () => {
       const { centers, corners, number } = tempBoard[index];
 
       if (
-        (moveType.current === MoveTypes.Corner || e.ctrlKey) &&
-        number === null
+        environment === Environment.Sandbox ||
+        moveType.current === MoveTypes.Number
+      ) {
+        tempBoard[index].number = key;
+        tempBoard[index].corners = [];
+        tempBoard[index].centers = [];
+        if (environment === Environment.Sandbox) {
+          tempBoard[index].locked = true;
+        }
+      } else if (
+        number === null &&
+        (e.ctrlKey || moveType.current === MoveTypes.Corner)
       ) {
         tempBoard[index].corners = corners.includes(key)
           ? corners.filter((num) => num !== key)
           : corners.concat(key).sort();
       } else if (
-        (moveType.current === MoveTypes.Center || shift) &&
-        number === null
+        number === null &&
+        (shift || moveType.current === MoveTypes.Center)
       ) {
         tempBoard[index].centers = centers.includes(key)
           ? centers.filter((num) => num !== key)
           : centers.concat(key).sort();
-      } else if (moveType.current === MoveTypes.Number) {
-        tempBoard[index].number = key;
-        tempBoard[index].corners = [];
-        tempBoard[index].centers = [];
       }
     });
 
@@ -52,12 +62,12 @@ export const Game = () => {
     <Body
       center={
         <>
-          <Timer />
-          <Board onKeyDown={handleNumberPressed} />
+          {environment !== Environment.Sandbox && <Timer />}
+          <Board onKeyDown={handleNumberPressed} environment={environment} />
           <RemainingNumbers onMouseDown={handleNumberPressed} />
         </>
       }
-      right={<Buttons />}
+      right={<Buttons environment={environment} />}
     />
   );
 };

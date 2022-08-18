@@ -11,6 +11,8 @@ import { MoveTypes, SIZE } from "../utils/utils";
 interface SudokuContextProps {
   board: CellData[];
   setBoard: React.Dispatch<React.SetStateAction<CellData[]>>;
+  initialBoard: CellData[];
+  setInitialBoard: React.Dispatch<React.SetStateAction<CellData[]>>;
   selected: number[];
   setSelected: React.Dispatch<React.SetStateAction<number[]>>;
   won: boolean;
@@ -36,12 +38,13 @@ interface SudokuContextProps {
   setCorners: (index: number, corners: number[]) => void;
   setCenters: (index: number, centers: number[]) => void;
   resetBoard: () => void;
-  initialBoard: () => CellData[];
 }
 
 const SudokuContext = createContext<SudokuContextProps>({
   board: [],
   setBoard: () => undefined,
+  initialBoard: [],
+  setInitialBoard: () => undefined,
   selected: [],
   setSelected: () => undefined,
   won: false,
@@ -59,7 +62,6 @@ const SudokuContext = createContext<SudokuContextProps>({
   setCorners: () => undefined,
   setCenters: () => undefined,
   resetBoard: () => undefined,
-  initialBoard: () => [],
 });
 
 interface SudokuProviderProps {
@@ -67,7 +69,7 @@ interface SudokuProviderProps {
 }
 
 export const SudokuProvider = ({ children }: SudokuProviderProps) => {
-  const initialBoard = () =>
+  const [initialBoard, setInitialBoard] = useState<CellData[]>(
     Array(SIZE ** 2)
       .fill(null)
       .map(() => ({
@@ -76,9 +78,9 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
         centers: [],
         corners: [],
         locked: false,
-      }));
-
-  const [board, setBoard] = useState<CellData[]>(initialBoard());
+      }))
+  );
+  const [board, setBoard] = useState<CellData[]>(initialBoard);
   const [selected, setSelected] = useState<number[]>([]);
   const [won, setWon] = useState(false);
   const [moveType, setMoveType] = useState({
@@ -196,13 +198,15 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
     );
   };
 
-  const resetBoard = () => setBoard(initialBoard());
+  const resetBoard = () => setBoard(initialBoard);
 
   return (
     <SudokuContext.Provider
       value={{
         board,
         setBoard,
+        initialBoard,
+        setInitialBoard,
         selected,
         setSelected,
         won,
@@ -220,7 +224,6 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
         setCorners,
         setCenters,
         resetBoard,
-        initialBoard,
       }}
     >
       {children}

@@ -50,3 +50,9 @@ export const isEqual = (obj1: unknown, obj2: unknown): boolean => {
 
   return false;
 };
+
+export enum Environment {
+  Sandbox,
+  Play,
+  Basic,
+}

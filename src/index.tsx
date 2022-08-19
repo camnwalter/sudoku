@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import { App } from "./App";
 import { Environment } from "./utils/utils";
 
@@ -7,7 +7,7 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
-  <BrowserRouter>
+  <HashRouter>
     <Routes>
       <Route path="/" element={<App environment={Environment.Basic} />} />
       <Route
@@ -19,5 +19,5 @@ root.render(
         element={<App environment={Environment.Play} />}
       />
     </Routes>
-  </BrowserRouter>
+  </HashRouter>
 );

@@ -46,7 +46,7 @@ const Board = ({ initial }: BoardProps) => {
     if (initial !== undefined) {
       setBoard(initial);
     }
-  }, []);
+  }, [initial, setBoard]);
 
   const handleNumberPressed = (
     e: React.KeyboardEvent<HTMLDivElement> | React.MouseEvent<HTMLDivElement>,

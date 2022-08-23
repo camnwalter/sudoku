@@ -5,13 +5,15 @@ import { useSudoku } from "../hooks/sudokuContext";
 import { useTime } from "../hooks/timeContext";
 import { useUndoRedo } from "../hooks/undoRedoContext";
 import styles from "../styles/Buttons.module.css";
-import { Environment, MoveTypes } from "../utils/utils";
+import { CellData } from "../utils/types";
+import { deepClone, Environment, MoveTypes } from "../utils/utils";
 import Row from "./Row";
 
 interface ButtonsProps {
   environment: Environment;
 }
 
+// TODO: Clear the state when switching tabs, but not when redirected.
 const Buttons = ({ environment }: ButtonsProps) => {
   const {
     emptyBoard,
@@ -88,12 +90,18 @@ const Buttons = ({ environment }: ButtonsProps) => {
         <Row>
           <button
             onClick={() => {
+              const copy = deepClone(board) as CellData[];
               fetch("api/games", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
                 },
-                body: JSON.stringify(board),
+                body: JSON.stringify(
+                  copy.map((cell) => ({
+                    ...cell,
+                    locked: cell.number !== null,
+                  }))
+                ),
               })
                 .then((res) => res.json())
                 .then(({ uuid }) => {

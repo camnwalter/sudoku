@@ -1,7 +1,6 @@
 import { useSudoku } from "../hooks/sudokuContext";
 import { useTime } from "../hooks/timeContext";
-import { useInterval } from "../hooks/useInterval";
-
+import useInterval from "../hooks/useInterval";
 import styles from "../styles/Timer.module.css";
 
 export const Timer = () => {

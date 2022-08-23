@@ -1,6 +1,7 @@
 import AWS from "aws-sdk";
 import { config } from "dotenv";
 import { CellData } from "../utils/types";
+import { SudokuError } from "../utils/utils";
 config();
 
 AWS.config.update({
@@ -49,7 +50,7 @@ export const getGame = async (id: string) => {
     return Item.L;
   }
 
-  throw new Error("List is not defined!");
+  throw new SudokuError("List is not defined!");
 };
 
 export const deleteGame = async (id: string) => {

@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
  * @param condition when true, callback loops
  * @param callback
  */
-export const useInterval = (condition: boolean, callback: () => void) => {
+const useInterval = (condition: boolean, callback: () => void) => {
   const savedCallback = useRef(callback);
 
   useEffect(() => {
@@ -24,3 +24,5 @@ export const useInterval = (condition: boolean, callback: () => void) => {
     return () => clearInterval(id);
   }, [condition]);
 };
+
+export default useInterval;

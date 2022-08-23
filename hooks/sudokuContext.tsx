@@ -92,7 +92,7 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
   const [mouseDown, setMouseDown] = useState(false);
 
   useEffect(() => {
-    const cb = (e: KeyboardEvent) => {
+    const onKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey) {
         setMoveType((prev) => {
           if (prev.current === MoveTypes.Corner) return prev;
@@ -114,7 +114,7 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
       }
     };
 
-    const resetMoveType = (e: KeyboardEvent) => {
+    const onKeyUp = (e: KeyboardEvent) => {
       if (e.code.startsWith("Control") || e.code.startsWith("Shift"))
         setMoveType((prev) => ({
           previous: prev.previous,
@@ -122,19 +122,19 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
         }));
     };
 
-    const mouseDownHandler = () => setMouseDown(true);
-    const mouseUpHandler = () => setMouseDown(false);
+    const onMouseDown = () => setMouseDown(true);
+    const onMouseUp = () => setMouseDown(false);
 
-    document.addEventListener("keydown", cb);
-    document.addEventListener("keyup", resetMoveType);
-    document.addEventListener("mousedown", mouseDownHandler);
-    document.addEventListener("mouseup", mouseUpHandler);
+    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("keyup", onKeyUp);
+    document.addEventListener("mousedown", onMouseDown);
+    document.addEventListener("mouseup", onMouseUp);
 
     return () => {
-      document.removeEventListener("keydown", cb);
-      document.removeEventListener("keyup", resetMoveType);
-      document.removeEventListener("mousedown", mouseDownHandler);
-      document.removeEventListener("mouseup", mouseUpHandler);
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("keyup", onKeyUp);
+      document.removeEventListener("mousedown", onMouseDown);
+      document.removeEventListener("mouseup", onMouseUp);
     };
   }, []);
 

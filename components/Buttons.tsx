@@ -52,7 +52,7 @@ const Buttons = ({ environment }: ButtonsProps) => {
 
   const reset = (clearBoard: boolean) => {
     if (clearBoard) {
-      setBoard(() => emptyBoard);
+      setBoard(emptyBoard);
     } else {
       resetBoard();
     }

@@ -6,6 +6,6 @@
   margin-top: 5px;
 }
 
-.board > div {
+.board .game {
   cursor: pointer;
 }

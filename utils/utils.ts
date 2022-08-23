@@ -56,3 +56,5 @@ export enum Environment {
   Play,
   Basic,
 }
+
+export class SudokuError extends Error {}

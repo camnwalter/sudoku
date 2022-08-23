@@ -3,6 +3,7 @@ const rows = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 import { useEffect } from "react";
 import { useSudoku } from "../hooks/sudokuContext";
 import { useUndoRedo } from "../hooks/undoRedoContext";
+import useOutsideDetector from "../hooks/useOutsideDetector";
 import styles from "../styles/Board.module.css";
 import { CellData } from "../utils/types";
 import {
@@ -39,8 +40,9 @@ const Board = ({ initial }: BoardProps) => {
     setCorners,
     setCenters,
   } = useSudoku();
-
   const { undo, redo, setMoves } = useUndoRedo();
+
+  const ref = useOutsideDetector(() => setSelected([]));
 
   useEffect(() => {
     if (initial !== undefined) {
@@ -148,63 +150,65 @@ const Board = ({ initial }: BoardProps) => {
   };
 
   return (
-    <div className={styles.board}>
-      {rows.map((row) => (
-        <Row key={row}>
-          {rows.map((col) => {
-            const index = locationToIndex(row, col);
-            return (
-              <Cell
-                key={index}
-                index={index}
-                selected={isSelected(index)}
-                adjacent={isAdjacent(index) || inSame3x3(row, col)}
-                sameNumber={isSameNumber(index)}
-                locked={isLocked(index)}
-                onMouseDown={(e) => handleCellClicked(e, index)}
-                onKeyDown={(e) => {
-                  e.preventDefault();
-                  handleArrowMovements(e);
+    <div className={styles.board} ref={ref}>
+      <div className={styles.game}>
+        {rows.map((row) => (
+          <Row key={row}>
+            {rows.map((col) => {
+              const index = locationToIndex(row, col);
+              return (
+                <Cell
+                  key={index}
+                  index={index}
+                  selected={isSelected(index)}
+                  adjacent={isAdjacent(index) || inSame3x3(row, col)}
+                  sameNumber={isSameNumber(index)}
+                  locked={isLocked(index)}
+                  onMouseDown={(e) => handleCellClicked(e, index)}
+                  onKeyDown={(e) => {
+                    e.preventDefault();
+                    handleArrowMovements(e);
 
-                  if (isLocked(index)) return;
+                    if (isLocked(index)) return;
 
-                  const key = parseInt(e.code.slice(-1));
+                    const key = parseInt(e.code.slice(-1));
 
-                  if (key >= 1 && key <= 9) {
-                    handleNumberPressed(e, key, isShiftDown(e));
-                  } else if (e.key === "Backspace" || e.key === "Delete") {
-                    selected.forEach((i) => {
-                      setNumber(i, null);
-                      setCorners(i, []);
-                      setCenters(i, []);
-                    });
-                  } else if (e.ctrlKey) {
-                    if (e.code === "KeyZ") undo();
-                    if (e.code === "KeyY") redo();
+                    if (key >= 1 && key <= 9) {
+                      handleNumberPressed(e, key, isShiftDown(e));
+                    } else if (e.key === "Backspace" || e.key === "Delete") {
+                      selected.forEach((i) => {
+                        setNumber(i, null);
+                        setCorners(i, []);
+                        setCenters(i, []);
+                      });
+                    } else if (e.ctrlKey) {
+                      if (e.code === "KeyZ") undo();
+                      if (e.code === "KeyY") redo();
+                    }
+                  }}
+                  onMouseOver={() =>
+                    mouseDown &&
+                    setSelected((prev) => [...new Set(prev.concat(index))])
                   }
-                }}
-                onMouseOver={() =>
-                  mouseDown &&
-                  setSelected((prev) => [...new Set(prev.concat(index))])
-                }
-              >
-                {board[index].corners.length > 0 && (
-                  <OverlayText
-                    text={board[index].corners.join(" ")}
-                    type="corner"
-                  />
-                )}
-                {board[index].centers.length > 0 && (
-                  <OverlayText
-                    text={board[index].centers.join("")}
-                    type="center"
-                  />
-                )}
-              </Cell>
-            );
-          })}
-        </Row>
-      ))}
+                >
+                  {board[index].corners.length > 0 && (
+                    <OverlayText
+                      text={board[index].corners.join(" ")}
+                      type="corner"
+                    />
+                  )}
+                  {board[index].centers.length > 0 && (
+                    <OverlayText
+                      text={board[index].centers.join("")}
+                      type="center"
+                    />
+                  )}
+                </Cell>
+              );
+            })}
+          </Row>
+        ))}
+      </div>
       <RemainingNumbers onMouseDown={handleNumberPressed} />
     </div>
   );

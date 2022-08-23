@@ -1,0 +1,22 @@
+.overlayText {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  font-size: 0.75rem;
+  width: 100%;
+}
+
+.corner {
+  width: 100%;
+  flex: none;
+  word-spacing: 0.5rem;
+}
+
+.center {
+  width: 100%;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -100%;
+}

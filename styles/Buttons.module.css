@@ -1,0 +1,26 @@
+.buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.buttons button {
+  background-color: #aaa;
+  padding: 5px 10px;
+  color: black;
+  border: 2px solid black;
+  border-radius: 5px;
+  float: center;
+  margin: 3px;
+  cursor: pointer;
+}
+
+.buttons button:hover {
+  background-color: #c5c5c5;
+}
+
+.buttons button:disabled {
+  background-color: #555;
+  color: #eee;
+}

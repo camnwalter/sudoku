@@ -1,0 +1,29 @@
+.adjacent {
+  background-color: #ddd;
+}
+
+.sameNumber {
+  background-color: #aaa;
+}
+
+.selected {
+  background-color: #777;
+}
+
+.locked {
+  color: blue;
+}
+
+.cell {
+  display: flex;
+  justify-content: center;
+  width: 50px;
+  aspect-ratio: 1 / 1;
+  border: 1px solid black;
+  flex-flow: nowrap;
+}
+
+.cell > span {
+  align-self: center;
+  font-size: 30px;
+}

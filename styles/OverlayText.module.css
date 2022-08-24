@@ -16,7 +16,10 @@
   width: 100%;
   flex: none;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+}
+
+.center:not(:only-of-type) {
   margin-left: -100%;
 }

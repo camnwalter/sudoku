@@ -8,7 +8,7 @@ const Play: NextPage = () => {
   return (
     <div>
       <Timer />
-      <Board />
+      <Board environment={Environment.Basic} />
       <Buttons environment={Environment.Basic} />
     </div>
   );

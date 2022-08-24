@@ -23,7 +23,7 @@
   flex-flow: nowrap;
 }
 
-.cell span {
+.cell > span {
   align-self: center;
   font-size: 30px;
 }

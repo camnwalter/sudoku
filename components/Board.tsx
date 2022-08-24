@@ -8,6 +8,7 @@ import styles from "../styles/Board.module.css";
 import { CellData } from "../utils/types";
 import {
   deepClone,
+  Environment,
   isShiftDown,
   locationToIndex,
   MoveTypes,
@@ -20,9 +21,10 @@ import Row from "./Row";
 
 interface BoardProps {
   initial?: CellData[];
+  environment: Environment;
 }
 
-const Board = ({ initial }: BoardProps) => {
+const Board = ({ initial, environment }: BoardProps) => {
   const {
     board,
     setBoard,
@@ -30,6 +32,7 @@ const Board = ({ initial }: BoardProps) => {
     setSelected,
     mouseDown,
     moveType,
+    setInitialBoard,
 
     isSelected,
     isSameNumber,
@@ -47,6 +50,7 @@ const Board = ({ initial }: BoardProps) => {
   useEffect(() => {
     if (initial !== undefined) {
       setBoard(initial);
+      setInitialBoard(initial);
     }
   }, [initial, setBoard]);
 
@@ -60,7 +64,10 @@ const Board = ({ initial }: BoardProps) => {
     selected.forEach((index) => {
       const { centers, corners, number } = tempBoard[index];
 
-      if (moveType.current === MoveTypes.Number) {
+      if (
+        environment === Environment.Create ||
+        moveType.current === MoveTypes.Number
+      ) {
         tempBoard[index].number = key;
         tempBoard[index].corners = [];
         tempBoard[index].centers = [];

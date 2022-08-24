@@ -4,17 +4,17 @@
   align-items: center;
 }
 
-.row:nth-child(3n + 1) div {
+.row:nth-child(3n + 1) > div {
   border-top: 3px solid black;
 }
-.row:last-child div {
+.row:last-child > div {
   border-bottom: 3px solid black;
 }
 
-.row div:nth-child(3n) {
+.row > div:nth-child(3n) {
   border-right: 3px solid black;
 }
 
-.row div:first-child {
+.row > div:first-child {
   border-left: 3px solid black;
 }

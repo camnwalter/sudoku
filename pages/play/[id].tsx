@@ -23,7 +23,7 @@ const Id = () => {
   return (
     <>
       <Timer />
-      <Board initial={data} />
+      <Board initial={data} environment={Environment.Play} />
       <Buttons environment={Environment.Play} />
     </>
   );

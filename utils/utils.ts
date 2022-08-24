@@ -1,4 +1,6 @@
+import { NextRouter } from "next/router";
 import React from "react";
+import { CellData } from "./types";
 
 export const SIZE = 9;
 
@@ -58,3 +60,22 @@ export enum Environment {
 }
 
 export class SudokuError extends Error {}
+
+export const createBoard = (board: CellData[], router: NextRouter) => {
+  fetch("api/games", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(
+      board.map((cell) => ({
+        ...cell,
+        locked: cell.number !== null,
+      }))
+    ),
+  })
+    .then((res) => res.json())
+    .then(({ uuid }) => {
+      router.push(`/play/${uuid}`);
+    });
+};

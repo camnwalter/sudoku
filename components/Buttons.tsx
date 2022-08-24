@@ -6,7 +6,7 @@ import { useTime } from "../hooks/timeContext";
 import { useUndoRedo } from "../hooks/undoRedoContext";
 import styles from "../styles/Buttons.module.css";
 import { CellData } from "../utils/types";
-import { deepClone, Environment, MoveTypes } from "../utils/utils";
+import { createBoard, deepClone, Environment, MoveTypes } from "../utils/utils";
 import Row from "./Row";
 
 interface ButtonsProps {
@@ -35,19 +35,17 @@ const Buttons = ({ environment }: ButtonsProps) => {
 
     const { puzzle, solution } = getSudoku(difficulty);
 
+    const copy = deepClone(board) as CellData[];
+
     [...puzzle].forEach((char, i) => {
-      setBoard((prev) => {
-        prev[i].solution = parseInt(solution[i]);
-        return prev;
-      });
+      copy[i].solution = parseInt(solution[i]);
       if (char === "-") return;
 
-      setBoard((prev) => {
-        prev[i].number = parseInt(char);
-        prev[i].locked = true;
-        return prev;
-      });
+      copy[i].number = parseInt(char);
+      copy[i].locked = true;
     });
+
+    createBoard(copy, router);
   };
 
   const reset = (clearBoard: boolean) => {
@@ -91,22 +89,7 @@ const Buttons = ({ environment }: ButtonsProps) => {
           <button
             onClick={() => {
               const copy = deepClone(board) as CellData[];
-              fetch("api/games", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(
-                  copy.map((cell) => ({
-                    ...cell,
-                    locked: cell.number !== null,
-                  }))
-                ),
-              })
-                .then((res) => res.json())
-                .then(({ uuid }) => {
-                  router.push(`/play/${uuid}`);
-                });
+              createBoard(copy, router);
             }}
           >
             {"Save Board"}

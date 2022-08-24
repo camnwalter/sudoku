@@ -6,7 +6,7 @@ import { Environment } from "../utils/utils";
 const Create: NextPage = () => {
   return (
     <>
-      <Board />
+      <Board environment={Environment.Create} />
       <Buttons environment={Environment.Create} />
     </>
   );

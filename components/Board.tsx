@@ -52,7 +52,7 @@ const Board = ({ initial, environment }: BoardProps) => {
       setBoard(initial);
       setInitialBoard(initial);
     }
-  }, [initial, setBoard]);
+  }, [initial, setBoard, setInitialBoard]);
 
   const handleNumberPressed = (
     e: React.KeyboardEvent<HTMLDivElement> | React.MouseEvent<HTMLDivElement>,

@@ -73,9 +73,8 @@ interface SudokuProviderProps {
 export const SudokuProvider = ({ children }: SudokuProviderProps) => {
   const emptyBoard = Array(SIZE ** 2)
     .fill(null)
-    .map(() => ({
+    .map<CellData>(() => ({
       number: null,
-      solution: -1,
       centers: [],
       corners: [],
       locked: false,

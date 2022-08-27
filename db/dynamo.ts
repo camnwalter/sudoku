@@ -62,3 +62,8 @@ export const deleteGame = async (id: string) => {
   };
   return dynamo.delete(params).promise();
 };
+
+export const deleteAllGames = async () => {
+  const games = await getGames();
+  Object.keys(games).forEach(deleteGame);
+};

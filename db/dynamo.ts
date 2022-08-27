@@ -1,7 +1,6 @@
 import AWS from "aws-sdk";
 import { config } from "dotenv";
 import { CellData } from "../utils/types";
-import { SudokuError } from "../utils/utils";
 config();
 
 AWS.config.update({
@@ -13,7 +12,7 @@ AWS.config.update({
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const TABLE_NAME = "sudoku";
 
-export const getGames = async () => {
+export const getGames = async (): Promise<Record<string, CellData[]>> => {
   const params = {
     TableName: TABLE_NAME,
   };
@@ -36,7 +35,7 @@ export const addGame = async (id: string, game: CellData[]) => {
   return dynamo.put(params).promise();
 };
 
-export const getGame = async (id: string) => {
+export const getGame = async (id: string): Promise<CellData[] | undefined> => {
   const params = {
     TableName: TABLE_NAME,
     Key: {
@@ -46,11 +45,7 @@ export const getGame = async (id: string) => {
 
   const { Item } = await dynamo.get(params).promise();
 
-  if (Item?.L !== undefined) {
-    return Item.L;
-  }
-
-  throw new SudokuError("List is not defined!");
+  return Item?.L;
 };
 
 export const deleteGame = async (id: string) => {

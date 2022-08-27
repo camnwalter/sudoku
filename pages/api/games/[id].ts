@@ -15,6 +15,8 @@ export default async function gameHandler(
       const game = await getGame(id as string);
       if (Array.isArray(game)) {
         res.status(200).json(game);
+      } else {
+        res.status(404).json({ message: "404 Not Found" });
       }
       break;
     default:

@@ -59,8 +59,6 @@ export enum Environment {
   Basic,
 }
 
-export class SudokuError extends Error {}
-
 export const createBoard = (board: CellData[], router: NextRouter) => {
   fetch("api/games", {
     method: "POST",

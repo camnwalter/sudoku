@@ -18,5 +18,12 @@ export default async function gameHandler(
       const data = await getGames();
       res.status(200).json(data);
       break;
+    default:
+      res
+        .status(405)
+        .end(
+          "Unsupported operation! /api/games is only accessible via GET or POST"
+        );
+      break;
   }
 }

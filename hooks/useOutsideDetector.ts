@@ -5,10 +5,14 @@ const useOutsideDetector = (callback: () => void) => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      // TODO: When pressing the buttons also don't reset the state.
+      const target = event.target as Element;
       if (
-        !ref.current?.children[0].contains(event.target as Element) &&
-        !ref.current?.children[1].contains(event.target as Element)
+        ![...(ref.current?.children ?? [])].some((child) =>
+          child.contains(target)
+        ) &&
+        ![...(ref.current?.parentElement?.lastChild?.childNodes ?? [])].some(
+          (child) => child.contains(target)
+        )
       ) {
         callback();
       }

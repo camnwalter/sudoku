@@ -37,7 +37,7 @@ const Buttons = ({ environment }: ButtonsProps) => {
 
   const router = useRouter();
 
-  const generateBoard = (difficulty: Difficulty) => () => {
+  const generateBoard = (difficulty: Difficulty) => async () => {
     reset(true);
 
     const { puzzle } = getSudoku(difficulty);
@@ -51,7 +51,7 @@ const Buttons = ({ environment }: ButtonsProps) => {
       copy[i].locked = true;
     });
 
-    createBoard(copy, router);
+    await createBoard(copy, router);
   };
 
   const reset = (clearBoard: boolean) => {
@@ -125,9 +125,9 @@ const Buttons = ({ environment }: ButtonsProps) => {
       {environment === Environment.Create ? (
         <Row>
           <button
-            onClick={() => {
+            onClick={async () => {
               const copy = deepClone(board) as CellData[];
-              createBoard(copy, router);
+              await createBoard(copy, router);
             }}
           >
             {"Save Board"}

@@ -59,8 +59,8 @@ export enum Environment {
   Basic,
 }
 
-export const createBoard = (board: CellData[], router: NextRouter) => {
-  fetch("api/games", {
+export const createBoard = async (board: CellData[], router: NextRouter) => {
+  const { uuid } = await fetch("api/games", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -71,9 +71,7 @@ export const createBoard = (board: CellData[], router: NextRouter) => {
         locked: cell.number !== null,
       }))
     ),
-  })
-    .then((res) => res.json())
-    .then(({ uuid }) => {
-      router.push(`/play/${uuid}`);
-    });
+  }).then((res) => res.json());
+
+  router.push(`/play/${uuid}`);
 };

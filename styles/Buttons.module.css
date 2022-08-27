@@ -8,7 +8,6 @@
 .buttons button {
   background-color: #aaa;
   padding: 5px 10px;
-  color: black;
   border: 2px solid black;
   border-radius: 5px;
   float: center;
@@ -23,4 +22,19 @@
 .buttons button:disabled {
   background-color: #555;
   color: #eee;
+}
+
+@media (prefers-color-scheme: dark) {
+  .buttons button {
+    background-color: #555;
+  }
+
+  .buttons button:hover {
+    background-color: #3a3a3a;
+  }
+
+  .buttons button:disabled {
+    background-color: #aaa;
+    color: #111;
+  }
 }

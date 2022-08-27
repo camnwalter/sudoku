@@ -6,7 +6,14 @@ import { useTime } from "../hooks/timeContext";
 import { useUndoRedo } from "../hooks/undoRedoContext";
 import styles from "../styles/Buttons.module.css";
 import { CellData } from "../utils/types";
-import { createBoard, deepClone, Environment, MoveTypes } from "../utils/utils";
+import {
+  createBoard,
+  deepClone,
+  Environment,
+  locationToIndex,
+  MoveTypes,
+  SIZE,
+} from "../utils/utils";
 import Row from "./Row";
 
 interface ButtonsProps {
@@ -33,12 +40,11 @@ const Buttons = ({ environment }: ButtonsProps) => {
   const generateBoard = (difficulty: Difficulty) => () => {
     reset(true);
 
-    const { puzzle, solution } = getSudoku(difficulty);
+    const { puzzle } = getSudoku(difficulty);
 
     const copy = deepClone(board) as CellData[];
 
     [...puzzle].forEach((char, i) => {
-      copy[i].solution = parseInt(solution[i]);
       if (char === "-") return;
 
       copy[i].number = parseInt(char);
@@ -62,7 +68,39 @@ const Buttons = ({ environment }: ButtonsProps) => {
   };
 
   const checkBoard = () => {
-    const solved = board.every(({ number, solution }) => number === solution);
+    const isUnique = (arr: number[]) =>
+      arr.every((item, index) => arr.indexOf(item) === index);
+
+    let solved = true;
+    for (let i = 0; i < SIZE; i++) {
+      const row = [];
+      for (let j = 0; j < SIZE; j++) {
+        const { number } = board[locationToIndex(i, j)];
+        if (number === null) {
+          solved = false;
+          break;
+        }
+        row.push(number);
+      }
+      if (!isUnique(row)) {
+        solved = false;
+        break;
+      }
+
+      row.length = 0;
+      for (let j = 0; j < SIZE; j++) {
+        const { number } = board[locationToIndex(j, i)];
+        if (number === null) {
+          solved = false;
+          break;
+        }
+        row.push(number);
+      }
+      if (!isUnique(row)) {
+        solved = false;
+        break;
+      }
+    }
 
     if (solved) {
       alert("Congrats! You solved it!");

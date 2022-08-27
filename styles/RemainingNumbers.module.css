@@ -16,3 +16,9 @@
   width: 2rem;
   cursor: pointer;
 }
+
+@media (prefers-color-scheme: dark) {
+  .remaining {
+    background: #555;
+  }
+}

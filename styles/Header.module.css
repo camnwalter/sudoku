@@ -1,14 +1,16 @@
 .header {
-  left: 0;
-  top: 0;
-  width: 100%;
   display: flex;
   justify-content: space-around;
   align-items: center;
   background-color: #aaa;
-  margin: 5px auto;
 }
 
 .header > div {
   cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+  .header {
+    background-color: #555;
+  }
 }

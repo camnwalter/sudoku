@@ -4,7 +4,7 @@ import Board from "../../components/Board";
 import Buttons from "../../components/Buttons";
 import { Timer } from "../../components/Timer";
 import styles from "../../styles/PlayId.module.css";
-import { Environment } from "../../utils/utils";
+import { Environment, SudokuError } from "../../utils/utils";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -16,7 +16,7 @@ const Id = () => {
     errorRetryCount: 0,
   });
 
-  if (error !== undefined)
+  if (error !== undefined && !(error instanceof SudokuError))
     return <div className={styles.error}>Failed to load game</div>;
   if (!data) return <div className={styles.error}>Loading...</div>;
 

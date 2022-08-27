@@ -1,3 +1,13 @@
+.cell {
+  display: flex;
+  justify-content: center;
+  width: 50px;
+  aspect-ratio: 1 / 1;
+  border: 1px solid black;
+  flex-flow: nowrap;
+  background-color: white;
+}
+
 .adjacent {
   background-color: #ddd;
 }
@@ -14,16 +24,27 @@
   color: blue;
 }
 
-.cell {
-  display: flex;
-  justify-content: center;
-  width: 50px;
-  aspect-ratio: 1 / 1;
-  border: 1px solid black;
-  flex-flow: nowrap;
-}
-
 .cell > span {
   align-self: center;
   font-size: 30px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .cell {
+    color: black;
+    background-color: #888;
+    color: white;
+  }
+
+  .adjacent {
+    background-color: #666;
+  }
+
+  .sameNumber {
+    background-color: #565656;
+  }
+
+  .selected {
+    background-color: #333;
+  }
 }

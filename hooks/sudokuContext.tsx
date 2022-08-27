@@ -122,19 +122,19 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
         }));
     };
 
-    const onMouseDown = () => setMouseDown(true);
-    const onMouseUp = () => setMouseDown(false);
+    const onPointerDown = () => setMouseDown(true);
+    const onPointerUp = () => setMouseDown(false);
 
     document.addEventListener("keydown", onKeyDown);
     document.addEventListener("keyup", onKeyUp);
-    document.addEventListener("mousedown", onMouseDown);
-    document.addEventListener("mouseup", onMouseUp);
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("pointerup", onPointerUp);
 
     return () => {
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("keyup", onKeyUp);
-      document.removeEventListener("mousedown", onMouseDown);
-      document.removeEventListener("mouseup", onMouseUp);
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("mouseup", onPointerUp);
     };
   }, []);
 

@@ -9,9 +9,9 @@ interface CellProps {
   adjacent: boolean;
   sameNumber: boolean;
   locked: boolean;
-  onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void;
-  onMouseOver: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onPointerEnter: (e: React.PointerEvent<HTMLDivElement>) => void;
 }
 
 const Cell = ({
@@ -21,9 +21,9 @@ const Cell = ({
   adjacent,
   sameNumber,
   locked,
-  onMouseDown,
+  onPointerDown,
   onKeyDown,
-  onMouseOver,
+  onPointerEnter,
 }: CellProps) => {
   const { board } = useSudoku();
   return (
@@ -36,9 +36,9 @@ const Cell = ({
       ].join(" ")}
       id={index.toString()}
       tabIndex={-1}
-      onMouseDown={onMouseDown}
+      onPointerDown={onPointerDown}
       onKeyDown={onKeyDown}
-      onMouseOver={onMouseOver}
+      onPointerEnter={onPointerEnter}
     >
       <span>{board[index].number}</span>
       {children}

@@ -16,6 +16,8 @@ a {
 * {
   box-sizing: border-box;
   user-select: none;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 *:focus {

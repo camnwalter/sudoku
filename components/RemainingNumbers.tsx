@@ -3,14 +3,14 @@ import { SIZE } from "../utils/utils";
 import styles from "../styles/RemainingNumbers.module.css";
 
 interface RemainingNumbersProps {
-  onMouseDown: (
-    e: React.MouseEvent<HTMLDivElement>,
+  onPointerDown: (
+    e: React.PointerEvent<HTMLDivElement>,
     key: number,
     shift: boolean
   ) => void;
 }
 
-const RemainingNumbers = ({ onMouseDown }: RemainingNumbersProps) => {
+const RemainingNumbers = ({ onPointerDown }: RemainingNumbersProps) => {
   const { board, selected, setSelected, isLocked } = useSudoku();
 
   const remainingNumbers = () => {
@@ -34,7 +34,7 @@ const RemainingNumbers = ({ onMouseDown }: RemainingNumbersProps) => {
             <div
               className={styles.number}
               key={num}
-              onMouseDown={(e) => {
+              onPointerDown={(e) => {
                 e.preventDefault();
 
                 if (selected.length === 0 || selected.some(isLocked)) {
@@ -54,7 +54,7 @@ const RemainingNumbers = ({ onMouseDown }: RemainingNumbersProps) => {
                   return;
                 }
 
-                onMouseDown(e, num, e.shiftKey);
+                onPointerDown(e, num, e.shiftKey);
               }}
             >
               {num}

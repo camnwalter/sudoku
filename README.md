@@ -1,34 +1,38 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Sudoku
 
-## Getting Started
+A high quality sudoku website with [trillions](https://github.com/petewritescode/sudoku-gen#how-it-works)
+of possible puzzles, or if that's not enough, you can create your own! This
+project was inspired by Cracking the Cryptic's own sudoku [website](https://cracking-the-cryptic.web.app/).
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+# Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Play a random puzzle or create your own!
+- See how fast you can solve the puzzle!
+- Challenge your friends to your puzzle by sending them the url!
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+# Controls
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+- Enter numbers 1 through 9 in each of the boxes.
+- To add corner notes, either click on the `Corner` button, or press `control`
+  while entering a number.
+- To add center notes, either click on the `Center` button, or press `shift`
+  while entering a number.
+- Undo and redo your moves by pressing `Undo`/`Redo` or `control z`/`y`
+- Holding `control` and clicking on multiple cells will select all which were
+  clicked
+- Dragging around cells will highlight the cells which were dragged over
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+---
 
-## Learn More
+# Contributing
 
-To learn more about Next.js, take a look at the following resources:
+Please open a [new issue](https://github.com/Squagward/sudoku/issues/new) if you
+would like new features or encounter any bugs. Please be specific, as it makes
+it much easier to get the intended implementation.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Pull requests are welcome! All that is required is to stick to the format as
+much as possible.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Thank you!

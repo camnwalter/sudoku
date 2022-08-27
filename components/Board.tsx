@@ -55,7 +55,7 @@ const Board = ({ initial, environment }: BoardProps) => {
   }, [initial, setBoard, setInitialBoard]);
 
   const handleNumberPressed = (
-    e: React.KeyboardEvent<HTMLDivElement> | React.MouseEvent<HTMLDivElement>,
+    e: React.KeyboardEvent<HTMLDivElement> | React.PointerEvent<HTMLDivElement>,
     key: number,
     shift: boolean
   ) => {
@@ -146,7 +146,7 @@ const Board = ({ initial, environment }: BoardProps) => {
   };
 
   const handleCellClicked = (
-    e: React.MouseEvent<HTMLDivElement>,
+    e: React.PointerEvent<HTMLDivElement>,
     index: number
   ) => {
     if (e.ctrlKey) {
@@ -171,7 +171,10 @@ const Board = ({ initial, environment }: BoardProps) => {
                   adjacent={isAdjacent(index) || inSame3x3(row, col)}
                   sameNumber={isSameNumber(index)}
                   locked={isLocked(index)}
-                  onMouseDown={(e) => handleCellClicked(e, index)}
+                  onPointerDown={(e) => {
+                    handleCellClicked(e, index);
+                    (e.target as Element).releasePointerCapture(e.pointerId);
+                  }}
                   onKeyDown={(e) => {
                     e.preventDefault();
                     handleArrowMovements(e);
@@ -193,7 +196,7 @@ const Board = ({ initial, environment }: BoardProps) => {
                       if (e.code === "KeyY") redo();
                     }
                   }}
-                  onMouseOver={() =>
+                  onPointerEnter={() =>
                     mouseDown &&
                     setSelected((prev) => [...new Set(prev.concat(index))])
                   }
@@ -216,7 +219,7 @@ const Board = ({ initial, environment }: BoardProps) => {
           </Row>
         ))}
       </div>
-      <RemainingNumbers onMouseDown={handleNumberPressed} />
+      <RemainingNumbers onPointerDown={handleNumberPressed} />
     </div>
   );
 };

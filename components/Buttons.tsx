@@ -26,11 +26,15 @@ const Buttons = ({ environment }: ButtonsProps) => {
     emptyBoard,
     board,
     setBoard,
+    selected,
     setSelected,
     setWon,
     moveType,
     setMoveType,
     resetBoard,
+    setNumber,
+    setCorners,
+    setCenters,
   } = useSudoku();
   const { setTime } = useTime();
   const { resetMoves, undo, redo } = useUndoRedo();
@@ -112,6 +116,19 @@ const Buttons = ({ environment }: ButtonsProps) => {
 
   return (
     <div className={styles.buttons}>
+      <Row>
+        <button
+          onClick={() => {
+            selected.forEach((i) => {
+              setNumber(i, null);
+              setCorners(i, []);
+              setCenters(i, []);
+            });
+          }}
+        >
+          Delete
+        </button>
+      </Row>
       <Row>
         <button onClick={() => reset(false)}>Reset</button>
         {environment !== Environment.Create && (

@@ -4,7 +4,6 @@
   width: 50px;
   aspect-ratio: 1 / 1;
   border: 1px solid black;
-  flex-flow: nowrap;
   background-color: white;
 }
 
@@ -46,5 +45,16 @@
 
   .selected {
     background-color: #333;
+  }
+}
+
+@media (max-width: 768px) {
+  .cell {
+    width: calc(100vmin / 9);
+  }
+
+  .cell > span {
+    align-self: center;
+    font-size: 7vmin;
   }
 }

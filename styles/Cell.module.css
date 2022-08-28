@@ -46,6 +46,10 @@
   .selected {
     background-color: #333;
   }
+
+  .locked {
+    color: blue;
+  }
 }
 
 @media (max-width: 768px) {

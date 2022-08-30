@@ -41,7 +41,7 @@ const Buttons = ({ environment }: ButtonsProps) => {
 
   const router = useRouter();
 
-  const generateBoard = (difficulty: Difficulty) => async () => {
+  const generateBoard = (difficulty: Difficulty) => () => {
     reset(true);
 
     const { puzzle } = getSudoku(difficulty);
@@ -55,10 +55,10 @@ const Buttons = ({ environment }: ButtonsProps) => {
       copy[i].locked = true;
     });
 
-    await createBoard(copy, router);
+    createBoard(copy, router);
   };
 
-  const reset = (clearBoard: boolean) => {
+  const reset = (clearBoard: boolean) => () => {
     if (clearBoard) {
       setBoard(emptyBoard);
     } else {
@@ -71,7 +71,9 @@ const Buttons = ({ environment }: ButtonsProps) => {
     setMoveType({ current: MoveTypes.Number, previous: MoveTypes.Number });
   };
 
-  const checkBoard = () => {
+  const checkBoard = (e: React.PointerEvent) => {
+    e.preventDefault();
+
     const isUnique = (arr: number[]) =>
       arr.every((item, index) => arr.indexOf(item) === index);
 
@@ -118,7 +120,9 @@ const Buttons = ({ environment }: ButtonsProps) => {
     <div className={styles.buttons}>
       <Row>
         <button
-          onClick={() => {
+          onPointerDown={(e) => {
+            e.preventDefault();
+
             selected.forEach((i) => {
               setNumber(i, null);
               setCorners(i, []);
@@ -130,21 +134,21 @@ const Buttons = ({ environment }: ButtonsProps) => {
         </button>
       </Row>
       <Row>
-        <button onClick={() => reset(false)}>Reset</button>
+        <button onPointerDown={reset(false)}>Reset</button>
         {environment !== Environment.Create && (
           <>
-            <button onClick={checkBoard}>Check</button>
-            <button onClick={undo}>Undo</button>
-            <button onClick={redo}>Redo</button>
+            <button onPointerDown={checkBoard}>Check</button>
+            <button onPointerDown={undo}>Undo</button>
+            <button onPointerDown={redo}>Redo</button>
           </>
         )}
       </Row>
       {environment === Environment.Create ? (
         <Row>
           <button
-            onClick={async () => {
+            onPointerDown={() => {
               const copy = deepClone(board) as CellData[];
-              await createBoard(copy, router);
+              createBoard(copy, router);
             }}
           >
             {"Save Board"}
@@ -163,34 +167,40 @@ const Buttons = ({ environment }: ButtonsProps) => {
 
           <Row>
             <button
-              onClick={() =>
+              onPointerDown={(e) => {
+                e.preventDefault();
+
                 setMoveType(() => ({
                   previous: MoveTypes.Number,
                   current: MoveTypes.Number,
-                }))
-              }
+                }));
+              }}
               disabled={moveType.current === MoveTypes.Number}
             >
               Normal
             </button>
             <button
-              onClick={() =>
+              onPointerDown={(e) => {
+                e.preventDefault();
+
                 setMoveType(() => ({
                   previous: MoveTypes.Corner,
                   current: MoveTypes.Corner,
-                }))
-              }
+                }));
+              }}
               disabled={moveType.current === MoveTypes.Corner}
             >
               Corner
             </button>
             <button
-              onClick={() =>
+              onPointerDown={(e) => {
+                e.preventDefault();
+
                 setMoveType(() => ({
                   previous: MoveTypes.Center,
                   current: MoveTypes.Center,
-                }))
-              }
+                }));
+              }}
               disabled={moveType.current === MoveTypes.Center}
             >
               Center

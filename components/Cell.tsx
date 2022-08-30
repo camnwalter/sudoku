@@ -9,9 +9,9 @@ interface CellProps {
   adjacent: boolean;
   sameNumber: boolean;
   locked: boolean;
-  onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void;
-  onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void;
-  onPointerEnter: (e: React.PointerEvent<HTMLDivElement>) => void;
+  onPointerDown: (e: React.PointerEvent) => void;
+  onKeyDown: (e: React.KeyboardEvent) => void;
+  onPointerEnter: (e: React.PointerEvent) => void;
 }
 
 const Cell = ({

@@ -55,13 +55,15 @@ const Board = ({ initial, environment }: BoardProps) => {
   }, [initial, setBoard, setInitialBoard]);
 
   const handleNumberPressed = (
-    e: React.KeyboardEvent<HTMLDivElement> | React.PointerEvent<HTMLDivElement>,
+    e: React.KeyboardEvent | React.PointerEvent,
     key: number,
     shift: boolean
   ) => {
     const tempBoard = deepClone(board) as CellData[];
 
     selected.forEach((index) => {
+      if (isLocked(index)) return;
+
       const { centers, corners, number } = tempBoard[index];
 
       if (
@@ -92,7 +94,7 @@ const Board = ({ initial, environment }: BoardProps) => {
     setBoard(tempBoard);
   };
 
-  const handleArrowMovements = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const handleArrowMovements = (e: React.KeyboardEvent) => {
     const target = e.target as Element;
 
     selected.forEach((actualSelected, index) => {
@@ -145,10 +147,7 @@ const Board = ({ initial, environment }: BoardProps) => {
     });
   };
 
-  const handleCellClicked = (
-    e: React.PointerEvent<HTMLDivElement>,
-    index: number
-  ) => {
+  const handleCellClicked = (e: React.PointerEvent, index: number) => {
     if (e.ctrlKey) {
       setSelected((prev) => [...new Set(prev.concat(index))]);
     } else {
@@ -178,8 +177,6 @@ const Board = ({ initial, environment }: BoardProps) => {
                   onKeyDown={(e) => {
                     e.preventDefault();
                     handleArrowMovements(e);
-
-                    if (isLocked(index)) return;
 
                     const key = parseInt(e.code.slice(-1));
 

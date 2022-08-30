@@ -5,8 +5,8 @@ import { useSudoku } from "./sudokuContext";
 
 interface UndoRedoContextProps {
   resetMoves: () => void;
-  undo: () => void;
-  redo: () => void;
+  undo: (e?: React.PointerEvent) => void;
+  redo: (e?: React.PointerEvent) => void;
   setMoves: (value: CellData[]) => void;
 }
 
@@ -42,7 +42,9 @@ export const UndoRedoProvider = ({ children }: UseUndoProviderProps) => {
     setIndex(0);
   };
 
-  const undo = () => {
+  const undo = (e?: React.PointerEvent) => {
+    e?.preventDefault();
+
     if (index === 0) {
       alert("Cannot undo! No moves to undo.");
       return;
@@ -51,7 +53,9 @@ export const UndoRedoProvider = ({ children }: UseUndoProviderProps) => {
     setIndex((prev) => prev - 1);
   };
 
-  const redo = () => {
+  const redo = (e?: React.PointerEvent) => {
+    e?.preventDefault();
+
     if (index >= moves.length - 1) {
       alert("Cannot redo! No moves to redo.");
       return;

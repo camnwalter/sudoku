@@ -6,7 +6,7 @@ export const SIZE = 9;
 
 export const locationToIndex = (row: number, col: number) => row * SIZE + col;
 
-export const isShiftDown = (e: React.KeyboardEvent<HTMLDivElement>) =>
+export const isShiftDown = (e: React.KeyboardEvent) =>
   e.shiftKey ||
   (e.code.startsWith("Numpad") &&
     (e.key.startsWith("Arrow") ||
@@ -59,8 +59,8 @@ export enum Environment {
   Basic,
 }
 
-export const createBoard = async (board: CellData[], router: NextRouter) => {
-  const { uuid } = await fetch("api/games", {
+export const createBoard = (board: CellData[], router: NextRouter) => {
+  fetch("api/games", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -71,7 +71,9 @@ export const createBoard = async (board: CellData[], router: NextRouter) => {
         locked: cell.number !== null,
       }))
     ),
-  }).then((res) => res.json());
-
-  router.push(`/play/${uuid}`);
+  })
+    .then((res) => res.json())
+    .then(({ uuid }) => {
+      router.push(`/play/${uuid}`);
+    });
 };

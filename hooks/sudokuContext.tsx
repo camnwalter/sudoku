@@ -168,7 +168,7 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
     );
 
   const setNumber = (index: number, value: BoardNumber) => {
-    if (index === -1) return;
+    if (index === -1 || isLocked(index)) return;
 
     setBoard((prev) => {
       prev[index].number = value;
@@ -178,7 +178,7 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
   };
 
   const setCorners = (index: number, corners: number[]) => {
-    if (index === -1) return;
+    if (index === -1 || isLocked(index)) return;
 
     setBoard((prev) =>
       prev.map((cellData, i) => ({
@@ -189,7 +189,7 @@ export const SudokuProvider = ({ children }: SudokuProviderProps) => {
   };
 
   const setCenters = (index: number, centers: number[]) => {
-    if (index === -1) return;
+    if (index === -1 || isLocked(index)) return;
 
     setBoard((prev) =>
       prev.map((cellData, i) => ({

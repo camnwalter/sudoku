@@ -3,11 +3,7 @@ import { SIZE } from "../utils/utils";
 import styles from "../styles/RemainingNumbers.module.css";
 
 interface RemainingNumbersProps {
-  onPointerDown: (
-    e: React.PointerEvent<HTMLDivElement>,
-    key: number,
-    shift: boolean
-  ) => void;
+  onPointerDown: (e: React.PointerEvent, key: number, shift: boolean) => void;
 }
 
 const RemainingNumbers = ({ onPointerDown }: RemainingNumbersProps) => {
@@ -37,7 +33,7 @@ const RemainingNumbers = ({ onPointerDown }: RemainingNumbersProps) => {
               onPointerDown={(e) => {
                 e.preventDefault();
 
-                if (selected.length === 0 || selected.some(isLocked)) {
+                if (selected.length === 0 || selected.every(isLocked)) {
                   setSelected(() => {
                     const index = board.findIndex(
                       ({ number }) => number === num

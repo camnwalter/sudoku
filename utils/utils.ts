@@ -79,7 +79,7 @@ export const getUniqueCode = (length: number) => {
   let string = "";
 
   for (let i = 0; i < length; i++) {
-    string += chars[Math.round(Math.random() * chars.length)];
+    string += chars[Math.floor(Math.random() * chars.length)];
   }
 
   return string;

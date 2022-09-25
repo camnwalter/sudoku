@@ -65,15 +65,22 @@ export const createBoard = (board: CellData[], router: NextRouter) => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(
-      board.map((cell) => ({
-        ...cell,
-        locked: cell.number !== null,
-      }))
-    ),
+    body: JSON.stringify(board.map((cell) => cell.number)),
   })
     .then((res) => res.json())
     .then(({ uuid }) => {
       router.push(`/play/${uuid}`);
     });
+};
+
+const chars = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789";
+
+export const getUniqueCode = (length: number) => {
+  let string = "";
+
+  for (let i = 0; i < length; i++) {
+    string += chars[Math.round(Math.random() * chars.length)];
+  }
+
+  return string;
 };

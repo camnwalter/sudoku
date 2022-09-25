@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getGame } from "../../../db/dynamo";
+import { getGame } from "../../../db/redis";
 
 export default async function gameHandler(
   req: NextApiRequest,
@@ -9,15 +9,14 @@ export default async function gameHandler(
     method,
     query: { id },
   } = req;
-
   switch (method) {
     case "GET":
       const game = await getGame(id as string);
-      if (Array.isArray(game)) {
-        res.status(200).json(game);
-      } else {
+      if (game === null) {
         res.status(404).json({ message: "404 Not Found" });
+        return;
       }
+      res.status(200).json(game);
       break;
     default:
       res

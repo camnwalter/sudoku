@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { v4 } from "uuid";
-import { addGame, getGames } from "../../../db/dynamo";
+import { addGame } from "../../../db/redis";
+import { BoardNumber } from "../../../utils/types";
 
 export default async function gameHandler(
   req: NextApiRequest,
@@ -10,13 +10,8 @@ export default async function gameHandler(
 
   switch (method) {
     case "POST":
-      const uuid = v4();
-      addGame(uuid, body);
+      const uuid = await addGame(body as BoardNumber[]);
       res.status(200).json({ uuid });
-      break;
-    case "GET":
-      const data = await getGames();
-      res.status(200).json(data);
       break;
     default:
       res

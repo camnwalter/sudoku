@@ -33,6 +33,7 @@ const Board = ({ initial, environment }: BoardProps) => {
     mouseDown,
     moveType,
     setInitialBoard,
+    won,
 
     isSelected,
     isSameNumber,
@@ -177,6 +178,8 @@ const Board = ({ initial, environment }: BoardProps) => {
                   onKeyDown={(e) => {
                     e.preventDefault();
                     handleArrowMovements(e);
+
+                    if (won) return;
 
                     const key = parseInt(e.code.slice(-1));
 

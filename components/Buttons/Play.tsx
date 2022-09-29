@@ -1,4 +1,7 @@
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { useSudoku } from "../../hooks/sudokuContext";
+import { useTime } from "../../hooks/timeContext";
 import { useUndoRedo } from "../../hooks/undoRedoContext";
 import { locationToIndex, MoveTypes, SIZE } from "../../utils/utils";
 import Row from "../Row";
@@ -14,15 +17,16 @@ const PlayButtons = ({ reset }: PlayButtonsProps) => {
     setNumber,
     setCorners,
     setCenters,
+    won,
     setWon,
     moveType,
     setMoveType,
   } = useSudoku();
   const { undo, redo } = useUndoRedo();
+  const { formatTime } = useTime();
+  const router = useRouter();
 
-  const checkBoard = (e: React.PointerEvent) => {
-    e.preventDefault();
-
+  const checkBoard = () => {
     const isUnique = (arr: number[]) =>
       arr.every((item, index) => arr.indexOf(item) === index);
 
@@ -58,14 +62,33 @@ const PlayButtons = ({ reset }: PlayButtonsProps) => {
     }
 
     if (solved) {
-      alert("Congrats! You solved it!");
       setWon(true);
-    } else {
-      alert("Sorry... You messed up somewhere.");
+      // TODO: Make this happen right after the board is updated somehow.
+      alert("Congrats! You solved it!");
     }
   };
 
-  return (
+  useEffect(() => {
+    if (!won) {
+      checkBoard();
+    }
+  });
+
+  const share = () => {
+    navigator.clipboard.writeText(
+      `I solved this Sudoku in ${formatTime()}. Played at https://sudoku.squagward.com${
+        router.asPath
+      }`
+    );
+  };
+
+  return won ? (
+    <Row>
+      <button style={{ fontSize: "larger" }} onClick={share}>
+        Share
+      </button>
+    </Row>
+  ) : (
     <>
       <Row>
         <button
@@ -84,7 +107,6 @@ const PlayButtons = ({ reset }: PlayButtonsProps) => {
         <button onPointerDown={reset(false)}>Reset</button>
       </Row>
       <Row>
-        <button onPointerDown={checkBoard}>Check</button>
         <button onPointerDown={undo}>Undo</button>
         <button onPointerDown={redo}>Redo</button>
       </Row>

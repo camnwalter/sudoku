@@ -5,8 +5,12 @@ import Board from "../../components/Board";
 import Buttons from "../../components/Buttons";
 import { Timer } from "../../components/Timer";
 import styles from "../../styles/PlayId.module.css";
-import { BoardNumber } from "../../utils/types";
+import { Game } from "../../utils/types";
 import { Environment } from "../../utils/utils";
+
+interface BadUrl {
+  message: string;
+}
 
 interface IdProps {
   params: ParsedUrlQuery;
@@ -17,20 +21,17 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 const Id = ({ params }: IdProps) => {
   const { id } = params;
 
-  const { data } = useSwr<BoardNumber[] | Record<string, string>>(
-    `/api/games/${id as string}`,
-    fetcher
-  );
+  const { data } = useSwr<Game | BadUrl>(`/api/games/${id as string}`, fetcher);
 
   if (data === undefined) {
     return <div className={styles.error}>Loading...</div>;
   }
 
-  if (!Array.isArray(data)) {
-    return <div className={styles.error}>{data.message}</div>;
+  if ((data as BadUrl).message !== undefined) {
+    return <div className={styles.error}>{(data as BadUrl).message}</div>;
   }
 
-  const cellData = data.map((cell) => ({
+  const cellData = (data as Game).board.map((cell) => ({
     number: cell,
     corners: [],
     centers: [],

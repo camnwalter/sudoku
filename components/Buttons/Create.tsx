@@ -1,8 +1,8 @@
+import { Button, ButtonGroup, Stack } from "@mui/material";
 import { NextRouter } from "next/router";
 import { useSudoku } from "../../hooks/sudokuContext";
 import { CellData } from "../../utils/types";
 import { createBoard, deepClone } from "../../utils/utils";
-import Row from "../Row";
 
 interface CreateButtonsProps {
   reset: (clearBoard: boolean) => () => void;
@@ -13,9 +13,10 @@ const CreateButtons = ({ reset, router }: CreateButtonsProps) => {
   const { board, selected, setNumber, setCorners, setCenters } = useSudoku();
 
   return (
-    <>
-      <Row>
-        <button
+    <Stack spacing={1}>
+      <ButtonGroup sx={{ justifyContent: "center" }}>
+        <Button
+          variant="contained"
           onPointerDown={(e) => {
             e.preventDefault();
 
@@ -27,20 +28,23 @@ const CreateButtons = ({ reset, router }: CreateButtonsProps) => {
           }}
         >
           Delete
-        </button>
-        <button onPointerDown={reset(false)}>Reset</button>
-      </Row>
-      <Row>
-        <button
+        </Button>
+        <Button variant="contained" onPointerDown={reset(false)}>
+          Reset
+        </Button>
+      </ButtonGroup>
+      <ButtonGroup sx={{ justifyContent: "center" }}>
+        <Button
+          variant="contained"
           onPointerDown={() => {
             const copy = deepClone(board) as CellData[];
-            createBoard(copy, router);
+            createBoard(copy, "unknown", router);
           }}
         >
-          {"Save Board"}
-        </button>
-      </Row>
-    </>
+          Save Board
+        </Button>
+      </ButtonGroup>
+    </Stack>
   );
 };
 

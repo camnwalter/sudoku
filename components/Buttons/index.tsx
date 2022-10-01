@@ -2,7 +2,6 @@ import { useRouter } from "next/router";
 import { useSudoku } from "../../hooks/sudokuContext";
 import { useTime } from "../../hooks/timeContext";
 import { useUndoRedo } from "../../hooks/undoRedoContext";
-import styles from "../../styles/Buttons.module.css";
 import { Environment, MoveTypes } from "../../utils/utils";
 import BasicButtons from "./Basic";
 import CreateButtons from "./Create";
@@ -34,7 +33,7 @@ const Buttons = ({ environment }: ButtonsProps) => {
   };
 
   return (
-    <div className={styles.buttons}>
+    <div>
       {environment === Environment.Create ? (
         <CreateButtons reset={reset} router={router} />
       ) : environment === Environment.Basic ? (

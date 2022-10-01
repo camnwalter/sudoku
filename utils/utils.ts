@@ -1,6 +1,6 @@
 import { NextRouter } from "next/router";
 import React from "react";
-import { CellData } from "./types";
+import { CellData, Difficulty } from "./types";
 
 export const SIZE = 9;
 
@@ -59,13 +59,20 @@ export enum Environment {
   Basic,
 }
 
-export const createBoard = (board: CellData[], router: NextRouter) => {
+export const createBoard = (
+  board: CellData[],
+  difficulty: Difficulty,
+  router: NextRouter
+) => {
   fetch("api/games", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(board.map((cell) => cell.number)),
+    body: JSON.stringify({
+      board: board.map((cell) => cell.number),
+      difficulty,
+    }),
   })
     .then((res) => res.json())
     .then(({ uuid }) => {

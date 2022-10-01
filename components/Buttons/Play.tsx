@@ -1,10 +1,31 @@
+import {
+  Alert,
+  Box,
+  Button,
+  ButtonGroup,
+  Modal,
+  Snackbar,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useSudoku } from "../../hooks/sudokuContext";
 import { useTime } from "../../hooks/timeContext";
 import { useUndoRedo } from "../../hooks/undoRedoContext";
 import { locationToIndex, MoveTypes, SIZE } from "../../utils/utils";
-import Row from "../Row";
+
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 interface PlayButtonsProps {
   reset: (clearBoard: boolean) => () => void;
@@ -25,6 +46,8 @@ const PlayButtons = ({ reset }: PlayButtonsProps) => {
   const { undo, redo } = useUndoRedo();
   const { formatTime } = useTime();
   const router = useRouter();
+  const [shareTextOpen, setShareTextOpen] = useState(false);
+  const [winTextOpen, setWinTextOpen] = useState(false);
 
   const checkBoard = () => {
     const isUnique = (arr: number[]) =>
@@ -63,8 +86,7 @@ const PlayButtons = ({ reset }: PlayButtonsProps) => {
 
     if (solved) {
       setWon(true);
-      // TODO: Make this happen right after the board is updated somehow.
-      alert("Congrats! You solved it!");
+      setWinTextOpen(true);
     }
   };
 
@@ -74,7 +96,8 @@ const PlayButtons = ({ reset }: PlayButtonsProps) => {
     }
   });
 
-  const share = () => {
+  const handleClick = () => {
+    setShareTextOpen(true);
     navigator.clipboard.writeText(
       `I solved this Sudoku in ${formatTime()}. Played at https://sudoku.squagward.com${
         router.asPath
@@ -82,16 +105,52 @@ const PlayButtons = ({ reset }: PlayButtonsProps) => {
     );
   };
 
+  const onTextClose =
+    (callback: () => void) =>
+    (_event?: React.SyntheticEvent | Event, reason?: string) => {
+      if (reason === "clickaway") {
+        return;
+      }
+
+      callback();
+    };
+
   return won ? (
-    <Row>
-      <button style={{ fontSize: "larger" }} onClick={share}>
-        Share
-      </button>
-    </Row>
-  ) : (
     <>
-      <Row>
-        <button
+      <Modal
+        open={winTextOpen}
+        onClose={() => setWinTextOpen(false)}
+        aria-labelledby="modal-modal-title"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Congratulations, you won!
+          </Typography>
+        </Box>
+      </Modal>
+
+      <Button variant="contained" onClick={handleClick}>
+        Share
+      </Button>
+      <Snackbar
+        open={shareTextOpen}
+        autoHideDuration={4000}
+        onClose={onTextClose(() => setShareTextOpen(false))}
+      >
+        <Alert
+          onClose={onTextClose(() => setShareTextOpen(false))}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          Copied text to clipboard
+        </Alert>
+      </Snackbar>
+    </>
+  ) : (
+    <Stack spacing={1}>
+      <ButtonGroup sx={{ justifyContent: "center" }}>
+        <Button
+          variant="contained"
           onPointerDown={(e) => {
             e.preventDefault();
 
@@ -103,15 +162,22 @@ const PlayButtons = ({ reset }: PlayButtonsProps) => {
           }}
         >
           Delete
-        </button>
-        <button onPointerDown={reset(false)}>Reset</button>
-      </Row>
-      <Row>
-        <button onPointerDown={undo}>Undo</button>
-        <button onPointerDown={redo}>Redo</button>
-      </Row>
-      <Row>
-        <button
+        </Button>
+        <Button variant="contained" onPointerDown={reset(false)}>
+          Reset
+        </Button>
+      </ButtonGroup>
+      <ButtonGroup sx={{ justifyContent: "center" }}>
+        <Button variant="contained" onPointerDown={undo}>
+          Undo
+        </Button>
+        <Button variant="contained" onPointerDown={redo}>
+          Redo
+        </Button>
+      </ButtonGroup>
+      <ButtonGroup sx={{ justifyContent: "center" }}>
+        <Button
+          variant="contained"
           onPointerDown={(e) => {
             e.preventDefault();
 
@@ -123,8 +189,9 @@ const PlayButtons = ({ reset }: PlayButtonsProps) => {
           disabled={moveType.current === MoveTypes.Number}
         >
           Normal
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="contained"
           onPointerDown={(e) => {
             e.preventDefault();
 
@@ -136,8 +203,9 @@ const PlayButtons = ({ reset }: PlayButtonsProps) => {
           disabled={moveType.current === MoveTypes.Corner}
         >
           Corner
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="contained"
           onPointerDown={(e) => {
             e.preventDefault();
 
@@ -149,9 +217,9 @@ const PlayButtons = ({ reset }: PlayButtonsProps) => {
           disabled={moveType.current === MoveTypes.Center}
         >
           Center
-        </button>
-      </Row>
-    </>
+        </Button>
+      </ButtonGroup>
+    </Stack>
   );
 };
 

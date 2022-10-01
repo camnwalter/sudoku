@@ -1,22 +1,19 @@
-import { createClient } from "redis";
-import { BoardNumber } from "../utils/types";
+import { Game } from "../utils/types";
 import { getUniqueCode } from "../utils/utils";
-import dotenv from "dotenv";
-dotenv.config();
+import { getClient } from "./connect";
 
-const BOARD_HASH = "board";
+const client = getClient();
 
-const client = createClient({
-  url: process.env.REDIS_URL,
-  username: process.env.REDIS_USERNAME,
-  password: process.env.REDIS_PASSWORD,
-});
+if (!client.isReady) {
+  console.log("connecting...");
+  (async () => await client.connect())();
+}
 
 client.on("error", (err) => console.error("Redis Error:", err));
 
-(async () => await client.connect())();
+const BOARD_HASH = "board";
 
-export const getGame = async (id: string): Promise<BoardNumber[] | null> => {
+export const getGame = async (id: string): Promise<Game | null> => {
   const board = await client.hGet(BOARD_HASH, id);
 
   if (board === undefined) {
@@ -26,7 +23,7 @@ export const getGame = async (id: string): Promise<BoardNumber[] | null> => {
   return JSON.parse(board);
 };
 
-export const addGame = async (body: BoardNumber[]) => {
+export const addGame = async (body: Game) => {
   let id = getUniqueCode(8);
   while ((await client.get(id)) !== null) {
     id = getUniqueCode(8);
@@ -37,11 +34,11 @@ export const addGame = async (body: BoardNumber[]) => {
   return id;
 };
 
-export const getAllGames = async (): Promise<Record<string, BoardNumber[]>> => {
+export const getAllGames = async (): Promise<Record<string, Game>> => {
   const keys = await client.hGetAll(BOARD_HASH);
 
   return Object.entries(keys).reduce((a, [key, value]) => {
     a[key] = JSON.parse(value);
     return a;
-  }, {} as Record<string, BoardNumber[]>);
+  }, {} as Record<string, Game>);
 };

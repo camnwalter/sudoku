@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { addGame, getAllGames } from "../../../db/redis";
-import { BoardNumber } from "../../../utils/types";
+import { Game } from "../../../utils/types";
 
 export default async function gameHandler(
   req: NextApiRequest,
@@ -13,7 +13,7 @@ export default async function gameHandler(
       res.status(200).json(await getAllGames());
       break;
     case "POST":
-      const uuid = await addGame(body as BoardNumber[]);
+      const uuid = await addGame(body as Game);
       res.status(200).json({ uuid });
       break;
     default:

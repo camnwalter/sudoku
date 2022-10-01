@@ -1,10 +1,10 @@
+import { Button, ButtonGroup } from "@mui/material";
 import { NextRouter } from "next/router";
 import { getSudoku } from "sudoku-gen";
 import { Difficulty } from "sudoku-gen/dist/types/difficulty.type";
 import { useSudoku } from "../../hooks/sudokuContext";
 import { CellData } from "../../utils/types";
 import { createBoard, deepClone } from "../../utils/utils";
-import Row from "../Row";
 
 interface BasicButtonsProps {
   reset: (clearBoard: boolean) => () => void;
@@ -28,16 +28,24 @@ const BasicButtons = ({ reset, router }: BasicButtonsProps) => {
       copy[i].locked = true;
     });
 
-    createBoard(copy, router);
+    createBoard(copy, difficulty, router);
   };
 
   return (
-    <Row>
-      <button onClick={generateBoard("easy")}>Easy</button>
-      <button onClick={generateBoard("medium")}>Medium</button>
-      <button onClick={generateBoard("hard")}>Hard</button>
-      <button onClick={generateBoard("expert")}>Expert</button>
-    </Row>
+    <ButtonGroup>
+      <Button variant="contained" onClick={generateBoard("easy")}>
+        Easy
+      </Button>
+      <Button variant="contained" onClick={generateBoard("medium")}>
+        Medium
+      </Button>
+      <Button variant="contained" onClick={generateBoard("hard")}>
+        Hard
+      </Button>
+      <Button variant="contained" onClick={generateBoard("expert")}>
+        Expert
+      </Button>
+    </ButtonGroup>
   );
 };
 

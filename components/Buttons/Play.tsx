@@ -96,7 +96,7 @@ const PlayButtons = ({ reset }: PlayButtonsProps) => {
     }
   });
 
-  const handleClick = () => {
+  const copyRouteToClipboard = () => {
     setShareTextOpen(true);
     navigator.clipboard.writeText(
       `I solved this Sudoku in ${formatTime()}. Played at https://sudoku.squagward.com${
@@ -129,7 +129,7 @@ const PlayButtons = ({ reset }: PlayButtonsProps) => {
         </Box>
       </Modal>
 
-      <Button variant="contained" onClick={handleClick}>
+      <Button variant="contained" onClick={copyRouteToClipboard}>
         Share
       </Button>
       <Snackbar

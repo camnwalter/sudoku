@@ -13,8 +13,8 @@ export default async function gameHandler(
       res.status(200).json(await getAllGames());
       break;
     case "POST":
-      const uuid = await addGame(body as Game);
-      res.status(200).json({ uuid });
+      const id = await addGame(body as Game);
+      res.status(200).json({ id });
       break;
     default:
       res

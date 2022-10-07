@@ -6,6 +6,7 @@ interface RemainingNumbersProps {
   onPointerDown: (e: React.PointerEvent, key: number, shift: boolean) => void;
 }
 
+// TODO: Make this prettier
 const RemainingNumbers = ({ onPointerDown }: RemainingNumbersProps) => {
   const { board, selected, setSelected, isLocked } = useSudoku();
 

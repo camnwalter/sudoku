@@ -75,8 +75,8 @@ export const createBoard = (
     }),
   })
     .then((res) => res.json())
-    .then(({ uuid }) => {
-      router.push(`/play/${uuid}`);
+    .then(({ id }) => {
+      router.push(`/play/${id}`);
     });
 };
 

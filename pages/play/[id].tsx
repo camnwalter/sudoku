@@ -1,4 +1,5 @@
 import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
 import useSwr from "swr";
 import Board from "../../components/Board";
@@ -12,16 +13,13 @@ interface BadUrl {
   message: string;
 }
 
-interface IdProps {
-  params: ParsedUrlQuery;
-}
-
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-const Id = ({ params }: IdProps) => {
-  const { id } = params;
+const Id = () => {
+  const router = useRouter();
+  const { id } = router.query;
 
-  const { data } = useSwr<Game | BadUrl>(`/api/games/${id as string}`, fetcher);
+  const { data } = useSwr<Game | BadUrl>(`/api/games/${id}`, fetcher);
 
   if (data === undefined) {
     return <div className={styles.error}>Loading...</div>;
@@ -45,13 +43,6 @@ const Id = ({ params }: IdProps) => {
       <Buttons environment={Environment.Play} />
     </>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  // Sets the parameters at request time so the params are never undefined
-  return {
-    props: { params: context.params },
-  };
 };
 
 export default Id;

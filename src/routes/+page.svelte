@@ -12,6 +12,8 @@
         cells[i] = {
           number: num || 0,
           locked: !Number.isNaN(num),
+          corners: [],
+          centers: [],
         };
       });
       return cells;

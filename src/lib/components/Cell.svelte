@@ -7,7 +7,7 @@
   } from "$lib/store";
 
   export let index: number;
-  $: number = $board[index]?.number ?? 0;
+  $: number = $board[index].number ?? 0;
 
   const onMouseDown = () => {
     mouseState.set(true);
@@ -47,9 +47,33 @@
     });
   };
 
+  const addOrRemoveExisting = (arr: number[], num: number) => {
+    if (arr.includes(num)) {
+      arr[num - 1] = 0;
+    } else {
+      arr[num - 1] = num;
+    }
+
+    return arr;
+  };
+
   const addNumber = (event: KeyboardEvent, num: number) => {
     if (event.ctrlKey) {
+      board.update((cells) => {
+        cells[index] = {
+          ...cells[index],
+          corners: addOrRemoveExisting(cells[index].corners, num),
+        };
+        return cells;
+      });
     } else if (event.shiftKey) {
+      board.update((cells) => {
+        cells[index] = {
+          ...cells[index],
+          centers: addOrRemoveExisting(cells[index].centers, num),
+        };
+        return cells;
+      });
     } else {
       board.update((cells) => {
         cells[index].number = num;
@@ -69,7 +93,12 @@
 
     if (event.code === "Backspace") {
       board.update((cells) => {
-        cells[index].number = 0;
+        cells[index] = {
+          number: 0,
+          locked: false,
+          corners: Array(9).fill(0),
+          centers: Array(9).fill(0),
+        };
         return cells;
       });
     }
@@ -85,7 +114,7 @@
   class:selected={$selectedCells[index]}
   class:sameNumber={$selectedNumbers.includes(number)}
   class:adjacent={isAdjacent($selectedCells)}
-  class:locked={$board[index]?.locked}
+  class:locked={$board[index].locked}
   on:mouseenter={onMouseEnter}
   on:mousedown={onMouseDown}
   on:mouseup={onMouseUp}
@@ -94,11 +123,36 @@
 >
   {#if number !== 0}
     {number}
+  {:else}
+    {#if $board[index].corners?.filter((n) => n !== 0).length > 0}
+      {@const corners = $board[index].corners}
+      <div class="corners">
+        <div class="row">
+          <div class="corner">{corners[0] || ""}</div>
+          <div class="corner">{corners[1] || ""}</div>
+          <div class="corner">{corners[2] || ""}</div>
+        </div>
+        <div class="row">
+          <div class="corner">{corners[3] || ""}</div>
+          <div class="corner">{corners[4] || ""}</div>
+          <div class="corner">{corners[5] || ""}</div>
+        </div>
+        <div class="row">
+          <div class="corner">{corners[6] || ""}</div>
+          <div class="corner">{corners[7] || ""}</div>
+          <div class="corner">{corners[8] || ""}</div>
+        </div>
+      </div>
+    {/if}
+    <div class="centers">
+      {$board[index].centers?.filter((n) => n !== 0)?.join("") ?? ""}
+    </div>
   {/if}
 </div>
 
 <style>
   .cell {
+    position: relative;
     width: 3.5vw;
     aspect-ratio: 1 / 1;
     font-size: 3.5rem;
@@ -139,5 +193,36 @@
 
   .locked {
     color: blue;
+  }
+
+  .corners {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    font-size: 1rem;
+  }
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .corner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .centers {
+    position: absolute;
+    font-size: 1rem;
+    max-width: 100%;
+    word-wrap: break-word;
+    text-align: center;
   }
 </style>

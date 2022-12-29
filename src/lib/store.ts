@@ -24,3 +24,7 @@ export const board = localWritable<Cell[]>(
       centers: Array(9).fill(0),
     }))
 );
+
+export const timer = localWritable("elapsed", 0);
+
+export const started = localWritable("started", false);

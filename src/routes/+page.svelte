@@ -2,7 +2,8 @@
   import Board from "$lib/components/Board.svelte";
   import type { Difficulty } from "sudoku-gen/dist/types/difficulty.type";
   import { getSudoku } from "sudoku-gen";
-  import { board } from "$lib/store";
+  import { board, started, timer } from "$lib/store";
+  import Stopwatch from "$lib/components/Stopwatch.svelte";
 
   const generateBoard = (difficulty: Difficulty) => {
     const { puzzle } = getSudoku(difficulty);
@@ -18,6 +19,13 @@
       });
       return cells;
     });
+    started.set(true);
+    timer.set(0);
+  };
+
+  const giveUp = () => {
+    timer.set(0);
+    started.set(false);
   };
 </script>
 
@@ -26,13 +34,22 @@
   <meta name="description" content="Sudoku" />
 </svelte:head>
 
-<Board />
+{#if $started}
+  <Stopwatch />
+  <Board />
+{/if}
 
 <div>
-  <button on:click={() => generateBoard("easy")}>Easy</button>
-  <button on:click={() => generateBoard("medium")}>Medium</button>
-  <button on:click={() => generateBoard("hard")}>Hard</button>
-  <button on:click={() => generateBoard("expert")}>Expert</button>
+  {#if !$started}
+    <button on:click={() => generateBoard("easy")}>Easy</button>
+    <button on:click={() => generateBoard("medium")}>Medium</button>
+    <button on:click={() => generateBoard("hard")}>Hard</button>
+    <button on:click={() => generateBoard("expert")}>Expert</button>
+  {:else}
+    <button on:click={giveUp} style="width: 40%; margin-top: 1rem"
+      >Give Up</button
+    >
+  {/if}
 </div>
 
 <style>
@@ -45,8 +62,10 @@
   button {
     width: 100%;
     font-size: 2.5rem;
-    background-color: var(--darkest);
+    background-color: var(--lighter);
     border-radius: 10px;
+    border: 3px solid var(--darkest);
+    padding: 0.5rem 0;
     color: white;
     cursor: pointer;
   }

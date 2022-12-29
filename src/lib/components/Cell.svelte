@@ -79,6 +79,7 @@
         cells[index].number = num;
         return cells;
       });
+      selectedNumbers.set([num]);
     }
   };
 
@@ -101,6 +102,7 @@
         };
         return cells;
       });
+      selectedNumbers.set([]);
     }
   };
 </script>

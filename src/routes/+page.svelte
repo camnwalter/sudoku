@@ -32,3 +32,24 @@
   <button on:click={() => generateBoard("hard")}>Hard</button>
   <button on:click={() => generateBoard("expert")}>Expert</button>
 </div>
+
+<style>
+  div {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+  }
+
+  button {
+    width: 100%;
+    font-size: 2.5rem;
+    background-color: var(--darkest);
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: var(--main-color);
+  }
+</style>

@@ -28,7 +28,7 @@
   }
 
   li:hover {
-    background-color: var(--lightest);
+    background-color: var(--lighter);
   }
 
   a {

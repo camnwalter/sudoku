@@ -1,8 +1,13 @@
 <script lang="ts">
-  import { mouseState, selectedCells, selectedNumbers } from "$lib/store";
+  import {
+    board,
+    mouseState,
+    selectedCells,
+    selectedNumbers,
+  } from "$lib/store";
 
   export let index: number;
-  $: number = 0;
+  $: number = $board[index]?.number ?? 0;
 
   const onMouseDown = () => {
     mouseState.set(true);
@@ -46,11 +51,16 @@
     if (event.ctrlKey) {
     } else if (event.shiftKey) {
     } else {
-      number = num;
+      board.update((cells) => {
+        cells[index].number = num;
+        return cells;
+      });
     }
   };
 
   const onKeyDown = (event: KeyboardEvent) => {
+    if ($board[index].locked) return;
+
     const key = parseInt(event.code.substring("Digit".length));
 
     if (1 <= key && key <= 9) {
@@ -58,7 +68,10 @@
     }
 
     if (event.code === "Backspace") {
-      number = 0;
+      board.update((cells) => {
+        cells[index].number = 0;
+        return cells;
+      });
     }
   };
 </script>
@@ -72,6 +85,7 @@
   class:selected={$selectedCells[index]}
   class:sameNumber={$selectedNumbers.includes(number)}
   class:adjacent={isAdjacent($selectedCells)}
+  class:locked={$board[index]?.locked}
   on:mouseenter={onMouseEnter}
   on:mousedown={onMouseDown}
   on:mouseup={onMouseUp}
@@ -121,5 +135,9 @@
 
   .down {
     border-bottom: 3px solid black;
+  }
+
+  .locked {
+    color: blue;
   }
 </style>

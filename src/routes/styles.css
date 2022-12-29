@@ -1,0 +1,14 @@
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: Helvetica, Arial, sans-serif;
+  color: black;
+}
+
+:root {
+  --main-color: rgb(115, 59, 199);
+  --darkest: rgb(76, 20, 159);
+  --lighter: rgb(154, 104, 230);
+  --lightest: rgb(208, 180, 249);
+}

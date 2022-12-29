@@ -1,38 +1,38 @@
-# Sudoku
+# create-svelte
 
-A high quality sudoku website with [trillions](https://github.com/petewritescode/sudoku-gen#how-it-works)
-of possible puzzles, or if that's not enough, you can create your own! This
-project was inspired by Cracking the Cryptic's own sudoku [website](https://cracking-the-cryptic.web.app/).
+Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
 
----
+## Creating a project
 
-# Features
+If you're seeing this, you've probably already done this step. Congrats!
 
-- Play a random puzzle or create your own!
-- See how fast you can solve the puzzle!
-- Challenge your friends to your puzzle by sending them the url!
+```bash
+# create a new project in the current directory
+npm create svelte@latest
 
-# Controls
+# create a new project in my-app
+npm create svelte@latest my-app
+```
 
-- Enter numbers 1 through 9 in each of the boxes.
-- To add corner notes, either click on the `Corner` button, or press `control`
-  while entering a number.
-- To add center notes, either click on the `Center` button, or press `shift`
-  while entering a number.
-- Undo and redo your moves by pressing `Undo`/`Redo` or `control z`/`y`
-- Holding `control` and clicking on multiple cells will select all which were
-  clicked
-- Dragging around cells will highlight the cells which were dragged over
+## Developing
 
----
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
-# Contributing
+```bash
+npm run dev
 
-Please open a [new issue](https://github.com/Squagward/sudoku/issues/new) if you
-would like new features or encounter any bugs. Please be specific, as it makes
-it much easier to get the intended implementation.
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
+```
 
-Pull requests are welcome! All that is required is to stick to the format as
-much as possible.
+## Building
 
-Thank you!
+To create a production version of your app:
+
+```bash
+npm run build
+```
+
+You can preview the production build with `npm run preview`.
+
+> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.

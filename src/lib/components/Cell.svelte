@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { arrowKeyFocus } from "$lib/focus";
   import {
     board,
     mouseState,
@@ -40,10 +41,18 @@
 
   $: isAdjacent = (selected: boolean[]) => {
     return selected.some((cell, i) => {
-      return (
-        cell &&
-        (index % 9 === i % 9 || Math.floor(index / 9) === Math.floor(i / 9))
-      );
+      const row = Math.floor(index / 9);
+      const col = index % 9;
+      const otherRow = Math.floor(i / 9);
+      const otherCol = i % 9;
+
+      const sameRow = row === otherRow;
+      const sameCol = col === otherCol;
+      const same3x3 =
+        Math.floor(row / 3) === Math.floor(otherRow / 3) &&
+        Math.floor(col / 3) === Math.floor(otherCol / 3);
+
+      return cell && (sameRow || sameCol || same3x3);
     });
   };
 
@@ -122,6 +131,7 @@
   on:mouseup={onMouseUp}
   on:keydown|preventDefault={onKeyDown}
   tabindex="-1"
+  use:arrowKeyFocus={index}
 >
   {#if number !== 0}
     {number}
@@ -164,6 +174,7 @@
     align-items: center;
     cursor: pointer;
     user-select: none;
+    outline: none;
   }
 
   .adjacent {

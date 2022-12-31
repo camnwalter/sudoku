@@ -69,23 +69,38 @@
   const addNumber = (event: KeyboardEvent, num: number) => {
     if (event.ctrlKey) {
       board.update((cells) => {
-        cells[index] = {
-          ...cells[index],
-          corners: addOrRemoveExisting(cells[index].corners, num),
-        };
+        $selectedCells.forEach((cell, i) => {
+          if (!cell) return;
+
+          cells[i] = {
+            ...cells[i],
+            corners: addOrRemoveExisting(cells[i].corners, num),
+          };
+        });
+
         return cells;
       });
     } else if (event.shiftKey) {
       board.update((cells) => {
-        cells[index] = {
-          ...cells[index],
-          centers: addOrRemoveExisting(cells[index].centers, num),
-        };
+        $selectedCells.forEach((cell, i) => {
+          if (!cell) return;
+
+          cells[i] = {
+            ...cells[i],
+            centers: addOrRemoveExisting(cells[i].centers, num),
+          };
+        });
+
         return cells;
       });
     } else {
       board.update((cells) => {
-        cells[index].number = num;
+        $selectedCells.forEach((cell, i) => {
+          if (!cell) return;
+
+          cells[i].number = num;
+        });
+
         return cells;
       });
       selectedNumbers.set([num]);
@@ -103,12 +118,16 @@
 
     if (event.code === "Backspace") {
       board.update((cells) => {
-        cells[index] = {
-          number: 0,
-          locked: false,
-          corners: Array(9).fill(0),
-          centers: Array(9).fill(0),
-        };
+        $selectedCells.forEach((cell, i) => {
+          if (!cell) return;
+
+          cells[i] = {
+            number: 0,
+            locked: false,
+            corners: Array(9).fill(0),
+            centers: Array(9).fill(0),
+          };
+        });
         return cells;
       });
       selectedNumbers.set([]);

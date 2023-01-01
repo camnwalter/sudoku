@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { addNumber } from "$lib/addNumber";
   import { arrowKeyFocus } from "$lib/focus";
   import {
     board,
@@ -54,57 +55,6 @@
 
       return cell && (sameRow || sameCol || same3x3);
     });
-  };
-
-  const addOrRemoveExisting = (arr: number[], num: number) => {
-    if (arr.includes(num)) {
-      arr[num - 1] = 0;
-    } else {
-      arr[num - 1] = num;
-    }
-
-    return arr;
-  };
-
-  const addNumber = (event: KeyboardEvent, num: number) => {
-    if (event.ctrlKey) {
-      board.update((cells) => {
-        $selectedCells.forEach((cell, i) => {
-          if (!cell) return;
-
-          cells[i] = {
-            ...cells[i],
-            corners: addOrRemoveExisting(cells[i].corners, num),
-          };
-        });
-
-        return cells;
-      });
-    } else if (event.shiftKey) {
-      board.update((cells) => {
-        $selectedCells.forEach((cell, i) => {
-          if (!cell) return;
-
-          cells[i] = {
-            ...cells[i],
-            centers: addOrRemoveExisting(cells[i].centers, num),
-          };
-        });
-
-        return cells;
-      });
-    } else {
-      board.update((cells) => {
-        $selectedCells.forEach((cell, i) => {
-          if (!cell) return;
-
-          cells[i].number = num;
-        });
-
-        return cells;
-      });
-      selectedNumbers.set([num]);
-    }
   };
 
   const onKeyDown = (event: KeyboardEvent) => {

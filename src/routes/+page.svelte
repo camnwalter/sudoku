@@ -1,9 +1,9 @@
 <script lang="ts">
   import Board from "$lib/components/Board.svelte";
-  import type { Difficulty } from "sudoku-gen/dist/types/difficulty.type";
-  import { getSudoku } from "sudoku-gen";
-  import { board, started, timer } from "$lib/store";
   import Stopwatch from "$lib/components/Stopwatch.svelte";
+  import { board, started, timer } from "$lib/store";
+  import { getSudoku } from "sudoku-gen";
+  import type { Difficulty } from "sudoku-gen/dist/types/difficulty.type";
 
   const generateBoard = (difficulty: Difficulty) => {
     const { puzzle } = getSudoku(difficulty);

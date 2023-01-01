@@ -1,16 +1,28 @@
 <script lang="ts">
-  import { clickOutside } from "$lib/clickOutside";
   import { selectedCells, selectedNumbers } from "$lib/store";
   import Cell from "./Cell.svelte";
+  import RemainingNumbers from "./RemainingNumbers.svelte";
 
-  const handleClickOutside = () => {
-    selectedCells.set([]);
-    selectedNumbers.set([]);
+  const clearSelected = (node: Node) => {
+    const handleMouseDown = (event: MouseEvent) => {
+      if (node === event.target || !node.contains(event.target as Element)) {
+        selectedCells.set(Array(81).fill(false));
+        selectedNumbers.set([]);
+      }
+    };
+
+    document.addEventListener("mousedown", handleMouseDown, true);
+
+    return {
+      destroy() {
+        document.removeEventListener("mousedown", handleMouseDown, true);
+      },
+    };
   };
 </script>
 
-<div class="wrapper">
-  <div class="board" use:clickOutside on:clickOutside={handleClickOutside}>
+<div class="wrapper" use:clearSelected>
+  <div class="board">
     {#each Array(9) as _, row}
       <div class="row">
         {#each Array(9) as _, col}
@@ -20,12 +32,13 @@
       </div>
     {/each}
   </div>
+  <RemainingNumbers />
 </div>
 
 <style>
   .wrapper {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
     height: 100%;
   }

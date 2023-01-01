@@ -38,5 +38,6 @@
     color: white;
     margin-bottom: 1rem;
     border: 2px solid var(--darkest);
+    user-select: none;
   }
 </style>

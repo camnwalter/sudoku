@@ -17,7 +17,7 @@ export const addNumber = (event: KeyboardEvent | MouseEvent, num: number) => {
   if (event.ctrlKey) {
     board.update((cells) => {
       get(selectedCells).forEach((cell, i) => {
-        if (!cell) return;
+        if (!cell || cells[i].locked) return;
 
         cells[i] = {
           ...cells[i],
@@ -30,7 +30,7 @@ export const addNumber = (event: KeyboardEvent | MouseEvent, num: number) => {
   } else if (event.shiftKey) {
     board.update((cells) => {
       get(selectedCells).forEach((cell, i) => {
-        if (!cell) return;
+        if (!cell || cells[i].locked) return;
 
         cells[i] = {
           ...cells[i],
@@ -43,7 +43,7 @@ export const addNumber = (event: KeyboardEvent | MouseEvent, num: number) => {
   } else {
     board.update((cells) => {
       get(selectedCells).forEach((cell, i) => {
-        if (!cell) return;
+        if (!cell || cells[i].locked) return;
 
         cells[i].number = num;
       });

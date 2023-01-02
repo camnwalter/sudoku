@@ -1,11 +1,16 @@
-import { board, selectedCells, selectedNumbers } from "./store";
+import {
+  board,
+  resetCellIfPossible,
+  selectedCells,
+  selectedNumbers,
+} from "./store";
 import { get } from "svelte/store";
 
 const addOrRemoveExisting = (arr: number[], num: number) => {
   if (arr.includes(num)) {
-    arr[num - 1] = 0;
+    arr.splice(arr.indexOf(num), 1);
   } else {
-    arr[num - 1] = num;
+    arr.push(num);
   }
 
   return arr;
@@ -30,7 +35,7 @@ export const addNumber = (event: KeyboardEvent | MouseEvent, num: number) => {
   } else if (event.shiftKey) {
     board.update((cells) => {
       get(selectedCells).forEach((cell, i) => {
-        if (!cell || cells[i].locked) return;
+        if (!cell) return;
 
         cells[i] = {
           ...cells[i],
@@ -43,9 +48,12 @@ export const addNumber = (event: KeyboardEvent | MouseEvent, num: number) => {
   } else {
     board.update((cells) => {
       get(selectedCells).forEach((cell, i) => {
-        if (!cell || cells[i].locked) return;
+        if (!cell) return;
 
-        cells[i].number = num;
+        cells[i] = {
+          ...resetCellIfPossible(cells[i]),
+          number: num,
+        };
       });
 
       return cells;

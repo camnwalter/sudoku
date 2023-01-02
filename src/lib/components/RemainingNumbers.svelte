@@ -5,17 +5,18 @@
   let remainingNumbers: number[];
 
   $: {
-    const numberFrequencies = $board
-      .map(({ number }) => number)
-      .reduce<Record<string, number>>((acc, curr) => {
-        acc[curr] ? ++acc[curr] : (acc[curr] = 1);
-        return acc;
-      }, {});
+    const numberFrequencies = Array<number>(9).fill(0);
+    $board.forEach(({ number }) => {
+      if (number !== 0) {
+        numberFrequencies[number - 1]++;
+      }
+    });
 
     remainingNumbers = Object.entries(numberFrequencies).reduce<number[]>(
-      (acc, [num, freq]) => {
+      (acc, [index, freq]) => {
+        const indexNum = parseInt(index);
         if (freq < 9) {
-          acc.push(parseInt(num));
+          acc.push(indexNum + 1);
         }
         return acc;
       },
@@ -26,8 +27,8 @@
 
 <div class="wrapper">
   <div>
+    <div>Remaining Numbers</div>
     {#if remainingNumbers.length > 0}
-      <div>Remaining Numbers</div>
       <div class="remainingNumbers">{remainingNumbers.join(" ")}</div>
     {/if}
   </div>
@@ -48,6 +49,7 @@
     padding: 5px;
     border-radius: 10px;
     border: 3px solid var(--lighter);
+    user-select: none;
   }
 
   .remainingNumbers {
@@ -57,7 +59,5 @@
     border-radius: 10px;
     padding-inline: 10px;
     margin-top: 1rem;
-    user-select: none;
-    cursor: pointer;
   }
 </style>

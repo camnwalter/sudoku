@@ -4,6 +4,7 @@
   import {
     board,
     mouseState,
+    resetCellIfPossible,
     selectedCells,
     selectedNumbers,
   } from "$lib/store";
@@ -71,12 +72,7 @@
         $selectedCells.forEach((cell, i) => {
           if (!cell) return;
 
-          cells[i] = {
-            number: 0,
-            locked: false,
-            corners: Array(9).fill(0),
-            centers: Array(9).fill(0),
-          };
+          cells[i] = resetCellIfPossible(cells[i]);
         });
         return cells;
       });

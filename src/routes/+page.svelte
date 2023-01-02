@@ -26,6 +26,7 @@
   const giveUp = () => {
     timer.set(0);
     started.set(false);
+    board.reset();
   };
 </script>
 

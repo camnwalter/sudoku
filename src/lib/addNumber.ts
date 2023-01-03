@@ -26,7 +26,7 @@ export const addNumber = (event: KeyboardEvent | MouseEvent, num: number) => {
 
         cells[i] = {
           ...cells[i],
-          corners: addOrRemoveExisting(cells[i].corners, num),
+          corners: addOrRemoveExisting(cells[i].corners, num).sort(),
         };
       });
 
@@ -39,7 +39,7 @@ export const addNumber = (event: KeyboardEvent | MouseEvent, num: number) => {
 
         cells[i] = {
           ...cells[i],
-          centers: addOrRemoveExisting(cells[i].centers, num),
+          centers: addOrRemoveExisting(cells[i].centers, num).sort(),
         };
       });
 

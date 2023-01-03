@@ -1,27 +1,21 @@
 <script lang="ts">
+  import { enhance } from "$app/forms";
   import Board from "$lib/components/Board.svelte";
   import Stopwatch from "$lib/components/Stopwatch.svelte";
   import { board, started, timer } from "$lib/store";
-  import { getSudoku } from "sudoku-gen";
-  import type { Difficulty } from "sudoku-gen/dist/types/difficulty.type";
+  import type { ActionData } from "./$types";
 
-  const generateBoard = (difficulty: Difficulty) => {
-    const { puzzle } = getSudoku(difficulty);
-    board.update((cells) => {
-      [...puzzle].forEach((char, i) => {
-        const num = parseInt(char);
-        cells[i] = {
-          number: num || 0,
-          locked: !Number.isNaN(num),
-          corners: [],
-          centers: [],
-        };
-      });
-      return cells;
-    });
-    started.set(true);
-    timer.set(0);
-  };
+  export let form: ActionData;
+
+  $: if (form != null) {
+    if ("board" in form) {
+      board.set(form.board);
+      started.set(true);
+      timer.set(0);
+    } else {
+      // TODO: stop timer here, game is finished
+    }
+  }
 
   const giveUp = () => {
     timer.set(0);
@@ -42,10 +36,20 @@
 
 <div>
   {#if !$started}
-    <button on:click={() => generateBoard("easy")}>Easy</button>
-    <button on:click={() => generateBoard("medium")}>Medium</button>
-    <button on:click={() => generateBoard("hard")}>Hard</button>
-    <button on:click={() => generateBoard("expert")}>Expert</button>
+    <form method="post" use:enhance>
+      <button formaction="?/createBoard" name="difficulty" value="easy"
+        >Easy</button
+      >
+      <button formaction="?/createBoard" name="difficulty" value="medium"
+        >Medium</button
+      >
+      <button formaction="?/createBoard" name="difficulty" value="hard"
+        >Hard</button
+      >
+      <button formaction="?/createBoard" name="difficulty" value="expert"
+        >Expert</button
+      >
+    </form>
   {:else}
     <button on:click={giveUp} style="width: 40%; margin-top: 1rem"
       >Give Up</button
@@ -54,7 +58,7 @@
 </div>
 
 <style>
-  div {
+  form {
     display: flex;
     justify-content: space-evenly;
     align-items: center;

@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { enhance } from "$app/forms";
   import { addNumber } from "$lib/addNumber";
   import { board, resetCellIfPossible, selectedCells } from "$lib/store";
-  import { get } from "svelte/store";
 
   const handleUndoRedo = (event: KeyboardEvent) => {
     if (event.ctrlKey) {
@@ -53,6 +53,13 @@
   <div class="row">
     <div on:mousedown={() => board.reset()}>Reset</div>
   </div>
+  <div class="row">
+    <form method="post" action="?/checkBoard" use:enhance>
+      <button name="board" value={$board.map(({ number }) => number).join("")}
+        >Check</button
+      >
+    </form>
+  </div>
 </div>
 
 <style>
@@ -68,7 +75,9 @@
     justify-content: space-evenly;
   }
 
-  .row > div {
+  .row > div,
+  .row > form,
+  button {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -78,9 +87,12 @@
     border: 1px solid var(--main-color);
     cursor: pointer;
     user-select: none;
+    background-color: rgba(0, 0, 0, 0);
   }
 
-  .row > div:hover {
+  .row > div:hover,
+  .row > form:hover,
+  button:hover {
     background-color: var(--lightest);
     color: black;
   }

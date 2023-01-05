@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { timer, started } from "$lib/store";
+  import { timer, started, won } from "$lib/store";
   import { onMount } from "svelte";
 
   const formatTime = (time: number) => {
@@ -11,7 +11,7 @@
 
   onMount(() => {
     const interval = setInterval(() => {
-      if ($started) {
+      if ($started && !$won) {
         timer.update((time) => time + 1);
       }
     }, 1000);

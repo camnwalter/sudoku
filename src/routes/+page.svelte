@@ -2,7 +2,7 @@
   import { enhance } from "$app/forms";
   import Board from "$lib/components/Board.svelte";
   import Stopwatch from "$lib/components/Stopwatch.svelte";
-  import { board, started, timer } from "$lib/store";
+  import { board, started, timer, won } from "$lib/store";
   import type { ActionData } from "./$types";
 
   export let form: ActionData;
@@ -12,8 +12,8 @@
       board.set(form.board);
       started.set(true);
       timer.set(0);
-    } else {
-      // TODO: stop timer here, game is finished
+    } else if (form.success) {
+      won.set(true);
     }
   }
 
@@ -21,6 +21,7 @@
     timer.set(0);
     started.set(false);
     board.reset();
+    won.set(false);
   };
 </script>
 
@@ -37,16 +38,16 @@
 <div>
   {#if !$started}
     <form method="post" use:enhance>
-      <button formaction="?/createBoard" name="difficulty" value="easy"
+      <button formaction="/?/createBoard" name="difficulty" value="easy"
         >Easy</button
       >
-      <button formaction="?/createBoard" name="difficulty" value="medium"
+      <button formaction="/?/createBoard" name="difficulty" value="medium"
         >Medium</button
       >
-      <button formaction="?/createBoard" name="difficulty" value="hard"
+      <button formaction="/?/createBoard" name="difficulty" value="hard"
         >Hard</button
       >
-      <button formaction="?/createBoard" name="difficulty" value="expert"
+      <button formaction="/?/createBoard" name="difficulty" value="expert"
         >Expert</button
       >
     </form>

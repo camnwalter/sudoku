@@ -11,7 +11,7 @@ export const actions: Actions = {
     const difficulty = data.get("difficulty") as Difficulty;
     const game = getSudoku(difficulty);
 
-    const board = [...game.puzzle].map<Cell>((char, i) => {
+    const board = [...game.puzzle].map<Cell>((char) => {
       const num = parseInt(char);
       return {
         number: num || 0,
@@ -45,5 +45,9 @@ export const actions: Actions = {
         };
       }
     }
+
+    return {
+      success: false,
+    };
   },
 };

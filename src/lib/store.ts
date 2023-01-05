@@ -45,6 +45,7 @@ const boardState = localWritable<Cell[]>(
 
 export const timer = localWritable("elapsed", 0);
 export const started = localWritable("started", false);
+export const won = localWritable("won", false);
 
 const createUndoRedo = (store: Writable<Cell[]>) => {
   const history = [deepClone(get(store))];

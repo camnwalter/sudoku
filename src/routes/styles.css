@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   border: 0;
+  font: inherit;
   font-family: Helvetica, Arial, sans-serif;
   color: black;
 }

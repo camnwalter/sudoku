@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { board } from "$lib/store";
+  import { board, won } from "$lib/store";
   import SideButtons from "./SideButtons.svelte";
 
   let remainingNumbers: number[];
@@ -25,16 +25,24 @@
   }
 </script>
 
-<div class="wrapper">
-  <div>
-    <div>Remaining Numbers</div>
-    {#if remainingNumbers.length > 0}
-      <div class="remainingNumbers">{remainingNumbers.join(" ")}</div>
-    {/if}
+{#if !$won}
+  <div class="wrapper">
+    <div>
+      <div>Remaining Numbers</div>
+      {#if remainingNumbers.length > 0}
+        <div class="remainingNumbers">{remainingNumbers.join(" ")}</div>
+      {/if}
+    </div>
+    <SideButtons />
   </div>
-  <SideButtons />
-</div>
+{/if}
 
+<!-- 
+todo:
+- corner, center, normal buttons,
+- "create" route,
+- /play/[id] stuff
+ -->
 <style>
   .wrapper {
     display: flex;

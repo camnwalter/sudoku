@@ -1,9 +1,17 @@
 <script lang="ts">
-  import { board, started, timer, won } from "$lib/store";
+  import {
+    board,
+    selectedCells,
+    selectedNumbers,
+    started,
+    timer,
+    won,
+  } from "$lib/store";
   import Board from "$lib/components/Board.svelte";
   import type { ActionData, PageData } from "./$types";
   import { enhance } from "$app/forms";
   import Stopwatch from "$src/lib/components/Stopwatch.svelte";
+  import SideButtons from "$src/lib/components/SideButtons.svelte";
 
   export let data: PageData;
   export let form: ActionData;
@@ -13,22 +21,53 @@
     started.set(true);
   }
 
+  $: if (form?.success) {
+    won.set(true);
+  }
+
   const giveUp = () => {
     timer.set(0);
     started.set(false);
-    board.reset();
     won.set(false);
+  };
+
+  const clearSelected = (node: Node) => {
+    const handleMouseDown = (event: MouseEvent) => {
+      if (node === event.target || !node.contains(event.target as Element)) {
+        selectedCells.set(Array(81).fill(false));
+        selectedNumbers.set([]);
+      }
+    };
+
+    document.addEventListener("mousedown", handleMouseDown, true);
+
+    return {
+      destroy() {
+        document.removeEventListener("mousedown", handleMouseDown, true);
+      },
+    };
   };
 </script>
 
 <Stopwatch />
-<Board />
+<div class="wrapper" use:clearSelected>
+  <Board />
+  <SideButtons />
+</div>
+
 <form method="post" action="?/giveUp" use:enhance>
   <button on:click={giveUp} style="width: 40%; margin-top: 1rem">Give Up</button
   >
 </form>
 
 <style>
+  .wrapper {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+  }
+
   form {
     display: flex;
     justify-content: center;

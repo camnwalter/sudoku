@@ -15,7 +15,7 @@ export const load = (async ({ params, cookies }) => {
     path: "/",
   });
 
-  const { puzzle, difficulty } = JSON.parse(game) as Sudoku;
+  const { puzzle } = JSON.parse(game) as Sudoku;
 
   const board = [...puzzle].map<Cell>((char) => {
     const num = parseInt(char);

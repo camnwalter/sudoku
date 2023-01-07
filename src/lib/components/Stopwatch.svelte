@@ -36,7 +36,6 @@
     padding: 0.5rem 1rem;
     border-radius: 10px;
     color: white;
-    margin-bottom: 1rem;
     border: 2px solid var(--darkest);
     user-select: none;
   }

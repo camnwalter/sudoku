@@ -12,4 +12,10 @@
   --darkest: rgb(76, 20, 159);
   --lighter: rgb(154, 104, 230);
   --lightest: rgb(208, 180, 249);
+  --even-lighter: rgb(228, 211, 253);
+  background-color: var(--even-lighter);
+}
+
+.pad {
+  margin: 1rem;
 }

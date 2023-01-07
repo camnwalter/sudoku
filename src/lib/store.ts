@@ -47,6 +47,10 @@ export const timer = localWritable("elapsed", 0);
 export const started = localWritable("started", false);
 export const won = localWritable("won", false);
 
+export type ButtonState = "normal" | "corner" | "center";
+
+export const buttonState = writable<ButtonState>("normal");
+
 const createUndoRedo = (store: Writable<Cell[]>) => {
   const history = [deepClone(get(store))];
   let index = 0;

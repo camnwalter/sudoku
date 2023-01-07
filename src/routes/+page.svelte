@@ -1,11 +1,16 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
+  import Header from "$lib/components/Header.svelte";
 </script>
 
 <svelte:head>
   <title>Home</title>
   <meta name="description" content="Sudoku" />
 </svelte:head>
+
+<Header />
+
+<div class="pad" />
 
 <form method="post" use:enhance>
   <button formaction="/?/createBoard" name="difficulty" value="easy"

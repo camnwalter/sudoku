@@ -140,6 +140,7 @@
     cursor: pointer;
     user-select: none;
     outline: none;
+    background-color: white;
   }
 
   .adjacent {

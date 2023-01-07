@@ -50,27 +50,32 @@
 </script>
 
 <Stopwatch />
+<div class="pad" />
 <div class="wrapper" use:clearSelected>
   <Board />
+  <div class="pad" />
+  <div class="pad" />
   <SideButtons />
 </div>
 
 <form method="post" action="?/giveUp" use:enhance>
-  <button on:click={giveUp} style="width: 40%; margin-top: 1rem">Give Up</button
-  >
+  <div class="pad" />
+  <button on:click={giveUp} style="width: 40%">Give Up</button>
 </form>
 
 <style>
   .wrapper {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
     height: 100%;
   }
 
   form {
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
   }
 
   button {

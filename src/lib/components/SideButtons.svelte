@@ -27,8 +27,10 @@
     }
   };
 
-  const handleKeyUp = () => {
-    buttonState.set(fallbackButtonState);
+  const handleKeyUp = (event: KeyboardEvent) => {
+    if (!event.ctrlKey && !event.shiftKey) {
+      buttonState.set(fallbackButtonState);
+    }
   };
 
   const toggle = (type: ButtonState) => {

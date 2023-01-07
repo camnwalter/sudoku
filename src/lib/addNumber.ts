@@ -1,8 +1,10 @@
 import {
   board,
+  buttonState,
   resetCellIfPossible,
   selectedCells,
   selectedNumbers,
+  type ButtonState,
 } from "./store";
 import { get } from "svelte/store";
 
@@ -19,7 +21,9 @@ const addOrRemoveExisting = (arr: number[], num: number) => {
 export const addNumber = (event: KeyboardEvent | MouseEvent, num: number) => {
   event.preventDefault();
 
-  if (event.ctrlKey) {
+  const state = get(buttonState);
+
+  if (state === "corner") {
     board.update((cells) => {
       get(selectedCells).forEach((cell, i) => {
         if (!cell || cells[i].locked) return;
@@ -32,7 +36,7 @@ export const addNumber = (event: KeyboardEvent | MouseEvent, num: number) => {
 
       return cells;
     });
-  } else if (event.shiftKey) {
+  } else if (state === "center") {
     board.update((cells) => {
       get(selectedCells).forEach((cell, i) => {
         if (!cell) return;

@@ -1,28 +1,5 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
-  import Board from "$lib/components/Board.svelte";
-  import Stopwatch from "$lib/components/Stopwatch.svelte";
-  import { board, started, timer, won } from "$lib/store";
-  import type { ActionData } from "./$types";
-
-  export let form: ActionData;
-
-  $: if (form != null) {
-    if ("board" in form) {
-      board.set(form.board);
-      started.set(true);
-      timer.set(0);
-    } else if (form.success) {
-      won.set(true);
-    }
-  }
-
-  const giveUp = () => {
-    timer.set(0);
-    started.set(false);
-    board.reset();
-    won.set(false);
-  };
 </script>
 
 <svelte:head>
@@ -30,37 +7,23 @@
   <meta name="description" content="Sudoku" />
 </svelte:head>
 
-{#if $started}
-  <Stopwatch />
-  <Board />
-{/if}
-
-<div>
-  {#if !$started}
-    <form method="post" use:enhance>
-      <button formaction="/?/createBoard" name="difficulty" value="easy"
-        >Easy</button
-      >
-      <button formaction="/?/createBoard" name="difficulty" value="medium"
-        >Medium</button
-      >
-      <button formaction="/?/createBoard" name="difficulty" value="hard"
-        >Hard</button
-      >
-      <button formaction="/?/createBoard" name="difficulty" value="expert"
-        >Expert</button
-      >
-    </form>
-  {:else}
-    <button on:click={giveUp} style="width: 40%; margin-top: 1rem"
-      >Give Up</button
-    >
-  {/if}
-</div>
+<form method="post" use:enhance>
+  <button formaction="/?/createBoard" name="difficulty" value="easy"
+    >Easy</button
+  >
+  <button formaction="/?/createBoard" name="difficulty" value="medium"
+    >Medium</button
+  >
+  <button formaction="/?/createBoard" name="difficulty" value="hard"
+    >Hard</button
+  >
+  <button formaction="/?/createBoard" name="difficulty" value="expert"
+    >Expert</button
+  >
+</form>
 
 <style>
-  form,
-  div {
+  form {
     display: flex;
     justify-content: space-evenly;
     align-items: center;

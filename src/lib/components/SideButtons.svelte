@@ -54,7 +54,7 @@
     <div on:mousedown={() => board.reset()}>Reset</div>
   </div>
   <div class="row">
-    <form method="post" action="/?/checkBoard" use:enhance>
+    <form method="post" action="?/checkBoard" use:enhance>
       <button name="board" value={$board.map(({ number }) => number).join("")}
         >Check</button
       >

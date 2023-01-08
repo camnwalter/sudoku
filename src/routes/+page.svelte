@@ -27,6 +27,7 @@
   >
 </form>
 
+<!-- TODO: tweak the home page functionality, numpad shift detection -->
 <style>
   form {
     display: flex;

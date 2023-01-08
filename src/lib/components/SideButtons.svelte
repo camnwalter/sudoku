@@ -50,10 +50,7 @@
   };
 </script>
 
-<svelte:window
-  on:keydown|preventDefault={handleKeyDown}
-  on:keyup={handleKeyUp}
-/>
+<svelte:window on:keydown={handleKeyDown} on:keyup={handleKeyUp} />
 
 <div class="outer">
   <div class="sideButtons">
@@ -87,16 +84,19 @@
     <div class="row">
       <button
         class="smaller"
+        tabindex="-1"
         disabled={$buttonState === "normal"}
         on:mousedown={() => toggle("normal")}>Normal</button
       >
       <button
         class="smaller"
+        tabindex="-1"
         disabled={$buttonState === "corner"}
         on:mousedown={() => toggle("corner")}>Corner</button
       >
       <button
         class="smaller"
+        tabindex="-1"
         disabled={$buttonState === "center"}
         on:mousedown={() => toggle("center")}>Center</button
       >
@@ -110,8 +110,10 @@
       <div on:mousedown={() => board.reset()}>Reset</div>
 
       <form method="post" action="?/checkBoard" use:enhance>
-        <button name="board" value={$board.map(({ number }) => number).join("")}
-          >Check</button
+        <button
+          name="board"
+          value={$board.map(({ number }) => number).join("")}
+          tabindex="-1">Check</button
         >
       </form>
     </div>

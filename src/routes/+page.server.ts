@@ -1,4 +1,4 @@
-import client from "$src/database";
+import client from "$db";
 import { redirect } from "@sveltejs/kit";
 import { getSudoku } from "sudoku-gen";
 import type { Difficulty } from "sudoku-gen/dist/types/difficulty.type";
@@ -15,11 +15,13 @@ export const actions: Actions = {
   createBoard: async ({ request, cookies }) => {
     const data = await request.formData();
     const difficulty = data.get("difficulty") as Difficulty;
-    const game = getSudoku(difficulty);
+    const { puzzle } = getSudoku(difficulty);
 
     const gameID = crypto.randomUUID();
-    client.hsetnx("games", gameID, JSON.stringify(game));
-    cookies.set("gameID", gameID);
+    client.hsetnx("games", gameID, puzzle);
+    cookies.set("gameID", gameID, {
+      path: "/",
+    });
 
     throw redirect(307, `/play/${gameID}`);
   },

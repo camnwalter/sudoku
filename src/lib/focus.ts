@@ -1,4 +1,5 @@
-import { selectedCells } from "./store";
+import { get } from "svelte/store";
+import { board, selectedCells, selectedNumbers } from "./store";
 
 // Adapted from https://github.com/SarcevicAntonio/as-comps/blob/cb1f38b1ceff0c7149ea401c7c4d631fa351524c/src/lib/actions/focus.ts
 export const arrowKeyFocus = (
@@ -17,6 +18,8 @@ export const arrowKeyFocus = (
       case "KeyW":
         if (row > 0) {
           selectedCells.update((prev) => prev.map((_, i) => i === index - 9));
+          const { number } = get(board)[index - 9];
+          selectedNumbers.set([number]);
           (cells[index - 9] as HTMLElement).focus();
         }
         break;
@@ -24,6 +27,8 @@ export const arrowKeyFocus = (
       case "KeyA":
         if (col > 0) {
           selectedCells.update((prev) => prev.map((_, i) => i === index - 1));
+          const { number } = get(board)[index - 1];
+          selectedNumbers.set([number]);
           (cells[index - 1] as HTMLElement).focus();
         }
         break;
@@ -31,6 +36,8 @@ export const arrowKeyFocus = (
       case "KeyS":
         if (row < 8) {
           selectedCells.update((prev) => prev.map((_, i) => i === index + 9));
+          const { number } = get(board)[index + 9];
+          selectedNumbers.set([number]);
           (cells[index + 9] as HTMLElement).focus();
         }
         break;
@@ -38,6 +45,8 @@ export const arrowKeyFocus = (
       case "KeyD":
         if (col < 8) {
           selectedCells.update((prev) => prev.map((_, i) => i === index + 1));
+          const { number } = get(board)[index + 1];
+          selectedNumbers.set([number]);
           (cells[index + 1] as HTMLElement).focus();
         }
         break;

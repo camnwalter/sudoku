@@ -19,10 +19,7 @@
       newCells[index] = true;
       return newCells;
     });
-    selectedNumbers.update(() => {
-      if (number !== 0) return [number];
-      return [];
-    });
+    selectedNumbers.set([number]);
   };
 
   const onMouseUp = () => {
@@ -35,9 +32,7 @@
         cells[index] = true;
         return cells;
       });
-      if (number !== 0) {
-        selectedNumbers.update((cells) => cells.concat(number));
-      }
+      selectedNumbers.update((cells) => cells.concat(number));
     }
   };
 
@@ -88,7 +83,7 @@
   class:up={Math.floor(index / 9) % 3 === 0}
   class:down={Math.floor(index / 9) % 3 === 2}
   class:selected={$selectedCells[index]}
-  class:sameNumber={$selectedNumbers.includes(number)}
+  class:sameNumber={number !== 0 && $selectedNumbers.includes(number)}
   class:adjacent={isAdjacent($selectedCells)}
   class:locked={$board[index].locked}
   on:mouseenter={onMouseEnter}

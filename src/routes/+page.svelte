@@ -1,6 +1,5 @@
-<script lang="ts">
-  import { enhance } from "$app/forms";
-  import Header from "$lib/components/Header.svelte";
+<script>
+  import { goto } from "$app/navigation";
 </script>
 
 <svelte:head>
@@ -8,46 +7,31 @@
   <meta name="description" content="Sudoku" />
 </svelte:head>
 
-<Header />
+<!-- TODO: numpad shift detection -->
 
-<div class="pad" />
+<div>
+  <button on:click={() => goto("/play")}>Play</button>
+  <button on:click={() => goto("/create")}>Create</button>
+</div>
 
-<form method="post" use:enhance>
-  <button formaction="/?/createBoard" name="difficulty" value="easy"
-    >Easy</button
-  >
-  <button formaction="/?/createBoard" name="difficulty" value="medium"
-    >Medium</button
-  >
-  <button formaction="/?/createBoard" name="difficulty" value="hard"
-    >Hard</button
-  >
-  <button formaction="/?/createBoard" name="difficulty" value="expert"
-    >Expert</button
-  >
-</form>
-
-<!-- TODO: tweak the home page functionality, numpad shift detection -->
 <style>
-  form {
+  div {
     display: flex;
-    justify-content: space-evenly;
-    align-items: center;
+    flex-direction: row;
     width: 100%;
+    height: 100vh;
   }
 
   button {
     width: 100%;
-    font-size: 2.5rem;
-    background-color: var(--lighter);
-    border-radius: 10px;
-    border: 3px solid var(--darkest);
-    padding: 0.5rem 0;
+    background-color: var(--main-color);
     color: white;
+    font-size: 4rem;
+    user-select: none;
     cursor: pointer;
   }
 
   button:hover {
-    background-color: var(--main-color);
+    background-color: var(--lighter);
   }
 </style>

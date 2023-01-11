@@ -33,6 +33,7 @@
 	"dependencies": {
 		"ioredis": "^5.2.4",
 		"sudoku-gen": "^1.0.0",
+		"svelte-french-toast": "^1.0.3",
 		"svelte-local-storage-store": "^0.3.2"
 	}
 }

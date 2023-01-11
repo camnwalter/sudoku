@@ -1,13 +1,16 @@
 <script lang="ts">
-  import { enhance } from "$app/forms";
   import { addNumber } from "$lib/addNumber";
+  import { isValidSolution } from "$lib/isValidSolution";
   import {
     board,
     buttonState,
     resetCellIfPossible,
     selectedCells,
+    won,
     type ButtonState,
+    type Cell,
   } from "$lib/store";
+  import toast from "svelte-french-toast";
 
   let fallbackButtonState: ButtonState = "normal";
 
@@ -47,6 +50,15 @@
         });
       }
     });
+  };
+
+  const checkBoard = (puzzle: Cell[]) => {
+    if (isValidSolution(puzzle)) {
+      won.set(true);
+      toast.success("Congratulations, you won!", {
+        style: "font-size: 1.5rem",
+      });
+    }
   };
 </script>
 
@@ -108,14 +120,7 @@
   <div class="sideButtons">
     <div class="row">
       <div on:mousedown={() => board.reset()}>Reset</div>
-
-      <form method="post" action="?/checkBoard" use:enhance>
-        <button
-          name="board"
-          value={$board.map(({ number }) => number).join("")}
-          tabindex="-1">Check</button
-        >
-      </form>
+      <div on:mousedown={() => checkBoard($board)}>Check</div>
     </div>
   </div>
 </div>

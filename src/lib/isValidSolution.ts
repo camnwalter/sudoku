@@ -1,17 +1,5 @@
 import type { Cell } from "./store";
 
-const parsePuzzle = (puzzle: string): Cell[] => {
-  return [...puzzle].map<Cell>((char) => {
-    const num = parseInt(char);
-    return {
-      number: num || 0,
-      locked: !Number.isNaN(num),
-      corners: [],
-      centers: [],
-    };
-  });
-};
-
 const arrayUnique = <T>(arr: T[]): boolean => {
   return arr.every((element, i) => arr.indexOf(element) === i);
 };
@@ -67,8 +55,6 @@ const boxesValid = (board: Cell[]): boolean => {
   return true;
 };
 
-export const isValidSolution = (puzzle: string): boolean => {
-  const board = parsePuzzle(puzzle);
-
-  return rowsValid(board) && colsValid(board) && boxesValid(board);
+export const isValidSolution = (puzzle: Cell[]): boolean => {
+  return rowsValid(puzzle) && colsValid(puzzle) && boxesValid(puzzle);
 };

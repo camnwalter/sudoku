@@ -14,6 +14,11 @@
   --lightest: rgb(208, 180, 249);
   --even-lighter: rgb(228, 211, 253);
   background-color: var(--even-lighter);
+
+  --toastContainerTop: auto;
+  --toastContainerRight: auto;
+  --toastContainerBottom: 8rem;
+  --toastContainerLeft: calc(50vw - 8rem);
 }
 
 .pad {

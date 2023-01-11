@@ -1,8 +1,6 @@
 <script lang="ts">
-  import { page } from "$app/stores";
   import Board from "$lib/components/Board.svelte";
   import SideButtons from "$lib/components/SideButtons.svelte";
-  import Stopwatch from "$lib/components/Stopwatch.svelte";
   import { selectedCells, selectedNumbers } from "$lib/store";
 
   const clearSelected = (node: Node) => {
@@ -23,11 +21,7 @@
   };
 </script>
 
-{#if $page.url.pathname.startsWith("/play")}
-  <Stopwatch />
-  <div class="pad" />
-{/if}
-<div class="wrapper" use:clearSelected>
+<div use:clearSelected>
   <Board />
   <div class="pad" />
   <div class="pad" />
@@ -35,12 +29,3 @@
 </div>
 
 <slot />
-
-<style>
-  .wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-  }
-</style>

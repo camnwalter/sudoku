@@ -12,14 +12,20 @@
   export let index: number;
   $: number = $board[index].number ?? 0;
 
-  const onMouseDown = () => {
+  const onMouseDown = (event: KeyboardEvent) => {
     mouseState.set(true);
-    selectedCells.update(() => {
-      const newCells = Array(81).fill(false);
-      newCells[index] = true;
-      return newCells;
+    selectedCells.update((prev) => {
+      if (!event.ctrlKey) {
+        prev.fill(false);
+      }
+      prev[index] = true;
+      return prev;
     });
-    selectedNumbers.set([number]);
+    if (event.ctrlKey) {
+      selectedNumbers.update((prev) => prev.concat(number));
+    } else {
+      selectedNumbers.set([number]);
+    }
   };
 
   const onMouseUp = () => {

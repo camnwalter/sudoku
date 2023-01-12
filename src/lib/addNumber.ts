@@ -39,7 +39,7 @@ export const addNumber = (event: KeyboardEvent | MouseEvent, num: number) => {
   } else if (state === "center") {
     board.update((cells) => {
       get(selectedCells).forEach((cell, i) => {
-        if (!cell) return;
+        if (!cell || cells[i].locked) return;
 
         cells[i] = {
           ...cells[i],
@@ -52,7 +52,7 @@ export const addNumber = (event: KeyboardEvent | MouseEvent, num: number) => {
   } else {
     board.update((cells) => {
       get(selectedCells).forEach((cell, i) => {
-        if (!cell) return;
+        if (!cell || cells[i].locked) return;
 
         cells[i] = {
           ...resetCellIfPossible(cells[i]),

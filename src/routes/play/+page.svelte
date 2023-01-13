@@ -2,6 +2,11 @@
   import { enhance } from "$app/forms";
 </script>
 
+<svelte:head>
+  <title>Play</title>
+  <meta name="description" content="Sudoku game" />
+</svelte:head>
+
 <form method="post" use:enhance>
   Play a custom difficulty:
   <button name="difficulty" value="easy">Easy</button>

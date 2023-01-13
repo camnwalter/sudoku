@@ -21,7 +21,7 @@
   };
 </script>
 
-<div use:clearSelected>
+<div class="wrapper" use:clearSelected>
   <Board />
   <div class="pad" />
   <div class="pad" />
@@ -29,3 +29,11 @@
 </div>
 
 <slot />
+
+<style>
+  .wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+</style>

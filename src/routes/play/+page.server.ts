@@ -22,7 +22,7 @@ export const actions: Actions = {
       const { puzzle } = getSudoku(difficulty);
 
       const gameID = crypto.randomUUID();
-      client.hsetnx("games", gameID, puzzle);
+      await client.hsetnx("games", gameID, puzzle);
       cookies.set("gameID", gameID, {
         path: "/",
       });

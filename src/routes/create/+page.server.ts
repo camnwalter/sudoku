@@ -8,7 +8,7 @@ export const actions: Actions = {
     const puzzle = formData.get("board") as string;
 
     const gameID = crypto.randomUUID();
-    client.hsetnx("games", gameID, puzzle);
+    await client.hsetnx("games", gameID, puzzle);
     cookies.set("gameID", gameID, {
       path: "/",
     });

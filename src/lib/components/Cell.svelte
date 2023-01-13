@@ -12,7 +12,7 @@
   export let index: number;
   $: number = $board[index].number ?? 0;
 
-  const onMouseDown = (event: KeyboardEvent) => {
+  const onMouseDown = (event: MouseEvent) => {
     mouseState.set(true);
     selectedCells.update((prev) => {
       if (!event.ctrlKey) {
@@ -21,11 +21,10 @@
       prev[index] = true;
       return prev;
     });
-    if (event.ctrlKey) {
-      selectedNumbers.update((prev) => prev.concat(number));
-    } else {
-      selectedNumbers.set([number]);
-    }
+
+    selectedNumbers.update((prev) =>
+      event.ctrlKey ? prev.concat(number) : [number]
+    );
   };
 
   const onMouseUp = () => {
@@ -59,16 +58,26 @@
     });
   };
 
+  const isShiftDown = (event: KeyboardEvent) => {
+    return (
+      event.shiftKey ||
+      (event.code.startsWith("Numpad") &&
+        (event.key.startsWith("Arrow") ||
+          event.key === "Home" ||
+          event.key === "End" ||
+          event.key === "Clear" ||
+          event.key.startsWith("Page")))
+    );
+  };
+
   const onKeyDown = (event: KeyboardEvent) => {
     if ($board[index].locked) return;
 
-    const key = parseInt(event.code.substring("Digit".length));
+    const key = parseInt(event.code.slice(-1));
 
     if (1 <= key && key <= 9) {
-      addNumber(event, key);
-    }
-
-    if (event.code === "Backspace") {
+      addNumber(event, key, isShiftDown(event));
+    } else if (event.code === "Backspace") {
       board.update((cells) => {
         $selectedCells.forEach((cell, i) => {
           if (!cell) return;
@@ -78,6 +87,9 @@
         return cells;
       });
       selectedNumbers.set([]);
+    } else if (event.ctrlKey) {
+      if (event.code === "KeyZ") board.undo();
+      if (event.code === "KeyY") board.redo();
     }
   };
 </script>

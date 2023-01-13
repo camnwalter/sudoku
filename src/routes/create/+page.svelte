@@ -3,6 +3,11 @@
   import { board } from "$lib/store";
 </script>
 
+<svelte:head>
+  <title>Create</title>
+  <meta name="description" content="Create a new sudoku game" />
+</svelte:head>
+
 <form method="post" action="?/createCustomBoard" use:enhance>
   <div class="pad" />
   <button

@@ -68,7 +68,12 @@ const createUndoRedo = (store: Writable<Cell[]>) => {
       updateStore();
     },
     update(updater: Updater<Cell[]>) {
-      this.set(updater(deepClone(get(store))));
+      store.update((prevValue) => {
+        const value = updater(deepClone(prevValue));
+        this.set(value);
+
+        return value;
+      });
     },
     undo() {
       // empty board is always first element
@@ -88,19 +93,6 @@ const createUndoRedo = (store: Writable<Cell[]>) => {
 
       index = 0;
       this.set(cleanBoard);
-    },
-    makeEmpty() {
-      index = 0;
-      this.set(
-        Array(81)
-          .fill(0)
-          .map(() => ({
-            number: 0,
-            locked: false,
-            corners: [],
-            centers: [],
-          }))
-      );
     },
   };
 };

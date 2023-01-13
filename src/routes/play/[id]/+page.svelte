@@ -17,6 +17,11 @@
   };
 </script>
 
+<svelte:head>
+  <title>Play</title>
+  <meta name="description" content="Sudoku game" />
+</svelte:head>
+
 <form method="post" action="?/giveUp" use:enhance>
   <div class="pad" />
   <button on:click={giveUp} style="width: 40%" tabindex="-1">Give Up</button>

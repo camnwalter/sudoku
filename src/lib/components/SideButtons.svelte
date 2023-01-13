@@ -12,32 +12,9 @@
   } from "$lib/store";
   import toast from "svelte-french-toast";
 
-  let fallbackButtonState: ButtonState = "normal";
-
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.ctrlKey) {
-      buttonState.set("corner");
-
-      if (event.code === "KeyZ") {
-        board.undo();
-      } else if (event.code === "KeyY") {
-        board.redo();
-      }
-    }
-
-    if (event.shiftKey) {
-      buttonState.set("center");
-    }
-  };
-
-  const handleKeyUp = (event: KeyboardEvent) => {
-    if (!event.ctrlKey && !event.shiftKey) {
-      buttonState.set(fallbackButtonState);
-    }
-  };
-
+  let fallbackType: ButtonState = "normal";
   const toggle = (type: ButtonState) => {
-    fallbackButtonState = type;
+    fallbackType = type;
     buttonState.set(type);
   };
 
@@ -58,6 +35,20 @@
       toast.success("Congratulations, you won!", {
         style: "font-size: 1.5rem",
       });
+    }
+  };
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.ctrlKey) {
+      buttonState.set("corner");
+    } else if (event.shiftKey) {
+      buttonState.set("center");
+    }
+  };
+
+  const handleKeyUp = (event: KeyboardEvent) => {
+    if (event.code.startsWith("Control") || event.code.startsWith("Shift")) {
+      buttonState.set(fallbackType);
     }
   };
 </script>

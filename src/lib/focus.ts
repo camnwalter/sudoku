@@ -1,5 +1,9 @@
-import { get } from "svelte/store";
-import { board, selectedCells, selectedNumbers } from "./store";
+import { board, selectedCells, selectedNumbers, type Cell } from "./store";
+
+let boardCopy: Cell[] = [];
+board.subscribe((cells) => {
+  boardCopy = cells;
+});
 
 // Adapted from https://github.com/SarcevicAntonio/as-comps/blob/cb1f38b1ceff0c7149ea401c7c4d631fa351524c/src/lib/actions/focus.ts
 export const arrowKeyFocus = (
@@ -7,6 +11,8 @@ export const arrowKeyFocus = (
   index: number
 ): { destroy(): void } => {
   const handleKeydown = (event: KeyboardEvent) => {
+    if (!Number.isNaN(parseInt(event.code.slice(-1)))) return; // don't count numpad as arrow keys
+
     event.preventDefault();
 
     const row = Math.floor(index / 9);
@@ -18,7 +24,7 @@ export const arrowKeyFocus = (
       case "KeyW":
         if (row > 0) {
           selectedCells.update((prev) => prev.map((_, i) => i === index - 9));
-          const { number } = get(board)[index - 9];
+          const { number } = boardCopy[index - 9];
           selectedNumbers.set([number]);
           (cells[index - 9] as HTMLElement).focus();
         }
@@ -27,7 +33,7 @@ export const arrowKeyFocus = (
       case "KeyA":
         if (col > 0) {
           selectedCells.update((prev) => prev.map((_, i) => i === index - 1));
-          const { number } = get(board)[index - 1];
+          const { number } = boardCopy[index - 1];
           selectedNumbers.set([number]);
           (cells[index - 1] as HTMLElement).focus();
         }
@@ -36,7 +42,7 @@ export const arrowKeyFocus = (
       case "KeyS":
         if (row < 8) {
           selectedCells.update((prev) => prev.map((_, i) => i === index + 9));
-          const { number } = get(board)[index + 9];
+          const { number } = boardCopy[index + 9];
           selectedNumbers.set([number]);
           (cells[index + 9] as HTMLElement).focus();
         }
@@ -45,7 +51,7 @@ export const arrowKeyFocus = (
       case "KeyD":
         if (col < 8) {
           selectedCells.update((prev) => prev.map((_, i) => i === index + 1));
-          const { number } = get(board)[index + 1];
+          const { number } = boardCopy[index + 1];
           selectedNumbers.set([number]);
           (cells[index + 1] as HTMLElement).focus();
         }

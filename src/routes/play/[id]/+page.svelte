@@ -1,6 +1,6 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
-  import { board, started, timer, won } from "$lib/store";
+  import { board, started, won } from "$lib/store";
   import type { PageData } from "./$types";
 
   export let data: PageData;
@@ -9,12 +9,6 @@
     board.set(data.board);
     started.set(true);
   }
-
-  const giveUp = () => {
-    timer.set(0);
-    started.set(false);
-    won.set(false);
-  };
 </script>
 
 <svelte:head>
@@ -24,7 +18,13 @@
 
 <form method="post" action="?/giveUp" use:enhance>
   <div class="pad" />
-  <button on:click={giveUp} style="width: 40%" tabindex="-1">Give Up</button>
+  <button style="width: 40%" tabindex="-1">
+    {#if $won}
+      Go Back
+    {:else}
+      Give Up
+    {/if}
+  </button>
 </form>
 
 <style>

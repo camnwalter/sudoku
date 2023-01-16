@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from "$app/stores";
   import { addNumber } from "$lib/addNumber";
   import { isValidSolution } from "$lib/isValidSolution";
   import {
@@ -80,40 +81,41 @@
       <div on:mousedown={() => board.redo()}>Redo</div>
     </div>
   </div>
+  {#if $page.route.id !== "/create"}
+    <div class="pad" />
 
-  <div class="pad" />
-
-  <div class="sideButtons">
-    <div class="row">
-      <button
-        class="smaller"
-        tabindex="-1"
-        disabled={$buttonState === "normal"}
-        on:mousedown={() => toggle("normal")}>Normal</button
-      >
-      <button
-        class="smaller"
-        tabindex="-1"
-        disabled={$buttonState === "corner"}
-        on:mousedown={() => toggle("corner")}>Corner</button
-      >
-      <button
-        class="smaller"
-        tabindex="-1"
-        disabled={$buttonState === "center"}
-        on:mousedown={() => toggle("center")}>Center</button
-      >
+    <div class="sideButtons">
+      <div class="row">
+        <button
+          class="smaller"
+          tabindex="-1"
+          disabled={$buttonState === "normal"}
+          on:mousedown={() => toggle("normal")}>Normal</button
+        >
+        <button
+          class="smaller"
+          tabindex="-1"
+          disabled={$buttonState === "corner"}
+          on:mousedown={() => toggle("corner")}>Corner</button
+        >
+        <button
+          class="smaller"
+          tabindex="-1"
+          disabled={$buttonState === "center"}
+          on:mousedown={() => toggle("center")}>Center</button
+        >
+      </div>
     </div>
-  </div>
 
-  <div class="pad" />
+    <div class="pad" />
 
-  <div class="sideButtons">
-    <div class="row">
-      <div on:mousedown={() => board.reset()}>Reset</div>
-      <div on:mousedown={() => checkBoard($board)}>Check</div>
+    <div class="sideButtons">
+      <div class="row">
+        <div on:mousedown={() => board.reset()}>Reset</div>
+        <div on:mousedown={() => checkBoard($board)}>Check</div>
+      </div>
     </div>
-  </div>
+  {/if}
 </div>
 
 <style>

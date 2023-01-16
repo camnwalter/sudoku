@@ -26,6 +26,9 @@ export const actions: Actions = {
       cookies.set("gameID", gameID, {
         path: "/",
         maxAge: 60 * 60 * 24 * 30,
+        httpOnly: true,
+        sameSite: "strict",
+        secure: process.env.NODE_ENV === "production",
       });
       throw redirect(307, `/play/${gameID}`);
     }
@@ -35,6 +38,9 @@ export const actions: Actions = {
       cookies.set("gameID", code, {
         path: "/",
         maxAge: 60 * 60 * 24 * 30,
+        httpOnly: true,
+        sameSite: "strict",
+        secure: process.env.NODE_ENV === "production",
       });
       throw redirect(307, `/play/${code}`);
     }

@@ -104,9 +104,9 @@
   class:sameNumber={number !== 0 && $selectedNumbers.includes(number)}
   class:adjacent={isAdjacent($selectedCells)}
   class:locked={$board[index].locked}
-  on:mouseenter={onMouseEnter}
-  on:mousedown={onMouseDown}
-  on:mouseup={onMouseUp}
+  on:pointerenter={onMouseEnter}
+  on:pointerdown={onMouseDown}
+  on:pointerup={onMouseUp}
   on:keydown|preventDefault={onKeyDown}
   tabindex="-1"
   use:arrowKeyFocus={index}

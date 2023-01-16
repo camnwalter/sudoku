@@ -59,28 +59,28 @@
 <div class="outer">
   <div class="numbers">
     <div class="row">
-      <div class="square" on:mousedown={(e) => addNumber(e, 1)}>1</div>
-      <div class="square" on:mousedown={(e) => addNumber(e, 2)}>2</div>
-      <div class="square" on:mousedown={(e) => addNumber(e, 3)}>3</div>
+      <div class="square" on:pointerdown={(e) => addNumber(e, 1)}>1</div>
+      <div class="square" on:pointerdown={(e) => addNumber(e, 2)}>2</div>
+      <div class="square" on:pointerdown={(e) => addNumber(e, 3)}>3</div>
     </div>
     <div class="row">
-      <div class="square" on:mousedown={(e) => addNumber(e, 4)}>4</div>
-      <div class="square" on:mousedown={(e) => addNumber(e, 5)}>5</div>
-      <div class="square" on:mousedown={(e) => addNumber(e, 6)}>6</div>
+      <div class="square" on:pointerdown={(e) => addNumber(e, 4)}>4</div>
+      <div class="square" on:pointerdown={(e) => addNumber(e, 5)}>5</div>
+      <div class="square" on:pointerdown={(e) => addNumber(e, 6)}>6</div>
     </div>
     <div class="row">
-      <div class="square" on:mousedown={(e) => addNumber(e, 7)}>7</div>
-      <div class="square" on:mousedown={(e) => addNumber(e, 8)}>8</div>
-      <div class="square" on:mousedown={(e) => addNumber(e, 9)}>9</div>
+      <div class="square" on:pointerdown={(e) => addNumber(e, 7)}>7</div>
+      <div class="square" on:pointerdown={(e) => addNumber(e, 8)}>8</div>
+      <div class="square" on:pointerdown={(e) => addNumber(e, 9)}>9</div>
     </div>
     <div class="row">
-      <div on:mousedown={deleteCellData}>Delete</div>
+      <div on:pointerdown={deleteCellData}>Delete</div>
     </div>
   </div>
   <div class="buttons">
     <div class="row">
-      <div on:mousedown={() => board.undo()}>Undo</div>
-      <div on:mousedown={() => board.redo()}>Redo</div>
+      <div on:pointerdown={() => board.undo()}>Undo</div>
+      <div on:pointerdown={() => board.redo()}>Redo</div>
     </div>
     {#if !$page.url.pathname.startsWith("/create")}
       <div class="row">
@@ -88,24 +88,24 @@
           class="smaller"
           tabindex="-1"
           disabled={$buttonState === "normal"}
-          on:mousedown={() => toggle("normal")}>Normal</button
+          on:pointerdown={() => toggle("normal")}>Normal</button
         >
         <button
           class="smaller"
           tabindex="-1"
           disabled={$buttonState === "corner"}
-          on:mousedown={() => toggle("corner")}>Corner</button
+          on:pointerdown={() => toggle("corner")}>Corner</button
         >
         <button
           class="smaller"
           tabindex="-1"
           disabled={$buttonState === "center"}
-          on:mousedown={() => toggle("center")}>Center</button
+          on:pointerdown={() => toggle("center")}>Center</button
         >
       </div>
       <div class="row">
-        <div on:mousedown={() => board.reset()}>Reset</div>
-        <div on:mousedown={() => checkBoard($board)}>Check</div>
+        <div on:pointerdown={() => board.reset()}>Reset</div>
+        <div on:pointerdown={() => checkBoard($board)}>Check</div>
       </div>
     {/if}
   </div>

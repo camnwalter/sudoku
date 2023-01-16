@@ -13,11 +13,11 @@
       }
     };
 
-    document.addEventListener("mousedown", handleMouseDown, true);
+    document.addEventListener("pointerdown", handleMouseDown, true);
 
     return {
       destroy() {
-        document.removeEventListener("mousedown", handleMouseDown, true);
+        document.removeEventListener("pointerdown", handleMouseDown, true);
       },
     };
   };
@@ -44,8 +44,12 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
+  }
+
+  .pad {
+    margin: 0.5vw;
   }
 
   .gameArea {

@@ -8,5 +8,3 @@ export const load = (({ cookies }) => {
     throw redirect(307, `/play/${cookie}`);
   }
 }) satisfies PageServerLoad;
-
-export const prerender = true;

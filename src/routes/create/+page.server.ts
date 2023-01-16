@@ -11,6 +11,7 @@ export const actions: Actions = {
     await client.hsetnx("games", gameID, puzzle);
     cookies.set("gameID", gameID, {
       path: "/",
+      maxAge: 60 * 60 * 24 * 30,
     });
 
     throw redirect(307, `/play/${gameID}`);

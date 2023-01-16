@@ -27,7 +27,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
+    font-size: 2vw;
+    height: 100vh;
   }
 
   input {
@@ -36,23 +37,38 @@
 
   button {
     width: 40%;
-    font-size: 2.5rem;
+    font-size: 2.5vw;
     background-color: var(--lighter);
     border-radius: 10px;
     border: 3px solid var(--darkest);
-    padding: 0.5rem 0;
+    padding: 0.5vw 0;
     color: white;
     cursor: pointer;
   }
 
   .smaller {
     width: fit-content;
-    font-size: 2rem;
-    margin: 0.5rem;
-    padding: 0.5rem;
+    font-size: 2vw;
+    margin: 0.5vw;
+    padding: 0.5vw;
   }
 
   button:hover {
     background-color: var(--main-color);
+  }
+
+  @media only screen and (max-width: 768px) {
+    form {
+      font-size: 4vw;
+    }
+
+    button {
+      width: 80%;
+      font-size: 5vw;
+    }
+
+    .smaller {
+      font-size: 4vw;
+    }
   }
 </style>

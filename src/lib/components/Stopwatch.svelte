@@ -31,12 +31,21 @@
   }
 
   .stopwatch {
-    font-size: 1.5rem;
+    font-size: 1.5vw;
     background-color: var(--lighter);
-    padding: 0.5rem 1rem;
-    border-radius: 10px;
+    padding: 0.5vw 1vw;
+    border-radius: 1vw;
     color: white;
-    border: 2px solid var(--darkest);
+    border: 0.2vw solid var(--darkest);
     user-select: none;
+  }
+
+  @media only screen and (max-width: 768px) {
+    .stopwatch {
+      font-size: 4vw;
+      padding: 1vw 2vw;
+      border-radius: 2vw;
+      border: 0.5vw solid var(--darkest);
+    }
   }
 </style>

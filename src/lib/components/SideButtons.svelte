@@ -57,7 +57,7 @@
 <svelte:window on:keydown={handleKeyDown} on:keyup={handleKeyUp} />
 
 <div class="outer">
-  <div class="sideButtons">
+  <div class="numbers">
     <div class="row">
       <div class="square" on:mousedown={(e) => addNumber(e, 1)}>1</div>
       <div class="square" on:mousedown={(e) => addNumber(e, 2)}>2</div>
@@ -76,15 +76,13 @@
     <div class="row">
       <div on:mousedown={deleteCellData}>Delete</div>
     </div>
+  </div>
+  <div class="buttons">
     <div class="row">
       <div on:mousedown={() => board.undo()}>Undo</div>
       <div on:mousedown={() => board.redo()}>Redo</div>
     </div>
-  </div>
-  {#if $page.route.id !== "/create"}
-    <div class="pad" />
-
-    <div class="sideButtons">
+    {#if !$page.url.pathname.startsWith("/create")}
       <div class="row">
         <button
           class="smaller"
@@ -105,37 +103,30 @@
           on:mousedown={() => toggle("center")}>Center</button
         >
       </div>
-    </div>
-
-    <div class="pad" />
-
-    <div class="sideButtons">
       <div class="row">
         <div on:mousedown={() => board.reset()}>Reset</div>
         <div on:mousedown={() => checkBoard($board)}>Check</div>
       </div>
-    </div>
-  {/if}
+    {/if}
+  </div>
 </div>
 
 <style>
   .outer {
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
-  }
-
-  .sideButtons {
     background-color: var(--lighter);
     border-radius: 10px;
     border: 3px solid var(--main-color);
   }
 
+  .outer > * {
+    flex: 1;
+  }
+
   .row {
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
   }
 
   .row > div,
@@ -149,12 +140,12 @@
     cursor: pointer;
     user-select: none;
     background-color: rgba(0, 0, 0, 0);
-    padding: 10px;
+    padding: 1vw;
   }
 
   .row > div:not(.smaller),
   button {
-    font-size: 2rem;
+    font-size: 2vw;
   }
 
   .row > div:hover,
@@ -173,6 +164,32 @@
   }
 
   .smaller {
-    font-size: 1rem;
+    font-size: 1vw;
+  }
+
+  @media only screen and (max-width: 768px) {
+    .outer {
+      display: flex;
+      flex-direction: row;
+      width: 50vw;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .buttons > .row {
+      flex: 1;
+    }
+
+    .row > div:not(.smaller),
+    button {
+      font-size: 4vw;
+    }
+
+    .smaller {
+      font-size: 2vw;
+    }
   }
 </style>

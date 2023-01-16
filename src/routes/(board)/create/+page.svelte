@@ -1,30 +1,22 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
-  import { board, started, won } from "$lib/store";
-  import type { PageData } from "./$types";
-
-  export let data: PageData;
-
-  if (!$started) {
-    board.set(data.board);
-    started.set(true);
-  }
+  import { board } from "$lib/store";
 </script>
 
 <svelte:head>
-  <title>Play</title>
-  <meta name="description" content="Sudoku game" />
+  <title>Create</title>
+  <meta name="description" content="Create a new sudoku game" />
 </svelte:head>
 
-<form method="post" action="?/giveUp" use:enhance>
+<form method="post" action="?/createCustomBoard" use:enhance>
   <div class="pad" />
-  <button style="width: 40%" tabindex="-1">
-    {#if $won}
-      Go Back
-    {:else}
-      Give Up
-    {/if}
-  </button>
+  <button
+    style="width: 40%"
+    tabindex="-1"
+    name="board"
+    value={$board.map(({ number }) => number || "-").join("")}
+    >Create Board</button
+  >
 </form>
 
 <style>
@@ -36,7 +28,7 @@
   }
 
   button {
-    font-size: 2rem;
+    font-size: 2vw;
     background-color: var(--main-color);
     color: white;
     border-radius: 5px;

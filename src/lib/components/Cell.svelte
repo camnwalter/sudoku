@@ -145,7 +145,7 @@
     position: relative;
     width: 3.5vw;
     aspect-ratio: 1 / 1;
-    font-size: 3.5rem;
+    font-size: 3vw;
     border: 1px solid black;
     display: flex;
     justify-content: center;
@@ -192,7 +192,7 @@
     flex-direction: column;
     width: 100%;
     height: 100%;
-    font-size: 1rem;
+    font-size: 1vw;
   }
 
   .row {
@@ -212,9 +212,21 @@
 
   .centers {
     position: absolute;
-    font-size: 1rem;
+    font-size: 1vw;
     max-width: 100%;
     word-wrap: break-word;
     text-align: center;
+  }
+
+  @media only screen and (max-width: 768px) {
+    .cell {
+      width: 8vw;
+      font-size: 6vw;
+    }
+
+    .corners,
+    .centers {
+      font-size: 2vw;
+    }
   }
 </style>

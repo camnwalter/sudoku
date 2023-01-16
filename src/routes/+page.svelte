@@ -7,8 +7,6 @@
   <meta name="description" content="Sudoku" />
 </svelte:head>
 
-<!-- TODO: numpad shift detection -->
-
 <div>
   <button on:click={() => goto("/play")}>Play</button>
   <button on:click={() => goto("/create")}>Create</button>
@@ -26,7 +24,7 @@
     width: 100%;
     background-color: var(--main-color);
     color: white;
-    font-size: 4rem;
+    font-size: 4vmax;
     user-select: none;
     cursor: pointer;
   }

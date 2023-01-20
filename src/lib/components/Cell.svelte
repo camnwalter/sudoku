@@ -107,11 +107,13 @@
     const row = Math.floor((dy / grid.height) * 9);
     const col = Math.floor((dx / grid.width) * 9);
 
-    selectedCells.update((cells) => {
-      cells[row * 9 + col] = true;
-      return cells;
-    });
-    selectedNumbers.update((cells) => cells.concat(number));
+    if (row >= 0 && row < 9 && col >= 0 && col < 9) {
+      selectedCells.update((cells) => {
+        cells[row * 9 + col] = true;
+        return cells;
+      });
+      selectedNumbers.update((cells) => cells.concat(number));
+    }
   };
 </script>
 

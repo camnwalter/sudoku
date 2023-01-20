@@ -9,10 +9,11 @@
     selectedNumbers,
   } from "$lib/store";
 
+  export let boardRef: HTMLDivElement;
   export let index: number;
   $: number = $board[index].number ?? 0;
 
-  const onMouseDown = (event: MouseEvent) => {
+  const onMouseDown = (event: PointerEvent) => {
     mouseState.set(true);
     selectedCells.update((prev) => {
       if (!event.ctrlKey) {
@@ -92,6 +93,26 @@
       if (event.code === "KeyY") board.redo();
     }
   };
+
+  const onTouchMove = (event: TouchEvent) => {
+    const grid = boardRef?.getBoundingClientRect();
+
+    if (!grid) return;
+
+    const { clientX, clientY } = event.changedTouches[0];
+
+    const dx = clientX - grid.left;
+    const dy = clientY - grid.top;
+
+    const row = Math.floor((dy / grid.height) * 9);
+    const col = Math.floor((dx / grid.width) * 9);
+
+    selectedCells.update((cells) => {
+      cells[row * 9 + col] = true;
+      return cells;
+    });
+    selectedNumbers.update((cells) => cells.concat(number));
+  };
 </script>
 
 <div
@@ -108,6 +129,7 @@
   on:pointerdown={onMouseDown}
   on:pointerup={onMouseUp}
   on:keydown|preventDefault={onKeyDown}
+  on:touchmove|preventDefault|stopPropagation={onTouchMove}
   tabindex="-1"
   use:arrowKeyFocus={index}
 >

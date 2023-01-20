@@ -6,7 +6,7 @@
   import { selectedCells, selectedNumbers } from "$lib/store";
 
   const clearSelected = (node: Node) => {
-    const handleMouseDown = (event: MouseEvent) => {
+    const handleMouseDown = (event: PointerEvent) => {
       if (node === event.target || !node.contains(event.target as Element)) {
         selectedCells.set(Array(81).fill(false));
         selectedNumbers.set([]);

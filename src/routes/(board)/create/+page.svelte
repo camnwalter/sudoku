@@ -8,10 +8,10 @@
   <meta name="description" content="Create a new sudoku game" />
 </svelte:head>
 
+<div class="pad" />
+
 <form method="post" action="?/createCustomBoard" use:enhance>
-  <div class="pad" />
   <button
-    style="width: 40%"
     tabindex="-1"
     name="board"
     value={$board.map(({ number }) => number || "-").join("")}
@@ -27,18 +27,29 @@
     align-items: center;
   }
 
-  button {
-    font-size: 2vw;
+  form > * {
     background-color: var(--main-color);
-    color: white;
-    border-radius: 5px;
-    border: 3px solid var(--darkest);
+    margin-inline: 0.5vw;
+    padding: 0.5vw 1vw;
+    border-radius: 0.5vw;
+    border: 0.25vw solid var(--darkest);
     user-select: none;
     cursor: pointer;
-    padding: 5px;
+    font-size: 2vw;
+    color: white;
   }
 
-  button:hover {
+  form > *:hover {
     background-color: var(--lighter);
+  }
+
+  @media only screen and (max-width: 768px) {
+    form > * {
+      font-size: 6vw;
+      margin-inline: 1vw;
+      padding: 1vw 2vw;
+      border-radius: 1vw;
+      border: 0.5vw solid var(--darkest);
+    }
   }
 </style>

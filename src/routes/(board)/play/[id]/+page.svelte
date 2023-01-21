@@ -1,7 +1,7 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
   import { isValidSolution } from "$lib/isValidSolution";
-  import { board, started, won } from "$lib/store";
+  import { board, started, won, type Cell } from "$lib/store";
   import toast from "svelte-french-toast";
   import type { PageData } from "./$types";
 

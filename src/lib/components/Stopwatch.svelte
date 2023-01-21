@@ -42,7 +42,7 @@
 
   @media only screen and (max-width: 768px) {
     .stopwatch {
-      font-size: 4vw;
+      font-size: 6vw;
       padding: 1vw 2vw;
       border-radius: 2vw;
       border: 0.5vw solid var(--darkest);

@@ -244,13 +244,13 @@
 
   @media only screen and (max-width: 768px) {
     .cell {
-      width: 8vw;
-      font-size: 6vw;
+      width: 9.5vw;
+      font-size: 8vw;
     }
 
     .corners,
     .centers {
-      font-size: 2vw;
+      font-size: 2.5vw;
     }
   }
 </style>

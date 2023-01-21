@@ -1,6 +1,8 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
+  import { isValidSolution } from "$lib/isValidSolution";
   import { board, started, won } from "$lib/store";
+  import toast from "svelte-french-toast";
   import type { PageData } from "./$types";
 
   export let data: PageData;
@@ -9,6 +11,15 @@
     board.set(data.board);
     started.set(true);
   }
+
+  const checkBoard = (puzzle: Cell[]) => {
+    if (isValidSolution(puzzle)) {
+      won.set(true);
+      toast.success("Congratulations, you won!", {
+        style: "font-size: 1.5rem",
+      });
+    }
+  };
 </script>
 
 <svelte:head>
@@ -16,43 +27,61 @@
   <meta name="description" content="Sudoku game" />
 </svelte:head>
 
-<form method="post" action="?/giveUp" use:enhance>
-  <div class="pad" />
-  <button style="width: 40%" tabindex="-1">
-    {#if $won}
-      Go Back
-    {:else}
-      Give Up
+<div class="pad" />
+
+<div class="wrapper">
+  <form method="post" action="?/giveUp" use:enhance>
+    {#if !$won}
+      <div on:pointerdown={() => board.reset()}>Reset</div>
+      <div on:pointerdown={() => checkBoard($board)}>Check</div>
     {/if}
-  </button>
-</form>
+
+    <button tabindex="-1">
+      {#if $won}
+        Go Back
+      {:else}
+        Give Up
+      {/if}
+    </button>
+  </form>
+</div>
 
 <style>
+  .wrapper {
+    display: flex;
+    justify-content: center;
+  }
+
   form {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: space-evenly;
     align-items: center;
   }
 
-  button {
-    font-size: 2vw;
+  form > * {
     background-color: var(--main-color);
-    color: white;
-    border-radius: 5px;
-    border: 3px solid var(--darkest);
+    margin-inline: 0.5vw;
+    padding: 0.5vw 1vw;
+    border-radius: 0.5vw;
+    border: 0.25vw solid var(--darkest);
     user-select: none;
     cursor: pointer;
-    padding: 5px;
+    font-size: 2vw;
+    color: white;
   }
 
-  button:hover {
+  form > *:hover {
     background-color: var(--lighter);
   }
 
   @media only screen and (max-width: 768px) {
-    button {
-      font-size: 4vw;
+    form > * {
+      font-size: 6vw;
+      margin-inline: 1vw;
+      padding: 1vw 2vw;
+      border-radius: 1vw;
+      border: 0.5vw solid var(--darkest);
     }
   }
 </style>

@@ -1,17 +1,13 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import { addNumber } from "$lib/addNumber";
-  import { isValidSolution } from "$lib/isValidSolution";
   import {
     board,
     buttonState,
     resetCellIfPossible,
     selectedCells,
-    won,
     type ButtonState,
-    type Cell,
   } from "$lib/store";
-  import toast from "svelte-french-toast";
 
   let fallbackType: ButtonState = "normal";
   const toggle = (type: ButtonState) => {
@@ -28,15 +24,6 @@
         });
       }
     });
-  };
-
-  const checkBoard = (puzzle: Cell[]) => {
-    if (isValidSolution(puzzle)) {
-      won.set(true);
-      toast.success("Congratulations, you won!", {
-        style: "font-size: 1.5rem",
-      });
-    }
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {
@@ -73,11 +60,11 @@
       <div class="square" on:pointerdown={(e) => addNumber(e, 8)}>8</div>
       <div class="square" on:pointerdown={(e) => addNumber(e, 9)}>9</div>
     </div>
+  </div>
+  <div class="buttons">
     <div class="row">
       <div on:pointerdown={deleteCellData}>Delete</div>
     </div>
-  </div>
-  <div class="buttons">
     <div class="row">
       <div on:pointerdown={() => board.undo()}>Undo</div>
       <div on:pointerdown={() => board.redo()}>Redo</div>
@@ -102,10 +89,6 @@
           disabled={$buttonState === "center"}
           on:pointerdown={() => toggle("center")}>Center</button
         >
-      </div>
-      <div class="row">
-        <div on:pointerdown={() => board.reset()}>Reset</div>
-        <div on:pointerdown={() => checkBoard($board)}>Check</div>
       </div>
     {/if}
   </div>
@@ -171,7 +154,7 @@
     .outer {
       display: flex;
       flex-direction: row;
-      width: 50vw;
+      width: 70vw;
     }
 
     .buttons {
@@ -185,11 +168,15 @@
 
     .row > div:not(.smaller),
     button {
-      font-size: 4vw;
+      font-size: 5vw;
+    }
+
+    .numbers > .row > div {
+      font-size: 6vw;
     }
 
     .smaller {
-      font-size: 2vw;
+      font-size: 2.5vw;
     }
   }
 </style>
